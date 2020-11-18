@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <BlockVariantGroups>
+
+    <!-- Armor -->
+
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightCubeGroup_SuperLight" />
+      <Icon>Textures\GUI\Icons\Cubes\light_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Super Light(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCornerInv_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCornerInv_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfSlopeArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfSlopeArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCornerInv_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCornerInv_SuperLight" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightRampCornerGroup_SuperLight" />
+      <Icon>Textures\GUI\Icons\Cubes\Corner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Super Light(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Tip_SuperLight" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyCubeGroup_SuperLight" />
+      <Icon>Textures\GUI\Icons\Cubes\heavy_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Super Light</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCornerInv_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCornerInv_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfSlopeArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfSlopeArmorBlock_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCornerInv_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundSlope_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCorner_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCornerInv_SuperLight" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyRampCornerGroup_SuperLight" />
+      <Icon>Textures\GUI\Icons\Cubes\HeavyCorner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Super Light</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Tip_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Base_SuperLight" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Tip_SuperLight" />
+      </Blocks>
+    </BlockVariantGroup>
+
+
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightCubeGroup_SuperHard" />
+      <Icon>Textures\GUI\Icons\Cubes\light_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Super Hard(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCornerInv_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCornerInv_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfSlopeArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfSlopeArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCornerInv_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCornerInv_SuperHard" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightRampCornerGroup_SuperHard" />
+      <Icon>Textures\GUI\Icons\Cubes\Corner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Super Hard(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Tip_SuperHard" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyCubeGroup_SuperHard" />
+      <Icon>Textures\GUI\Icons\Cubes\heavy_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Super Hard</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCornerInv_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCornerInv_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfSlopeArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfSlopeArmorBlock_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCornerInv_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundSlope_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCorner_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCornerInv_SuperHard" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyRampCornerGroup_SuperHard" />
+      <Icon>Textures\GUI\Icons\Cubes\HeavyCorner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Super Hard</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Tip_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Base_SuperHard" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Tip_SuperHard" />
+      </Blocks>
+    </BlockVariantGroup>
+
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightCubeGroup_SuperHardHeavy" />
+      <Icon>Textures\GUI\Icons\Cubes\light_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Super Hard Heavy(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCornerInv_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCornerInv_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfSlopeArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfSlopeArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCornerInv_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCornerInv_SuperHardHeavy" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightRampCornerGroup_SuperHardHeavy" />
+      <Icon>Textures\GUI\Icons\Cubes\Corner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Super Hard Heavy(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Tip_SuperHardHeavy" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyCubeGroup_SuperHardHeavy" />
+      <Icon>Textures\GUI\Icons\Cubes\heavy_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Super Hard Heavy</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCornerInv_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCornerInv_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfSlopeArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfSlopeArmorBlock_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCornerInv_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundSlope_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCorner_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCornerInv_SuperHardHeavy" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyRampCornerGroup_SuperHardHeavy" />
+      <Icon>Textures\GUI\Icons\Cubes\HeavyCorner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Super Hard Heavy</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Tip_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Base_SuperHardHeavy" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Tip_SuperHardHeavy" />
+      </Blocks>
+    </BlockVariantGroup>
+
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightCubeGroup_Advance" />
+      <Icon>Textures\GUI\Icons\Cubes\light_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Advance(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCornerInv_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCornerInv_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorSlope2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHalfSlopeArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorSlope2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HalfSlopeArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorRoundCornerInv_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorRoundCornerInv_Advance" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorLightRampCornerGroup_Advance" />
+      <Icon>Textures\GUI\Icons\Cubes\Corner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Advance(Light Weight)</DisplayName>
+      <Description>Description_LightArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorCorner2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeBlockArmorInvCorner2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorCorner2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallBlockArmorInvCorner2Tip_Advance" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyCubeGroup_Advance" />
+      <Icon>Textures\GUI\Icons\Cubes\heavy_armor_cube.dds</Icon>
+      <DisplayName>Armor Block Advance</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCornerInv_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCornerInv_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorSlope2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyHalfSlopeArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorSlope2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="HeavyHalfSlopeArmorBlock_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorRoundCornerInv_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundSlope_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCorner_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorRoundCornerInv_Advance" />
+      </Blocks>
+    </BlockVariantGroup>
+    <BlockVariantGroup>
+      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="ArmorHeavyRampCornerGroup_Advance" />
+      <Icon>Textures\GUI\Icons\Cubes\HeavyCorner2x1x1Base.dds</Icon>
+      <DisplayName>Armor Block Advance</DisplayName>
+      <Description>Description_HeavyArmor</Description>
+      <Blocks>
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorCorner2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="LargeHeavyBlockArmorInvCorner2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorCorner2Tip_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Base_Advance" />
+        <Block Type="MyObjectBuilder_CubeBlock" Subtype="SmallHeavyBlockArmorInvCorner2Tip_Advance" />
+      </Blocks>
+    </BlockVariantGroup>
+
+  </BlockVariantGroups>
+</Definitions>

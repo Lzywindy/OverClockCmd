@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Blueprints>   
+    <!--超级材料的蓝图-->
+    <Blueprint>
+      <Id>
+        <TypeId>BlueprintDefinition</TypeId>
+        <SubtypeId>CompositeMetalGrid</SubtypeId>
+      </Id>
+      <DisplayName>Composite Metal Grid</DisplayName>
+      <Icon>Textures\GUI\Icons\component\metal_grid_component.dds</Icon>
+      <Prerequisites>
+        <Item Amount="12" TypeId="Ingot" SubtypeId="Iron" />
+        <Item Amount="5" TypeId="Ingot" SubtypeId="Nickel" />
+        <Item Amount="3" TypeId="Ingot" SubtypeId="Cobalt" />
+      </Prerequisites>
+      <Result Amount="1" TypeId="Component" SubtypeId="CompositeMetalGrid" />
+      <BaseProductionTimeInSeconds>2</BaseProductionTimeInSeconds>
+      <IsPrimary>true</IsPrimary>
+    </Blueprint>
+    <Blueprint>
+      <Id>
+        <TypeId>BlueprintDefinition</TypeId>
+        <SubtypeId>CompositeInteriorPlate</SubtypeId>
+      </Id>
+      <DisplayName>Composite Interior Plate</DisplayName>
+      <Icon>Textures\GUI\Icons\component\interior_plate_component.dds</Icon>
+      <Prerequisites>
+        <Item Amount="1" TypeId="Ingot" SubtypeId="Stone" />
+        <Item Amount="1" TypeId="Ingot" SubtypeId="Iron" />
+      </Prerequisites>
+      <Result Amount="2" TypeId="Component" SubtypeId="CompositeInteriorPlate" />
+      <BaseProductionTimeInSeconds>1</BaseProductionTimeInSeconds>
+      <IsPrimary>true</IsPrimary>
+    </Blueprint>
+    <Blueprint>
+      <Id>
+        <TypeId>BlueprintDefinition</TypeId>
+        <SubtypeId>CompositeArmorPlate</SubtypeId>
+      </Id>
+      <DisplayName>Composite Armor Plate</DisplayName>
+      <Icon>Textures\GUI\Icons\component\steel_plate_component.dds</Icon>
+      <Prerequisites>
+        <Item Amount="1" TypeId="Ingot" SubtypeId="Iron" />
+        <Item Amount="1" TypeId="Ingot" SubtypeId="Stone" />
+        <Item Amount="1" TypeId="Ingot" SubtypeId="Nickel" />
+        <Item Amount="1" TypeId="Ingot" SubtypeId="Silicon" />
+      </Prerequisites>
+      <Result Amount="5" TypeId="Component" SubtypeId="CompositeArmorPlate" />
+      <BaseProductionTimeInSeconds>1</BaseProductionTimeInSeconds>
+      <IsPrimary>true</IsPrimary>
+    </Blueprint>
+    <Blueprint>
+        <Id>
+          <TypeId>BlueprintDefinition</TypeId>
+          <SubtypeId>SuperMaterialPlate</SubtypeId>
+        </Id>
+        <DisplayName>Super Material Plate</DisplayName>
+        <Icon>Textures\GUI\Icons\component\steel_plate_component.dds</Icon>
+        <Prerequisites>
+          <Item Amount="10000" TypeId="Ore" SubtypeId="Stone" />
+        </Prerequisites>
+        <Result Amount="1" TypeId="Component" SubtypeId="SuperMaterialPlate" />
+        <BaseProductionTimeInSeconds>1</BaseProductionTimeInSeconds>
+        <IsPrimary>true</IsPrimary>
+    </Blueprint>
+    <!--超级组件的蓝图-->
+    <Blueprint>
+      <Id>
+        <TypeId>BlueprintDefinition</TypeId>
+        <SubtypeId>LightQuantumComputer</SubtypeId>
+      </Id>
+      <DisplayName>Light Quantum Computer</DisplayName>
+      <Icon>Textures\GUI\Icons\component\computer_component.dds</Icon>
+      <Prerequisites>
+        <Item Amount="0.5" TypeId="Ingot" SubtypeId="Iron" />
+        <Item Amount="0.1" TypeId="Ingot" SubtypeId="Stone" />
+        <Item Amount="0.2" TypeId="Ingot" SubtypeId="Silicon" />
+        <Item Amount="0.05" TypeId="Ingot" SubtypeId="Silver" />
+        <Item Amount="0.01" TypeId="Ingot" SubtypeId="Gold" />
+        <Item Amount="0.01" TypeId="Ingot" SubtypeId="Platinum" />
+      </Prerequisites>
+      <Result Amount="1" TypeId="Component" SubtypeId="LightQuantumComputer" />
+      <BaseProductionTimeInSeconds>1</BaseProductionTimeInSeconds>
+      <IsPrimary>true</IsPrimary>
+    </Blueprint>
+    <Blueprint>
+      <Id>
+        <TypeId>BlueprintDefinition</TypeId>
+        <SubtypeId>METransformer</SubtypeId>
+      </Id>
+      <DisplayName>Mass-Energy Transformer</DisplayName>
+      <Icon>Textures\GUI\Icons\component\reactor_components_component.dds</Icon>
+      <Prerequisites>
+        <Item Amount="15" TypeId="Ingot" SubtypeId="Iron" />
+        <Item Amount="20" TypeId="Ingot" SubtypeId="Stone" />
+        <Item Amount="5" TypeId="Ingot" SubtypeId="Silver" />
+        <Item Amount="0.2" TypeId="Ingot" SubtypeId="Silicon" />
+        <Item Amount="0.01" TypeId="Ingot" SubtypeId="Gold" />
+        <Item Amount="0.01" TypeId="Ingot" SubtypeId="Platinum" />
+        <Item Amount="0.1" TypeId="Ingot" SubtypeId="Stone" />
+      </Prerequisites>
+      <Result Amount="1" TypeId="Component" SubtypeId="METransformer" />
+      <BaseProductionTimeInSeconds>8</BaseProductionTimeInSeconds>
+    </Blueprint>
+    <Blueprint>
+      <Id>
+        <TypeId>BlueprintDefinition</TypeId>
+        <SubtypeId>RiemannTransformerDevice</SubtypeId>
+      </Id>
+      <DisplayName>Riemann Transformer Device</DisplayName>
+      <Icon>Textures\GUI\Icons\component\gravity_generator_components_component.dds</Icon>
+      <Prerequisites>
+        <Item Amount="5" TypeId="Ingot" SubtypeId="Silver" />
+        <Item Amount="10" TypeId="Ingot" SubtypeId="Gold" />
+        <Item Amount="220" TypeId="Ingot" SubtypeId="Cobalt" />
+        <Item Amount="600" TypeId="Ingot" SubtypeId="Iron" />
+      </Prerequisites>
+      <Result Amount="1" TypeId="Component" SubtypeId="RiemannTransformerDevice" />
+      <BaseProductionTimeInSeconds>10</BaseProductionTimeInSeconds>
+    </Blueprint>
+  </Blueprints>
+</Definitions>

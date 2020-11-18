@@ -1,0 +1,2 @@
+C:\Users\LvZhengyu-PC\AppData\Roaming\SpaceEngineers\Mods\OverClockCmd\Data\Scripts\OverClockCmd\obj\Debug\script.csprojAssemblyReference.cache
+C:\Users\LvZhengyu-PC\AppData\Roaming\SpaceEngineers\Mods\OverClockCmd\Data\Scripts\OverClockCmd\obj\Debug\script.csproj.CoreCompileInputs.cache

@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <BlueprintClasses>
+    <Class>
+      <Id>
+        <TypeId>BlueprintClassDefinition</TypeId>
+        <SubtypeId>AdvanceTechnologyItems</SubtypeId>
+      </Id>
+      <DisplayName>Advance Technology Items</DisplayName>
+      <Description>Advance Technology Items can be used to make advance equipment for more nice devices.</Description>
+      <Icon>Textures\GUI\Icons\buttons\component.dds</Icon>
+      <HighlightIcon>Textures\GUI\Icons\buttons\component.dds</HighlightIcon>
+      <FocusIcon>Textures\GUI\Icons\buttons\component.dds</FocusIcon>
+      <InputConstraintIcon>Textures\GUI\Icons\filter_ore.dds</InputConstraintIcon>
+      <OutputConstraintIcon>Textures\GUI\Icons\filter_ingot.dds</OutputConstraintIcon>
+    </Class>
+    <Class>
+      <Id>
+        <TypeId>BlueprintClassDefinition</TypeId>
+        <SubtypeId>AdvanceTechnologyDevice</SubtypeId>
+      </Id>
+      <DisplayName>Advance Technology Device</DisplayName>
+      <Description>Advance Technology Device can be used to make advance equipment for more nice devices.</Description>
+      <Icon>Textures\GUI\Icons\buttons\component.dds</Icon>
+      <HighlightIcon>Textures\GUI\Icons\buttons\component.dds</HighlightIcon>
+      <FocusIcon>Textures\GUI\Icons\buttons\component.dds</FocusIcon>
+      <InputConstraintIcon>Textures\GUI\Icons\filter_ingot.dds</InputConstraintIcon>
+    </Class>
+    <Class>
+      <Id>
+        <TypeId>BlueprintClassDefinition</TypeId>
+        <SubtypeId>AdvanceTechnologyBlock</SubtypeId>
+      </Id>
+      <DisplayName>Advance Technology Block</DisplayName>
+      <Description>Advance Technology Block can be used to make advance constructure for nice ship.</Description>
+      <Icon>Textures\GUI\Icons\buttons\component.dds</Icon>
+      <HighlightIcon>Textures\GUI\Icons\buttons\component.dds</HighlightIcon>
+      <FocusIcon>Textures\GUI\Icons\buttons\component.dds</FocusIcon>
+      <InputConstraintIcon>Textures\GUI\Icons\filter_ingot.dds</InputConstraintIcon>
+    </Class>
+  </BlueprintClasses>
+  <BlueprintClassEntries>
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Slope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Corner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_CornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfSlopeArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfSlopeArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfSlopeArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfSlopeArmorBlock_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundSlope_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCorner_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCornerInv_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Base_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Tip_Advance" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Slope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Corner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_CornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfSlopeArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfSlopeArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfSlopeArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfSlopeArmorBlock_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundSlope_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCorner_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCornerInv_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Base_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Tip_SuperHard" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Slope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Corner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_CornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfSlopeArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfSlopeArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfSlopeArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfSlopeArmorBlock_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundSlope_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCorner_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCornerInv_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Base_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Tip_SuperHardHeavy" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Slope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_Corner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeRoundArmor_CornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHalfSlopeArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyHalfSlopeArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HalfSlopeArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/HeavyHalfSlopeArmorBlock_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorRoundCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorRoundCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorRoundCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundSlope_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCorner_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorRoundCornerInv_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorSlope2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeBlockArmorInvCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorSlope2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/LargeHeavyBlockArmorInvCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorSlope2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallBlockArmorInvCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorSlope2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Base_SuperLight" />
+    <Entry Class="AdvanceTechnologyBlock" BlueprintSubtypeId="CubeBlock/SmallHeavyBlockArmorInvCorner2Tip_SuperLight" />
+    <Entry Class="AdvanceTechnologyDevice" BlueprintSubtypeId="AirVent/AirVent_OC" />
+    <Entry Class="AdvanceTechnologyDevice" BlueprintSubtypeId="AirVent/SmallAirVent_OC" />
+    <Entry Class="AdvanceTechnologyDevice" BlueprintSubtypeId="RemoteControl/PRC_Block_Large" />
+    <Entry Class="AdvanceTechnologyDevice" BlueprintSubtypeId="RemoteControl/PRC_Block_Small" />
+    <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="CompositeMetalGrid" />
+    <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="CompositeInteriorPlate" />
+    <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="CompositeArmorPlate" />
+    <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="SuperMaterialPlate" />
+    <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="LightQuantumComputer" />
+    <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="METransformer" />
+    <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="RiemannTransformerDevice" />
+  </BlueprintClassEntries>
+</Definitions>

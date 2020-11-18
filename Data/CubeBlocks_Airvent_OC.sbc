@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CubeBlocks>
+    <Definition xsi:type="MyObjectBuilder_AirVentDefinition">
+      <Id>
+        <TypeId>AirVent</TypeId>
+        <SubtypeId>AirVent_OC</SubtypeId>
+      </Id>
+      <DisplayName>Air Vent Overclocked</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\AirVent.dds</Icon>
+      <Description>More Powerful Air Vent with a motor overclocked. Need more power and intake or output more oxygen.</Description>
+      <CubeSize>Large</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="1" z="1" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\Large\OxygenPressurizer.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="30" />
+        <Component Subtype="Construction" Count="20" />
+        <Component Subtype="Motor" Count="10" />
+        <Component Subtype="Computer" Count="5" />
+        <Component Subtype="SteelPlate" Count="15" />
+      </Components>
+      <CriticalComponent Subtype="Computer" Index="0" />
+      <MountPoints>
+        <MountPoint Side="Bottom" StartX="0" StartY="0.5" EndX="1" EndY="1" />
+        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+        <MountPoint Side="Left" StartX="0.5" StartY="0" EndX="1" EndY="1" />
+        <MountPoint Side="Right" StartX="0" StartY="0" EndX="0.5" EndY="1" />
+        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.5" />
+      </MountPoints>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.33" File="Models\Cubes\Large\OxygenPressurizerConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Large\OxygenPressurizerConstruction_2.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\OxygenPressurizerConstruction_3.mwm" />
+      </BuildProgressModels>
+      <BlockPairName>AirVent_OC</BlockPairName>
+      <MirroringY>Z</MirroringY>
+      <MirroringZ>Y</MirroringZ>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>20</BuildTimeSeconds>
+      <ResourceSourceGroup>Battery</ResourceSourceGroup>
+      <ResourceSinkGroup>Factory</ResourceSinkGroup>
+      <OperationalPowerConsumption>0.1</OperationalPowerConsumption>
+      <StandbyPowerConsumption>0.1</StandbyPowerConsumption>
+      <VentilationCapacityPerSecond>30000</VentilationCapacityPerSecond>
+      <DamageEffectName>Damage_WeapExpl_Damaged</DamageEffectName>
+      <DamagedSound>ParticleWeapExpl</DamagedSound>
+      <PressurizeSound>BlockAirVentExhale</PressurizeSound>
+      <DepressurizeSound>BlockAirVentDepressurize</DepressurizeSound>
+      <IdleSound>BlockAirVentIdle</IdleSound>
+      <EmissiveColorPreset>Extended</EmissiveColorPreset>
+      <DestroyEffect>BlockDestroyedExplosion_Large</DestroyEffect>
+      <DestroySound>WepSmallWarheadExpl</DestroySound>
+      <PCU>10</PCU>
+    </Definition>
+    <Definition xsi:type="MyObjectBuilder_AirVentDefinition">
+      <Id>
+        <TypeId>AirVent</TypeId>
+        <SubtypeId>SmallAirVent_OC</SubtypeId>
+      </Id>
+      <DisplayName>Air Vent Overclocked</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\AirVent.dds</Icon>
+      <Description>More Powerful Air Vent with a motor overclocked. Need more power and intake or output more oxygen.</Description>
+      <CubeSize>Small</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="1" z="1" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\Small\OxygenPressurizer.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="5" />
+        <Component Subtype="Construction" Count="10" />
+        <Component Subtype="Motor" Count="2" />
+        <Component Subtype="Computer" Count="5" />
+        <Component Subtype="SteelPlate" Count="3" />
+      </Components>
+      <CriticalComponent Subtype="Computer" Index="0" />
+      <MountPoints>
+        <MountPoint Side="Bottom" StartX="0" StartY="0.5" EndX="1" EndY="1" />
+        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+        <MountPoint Side="Left" StartX="0.5" StartY="0" EndX="1" EndY="1" />
+        <MountPoint Side="Right" StartX="0" StartY="0" EndX="0.5" EndY="1" />
+        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.5" />
+      </MountPoints>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.33" File="Models\Cubes\Small\OxygenPressurizerConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Small\OxygenPressurizerConstruction_2.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\OxygenPressurizerConstruction_3.mwm" />
+      </BuildProgressModels>
+      <BlockPairName>AirVent_OC</BlockPairName>
+      <MirroringY>Z</MirroringY>
+      <MirroringZ>Y</MirroringZ>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>10</BuildTimeSeconds>
+      <ResourceSourceGroup>Battery</ResourceSourceGroup>
+      <ResourceSinkGroup>Factory</ResourceSinkGroup>
+      <OperationalPowerConsumption>0.01</OperationalPowerConsumption>
+      <StandbyPowerConsumption>0.1</StandbyPowerConsumption>
+      <VentilationCapacityPerSecond>3000</VentilationCapacityPerSecond>
+      <DamageEffectName>Damage_WeapExpl_Damaged</DamageEffectName>
+      <DamagedSound>ParticleWeapExpl</DamagedSound>
+      <PressurizeSound>BlockAirVentExhale</PressurizeSound>
+      <DepressurizeSound>BlockAirVentDepressurize</DepressurizeSound>
+      <IdleSound>BlockAirVentIdle</IdleSound>
+      <EmissiveColorPreset>Extended</EmissiveColorPreset>
+      <DestroyEffect>BlockDestroyedExplosion_Tiny</DestroyEffect>
+      <DestroySound>WepSmallWarheadExpl</DestroySound>
+      <PCU>10</PCU>
+    </Definition>
+  </CubeBlocks>
+</Definitions>
