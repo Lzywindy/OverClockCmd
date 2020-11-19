@@ -40,9 +40,10 @@ namespace SuperBlocks.Controller
             CreateController();
             NeedsUpdate |= (MyEntityUpdateEnum.EACH_FRAME | MyEntityUpdateEnum.EACH_10TH_FRAME | MyEntityUpdateEnum.EACH_100TH_FRAME);
         }
-        protected virtual void CreateController()
+        private void CreateController()
         {
-            Control = new ControllerManageBase(Entity as IMyTerminalBlock);
+            InitController();
+            InitParameters();
         }
         public override void Close()
         {
@@ -67,9 +68,13 @@ namespace SuperBlocks.Controller
             else Control.Restart(Entity as IMyTerminalBlock);
         }
         public ControllerManageBase Control { get; protected set; }
-        public void RunningRestart()
+        protected virtual void InitController() { Control = new ControllerManageBase(Entity as IMyTerminalBlock); }
+        protected virtual void InitParameters() { }
+        public static void RunningRestart(IMyTerminalBlock Me)
         {
-            Control.Restart(Entity as IMyTerminalBlock);
+            var target = Me.GameLogic.GetAs<ControlBase>();
+            if (target == null || target.Control == null) return;
+            target.Control.Restart(target.Entity as IMyTerminalBlock);
         }
     }
 }

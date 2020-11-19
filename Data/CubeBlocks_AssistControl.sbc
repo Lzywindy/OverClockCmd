@@ -1,499 +1,592 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <CubeBlocks>
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>TankTrackControl</SubtypeId>
-      </Id>
-      <DisplayName>Tank Track Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Large</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Large\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
-        <MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>TankTrackControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <DestroyEffectOffset>
-        <X>0</X>
-        <Y>0</Y>
-        <Z>1.1</Z>
-      </DestroyEffectOffset>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>SmallTankTrackControl</SubtypeId>
-      </Id>
-      <DisplayName>Tank Track Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Small</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Small\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>TankTrackControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>HeilcopterControl</SubtypeId>
-      </Id>
-      <DisplayName>Heilcopter Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Large</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Large\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
-        <MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>HeilcopterControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <DestroyEffectOffset>
-        <X>0</X>
-        <Y>0</Y>
-        <Z>1.1</Z>
-      </DestroyEffectOffset>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>SmallHeilcopterControl</SubtypeId>
-      </Id>
-      <DisplayName>Heilcopter Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Small</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Small\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>HeilcopterControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>VTOLControl</SubtypeId>
-      </Id>
-      <DisplayName>VTOL Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Large</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Large\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
-        <MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>VTOLControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <DestroyEffectOffset>
-        <X>0</X>
-        <Y>0</Y>
-        <Z>1.1</Z>
-      </DestroyEffectOffset>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>SmallVTOLControl</SubtypeId>
-      </Id>
-      <DisplayName>VTOL Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Small</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Small\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>VTOLControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-
-
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>AirplaneControl</SubtypeId>
-      </Id>
-      <DisplayName>Airplane Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Large</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Large\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
-        <MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>AirplaneControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <DestroyEffectOffset>
-        <X>0</X>
-        <Y>0</Y>
-        <Z>1.1</Z>
-      </DestroyEffectOffset>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>SmallAirplaneControl</SubtypeId>
-      </Id>
-      <DisplayName>Airplane Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Small</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Small\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>AirplaneControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-    
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>SpaceShipControl</SubtypeId>
-      </Id>
-      <DisplayName>Space Ship Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Large</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Large\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
-        <MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
-        <MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>SpaceShipControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <DestroyEffectOffset>
-        <X>0</X>
-        <Y>0</Y>
-        <Z>1.1</Z>
-      </DestroyEffectOffset>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-    <Definition>
-      <Id>
-        <TypeId>TerminalBlock</TypeId>
-        <SubtypeId>SmallSpaceShipControl</SubtypeId>
-      </Id>
-      <DisplayName>Space Ship Controller</DisplayName>
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <Description>Description_ControlPanel</Description>
-      <CubeSize>Small</CubeSize>
-      <BlockTopology>TriangleMesh</BlockTopology>
-      <Size x="1" y="1" z="1" />
-      <ModelOffset x="0" y="0" z="0" />
-      <Model>Models\Cubes\Small\RemoteControl.mwm</Model>
-      <Components>
-        <Component Subtype="SteelPlate" Count="1" />
-        <Component Subtype="Construction" Count="1" />
-        <Component Subtype="Computer" Count="1" />
-      </Components>
-      <CriticalComponent Subtype="Construction" Index="0" />
-      <MountPoints>
-        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
-        <MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
-        <MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
-      </MountPoints>
-      <IsStandAlone>false</IsStandAlone>
-      <HasPhysics>false</HasPhysics>
-      <BuildProgressModels>
-        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
-        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
-      </BuildProgressModels>
-      <BlockPairName>SpaceShipControl</BlockPairName>
-      <MirroringZ>Y</MirroringZ>
-      <MirroringY>Z</MirroringY>
-      <EdgeType>Light</EdgeType>
-      <BuildTimeSeconds>6</BuildTimeSeconds>
-      <PCU>5</PCU>
-      <IsAirTight>false</IsAirTight>
-    </Definition>
-
-  </CubeBlocks>
-  <BlockVariantGroups>
-    <BlockVariantGroup>
-      <Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="Controllers" />
-      <Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
-      <DisplayName>Controllers</DisplayName>
-      <Description>Controllers Group for Rotor Turret, Tank Tracks, VTOL , Boat , Space Ship</Description>
-      <Blocks>
-        <Block Type="TerminalBlock" Subtype="TankTrackControl" />
-        <Block Type="TerminalBlock" Subtype="SmallTankTrackControl" />
-        <Block Type="TerminalBlock" Subtype="HeilcopterControl" />
-        <Block Type="TerminalBlock" Subtype="SmallHeilcopterControl" />
-        <Block Type="TerminalBlock" Subtype="VTOLControl" />
-        <Block Type="TerminalBlock" Subtype="SmallVTOLControl" />
-        <Block Type="TerminalBlock" Subtype="AirplaneControl" />
-        <Block Type="TerminalBlock" Subtype="SmallAirplaneControl" />
-        <Block Type="TerminalBlock" Subtype="SpaceShipControl" />
-        <Block Type="TerminalBlock" Subtype="SmallSpaceShipControl" />
-      </Blocks>
-    </BlockVariantGroup>
-  </BlockVariantGroups>
-  <CategoryClasses>
-    <Category xsi:type="MyObjectBuilder_GuiBlockCategoryDefinition">
-      <Id>
-        <TypeId>GuiBlockCategoryDefinition</TypeId>
-        <SubtypeId />
-      </Id>
-      <DisplayName>Super Armor and Device Blocks</DisplayName>
-      <Name>SuperArmorAndDeviceBlocks</Name>
-      <StrictSearch>true</StrictSearch>
-      <ItemIds>
-        <string>TerminalBlock/TankTrackControl</string>
-        <string>TerminalBlock/SmallTankTrackControl</string>
-        <string>TerminalBlock/HeilcopterControl</string>
-        <string>TerminalBlock/SmallHeilcopterControl</string>
-        <string>TerminalBlock/VTOLControl</string>
-        <string>TerminalBlock/SmallVTOLControl</string>
-        <string>TerminalBlock/AirplaneControl</string>
-        <string>TerminalBlock/SmallAirplaneControl</string>
-         <string>TerminalBlock/SpaceShipControl</string>
-        <string>TerminalBlock/SmallSpaceShipControl</string>
-      </ItemIds>
-    </Category>
-  </CategoryClasses>
+	<CubeBlocks>
+		<!--坦克控制器（可以用于控制卡车）-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>TankTrackControl</SubtypeId>
+			</Id>
+			<DisplayName>Tank Track Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>TankTrackControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallTankTrackControl</SubtypeId>
+			</Id>
+			<DisplayName>Tank Track Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>TankTrackControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<!--船舶控制器-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>ShipControl</SubtypeId>
+			</Id>
+			<DisplayName>Sea Ship Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>ShipControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallShipControl</SubtypeId>
+			</Id>
+			<DisplayName>Sea Ship Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>ShipControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<!--直升机控制器-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>HeilcopterControl</SubtypeId>
+			</Id>
+			<DisplayName>Heilcopter Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>HeilcopterControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallHeilcopterControl</SubtypeId>
+			</Id>
+			<DisplayName>Heilcopter Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>HeilcopterControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<!--垂降飞机控制器-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>VTOLControl</SubtypeId>
+			</Id>
+			<DisplayName>VTOL Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>VTOLControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallVTOLControl</SubtypeId>
+			</Id>
+			<DisplayName>VTOL Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>VTOLControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<!--飞机控制器-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>AirplaneControl</SubtypeId>
+			</Id>
+			<DisplayName>Airplane Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>AirplaneControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallAirplaneControl</SubtypeId>
+			</Id>
+			<DisplayName>Airplane Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>AirplaneControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<!--宇宙飞船控制器-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SpaceShipControl</SubtypeId>
+			</Id>
+			<DisplayName>Space Ship Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>SpaceShipControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallSpaceShipControl</SubtypeId>
+			</Id>
+			<DisplayName>Space Ship Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Description_ControlPanel</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<IsStandAlone>false</IsStandAlone>
+			<HasPhysics>false</HasPhysics>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>SpaceShipControl</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+	</CubeBlocks>
+	<BlockVariantGroups>
+		<BlockVariantGroup>
+			<Id Type="MyObjectBuilder_BlockVariantGroup" Subtype="Controllers" />
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<DisplayName>Controllers</DisplayName>
+			<Description>Controllers Group for Rotor Turret, Tank Tracks, VTOL , Boat , Space Ship</Description>
+			<Blocks>
+				<Block Type="TerminalBlock" Subtype="TankTrackControl" />
+				<Block Type="TerminalBlock" Subtype="SmallTankTrackControl" />
+				<Block Type="TerminalBlock" Subtype="ShipControl" />
+				<Block Type="TerminalBlock" Subtype="SmallShipControl" />
+				<Block Type="TerminalBlock" Subtype="HeilcopterControl" />
+				<Block Type="TerminalBlock" Subtype="SmallHeilcopterControl" />
+				<Block Type="TerminalBlock" Subtype="VTOLControl" />
+				<Block Type="TerminalBlock" Subtype="SmallVTOLControl" />
+				<Block Type="TerminalBlock" Subtype="AirplaneControl" />
+				<Block Type="TerminalBlock" Subtype="SmallAirplaneControl" />
+				<Block Type="TerminalBlock" Subtype="SpaceShipControl" />
+				<Block Type="TerminalBlock" Subtype="SmallSpaceShipControl" />
+			</Blocks>
+		</BlockVariantGroup>
+	</BlockVariantGroups>
+	<CategoryClasses>
+		<Category xsi:type="MyObjectBuilder_GuiBlockCategoryDefinition">
+			<Id>
+				<TypeId>GuiBlockCategoryDefinition</TypeId>
+				<SubtypeId />
+			</Id>
+			<DisplayName>Super Armor and Device Blocks</DisplayName>
+			<Name>SuperArmorAndDeviceBlocks</Name>
+			<StrictSearch>true</StrictSearch>
+			<ItemIds>
+				<string>TerminalBlock/TankTrackControl</string>
+				<string>TerminalBlock/SmallTankTrackControl</string>
+				<string>TerminalBlock/ShipControl</string>
+				<string>TerminalBlock/SmallShipControl</string>
+				<string>TerminalBlock/HeilcopterControl</string>
+				<string>TerminalBlock/SmallHeilcopterControl</string>
+				<string>TerminalBlock/VTOLControl</string>
+				<string>TerminalBlock/SmallVTOLControl</string>
+				<string>TerminalBlock/AirplaneControl</string>
+				<string>TerminalBlock/SmallAirplaneControl</string>
+				<string>TerminalBlock/SpaceShipControl</string>
+				<string>TerminalBlock/SmallSpaceShipControl</string>
+			</ItemIds>
+		</Category>
+	</CategoryClasses>
 </Definitions>

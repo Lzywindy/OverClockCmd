@@ -31,10 +31,12 @@ namespace SuperBlocks
         protected override bool 忽略高度 => ForwardOrUp || NoGravity;
         protected override bool PoseMode => EnabledCuriser && (!NoGravity);
         #endregion
-        public float MaxiumFlightSpeed { get; set; } = 1000f;
-        public float MaxiumHoverSpeed { get; set; } = 30f;
+        public float MaxiumFlightSpeed { get { return _MaxiumFlightSpeed; } set { _MaxiumFlightSpeed = MathHelper.Clamp(value, 0, float.MaxValue); } }
+        public float MaxiumHoverSpeed { get { return _MaxiumHoverSpeed; } set { _MaxiumHoverSpeed = MathHelper.Clamp(value, 5, 100); } }
         public bool EnabledCuriser { get; set; } = false;
-        public bool HoverMode { get { return _HoverMode; } set { _HoverMode = value; if (_HoverMode) diffsealevel = (float)(_Target_Sealevel - sealevel) * 25f; else target_speed = LinearVelocity.Length(); } }
+        public bool HoverMode { get { return _HoverMode; } set { _HoverMode = value; if (_HoverMode) { _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * 25f; } else target_speed = LinearVelocity.Length(); } }
         private bool _HoverMode;
+        private float _MaxiumFlightSpeed;
+        private float _MaxiumHoverSpeed;
     }
 }

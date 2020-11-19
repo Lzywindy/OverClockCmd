@@ -15,6 +15,8 @@ namespace SuperBlocks
         protected override void Init(IMyTerminalBlock refered_block)
         {
             base.Init(refered_block);
+            ThrustControllerSystem?.SetAll(true);
+            GyroControllerSystem?.GyrosOverride(null);
             ForwardDirection = ScaleVectorTimes(Me.WorldMatrix.Forward);
             InitBasicDevice();
             SensorReading();
@@ -27,11 +29,10 @@ namespace SuperBlocks
         {
             if (MainCtrl != null) return;
             ThrustControllerSystem?.SetAll(true);
-            GyroControllerSystem?.SetOverride(false);
             GyroControllerSystem?.GyrosOverride(null);
         }
         protected virtual void PoseCtrl() { }
-        protected virtual void ThrustControl() { }       
+        protected virtual void ThrustControl() { }
         #region 基础参数设置
         #endregion
         #region 可定制电路
@@ -58,7 +59,8 @@ namespace SuperBlocks
         }
         protected Vector3 飞船朝向处理(float 向前信号, float 向右信号, bool 是否巡航, Vector3 法向量, ref Vector3 朝向)
         {
-            var CtrlGyro = ProcessPlaneFunctions.ProcessPose_RPY(Me, (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : 朝向, 法向量, PoseMode, MaxReactions_AngleV) * MaxReactions_AngleV;
+            AngularDampeners = Vector3.Clamp(AngularDampeners, Vector3.One, Vector3.One * 50);
+            var CtrlGyro = ProcessPlaneFunctions.ProcessPose_RPY(Me, (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : 朝向, 法向量, PoseMode, AngularDampeners) * MaxReactions_AngleV;
             var direction = 朝向;
             if (向右信号 != 0 || 向前信号 != 0) direction = Me.WorldMatrix.Forward;
             if (是否巡航 && ForwardOrUp && (!NoGravity))
@@ -81,7 +83,7 @@ namespace SuperBlocks
                 var current_velocity_linear_p_1 = Vector3.ClampToSphere(ProjectOnPlane(current_velocity_linear.Value, current_gravity.Value), 1f);
                 var current_gravity_1 = Vector3.ClampToSphere(current_gravity.Value, 1f);
                 var ls_cv = current_velocity_linear_p_1.Normalize();
-                Vector2 vector = Vector2.Normalize(new Vector2(ls_cv * SafetyStage, current_gravity_1.Normalize()));
+                Vector2 vector = Vector2.Normalize(new Vector2(MathHelper.Clamp(ls_cv, -1, 1) * SafetyStage, MathHelper.Clamp(current_gravity_1.Normalize(), -1, 1)));
                 if (ls_cv == 0)
                     return current_gravity;
                 else
@@ -106,8 +108,8 @@ namespace SuperBlocks
             else ThrustControllerSystem = new 推进控制器(thrusts, Me);
         }
         public bool Dampener { get; set; } = true;
-        public float LocationSensetive { get; set; } = 1.5f;
-        public float MaxReactions_AngleV { get; set; } = 45f;
+        public float LocationSensetive { get { return _LocationSensetive; } set { _LocationSensetive = MathHelper.Clamp(value, 0.5f, 4f); } }
+        public float MaxReactions_AngleV { get { return _MaxReactions_AngleV; } set { _MaxReactions_AngleV = MathHelper.Clamp(value, 1f, 90f); } }
         public bool NoGravity { get { return Me.CubeGrid.Physics.Gravity == Vector3.Zero; } }
         public bool EnabledThrusters { get; set; } = true;
         public bool EnabledGyros { get; set; } = true;
@@ -118,10 +120,13 @@ namespace SuperBlocks
         protected bool ThrustsIsReady { get { return ThrustControllerSystem != null; } }
         protected bool HandBrake { get { if (MainCtrl == null) return true; return MainCtrl.HandBrake; } }
         protected Vector3 ProjectLinnerVelocity_CockpitForward { get { return ProjectOnPlane(LinearVelocity, Me.WorldMatrix.Forward); } }
+        public Vector3 AngularDampeners = Vector3.One;
         public const float SafetyStageMin = 0f;
         public const float SafetyStageMax = 9f;
         protected Vector3 ForwardDirection;
         private float SafetyStageCurrent;
+        private float _LocationSensetive;
+        private float _MaxReactions_AngleV;
         #endregion
     }
 }

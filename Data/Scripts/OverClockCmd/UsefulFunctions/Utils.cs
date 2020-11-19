@@ -2,11 +2,19 @@
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRageMath;
+using System.Text;
+using VRage.Game.Components;
 
 namespace SuperBlocks
 {
     public static class Utils
     {
+        public static Matrix GetWorldMatrix(IMyTerminalBlock Me)
+        {
+            Matrix me_matrix;
+            Me.Orientation.GetMatrix(out me_matrix);
+            return me_matrix;
+        }
         public static float CalculateDirection(Vector3D direction_t, Vector3D direction_c, Vector3D rotor_normal, Vector3D rotor_right, float rotor_max_rad_scare = MathHelper.FourPi, float rotor_max_rad = MathHelper.PiOver2)
         {
             var diff = direction_t - direction_c;

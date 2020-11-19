@@ -149,7 +149,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControllerLink2Block\AeroCtrl.cs" />
+    <Compile Include="ControllerLink2Block\FlyMachines\AeroCtrl.cs" />
     <Compile Include="ControllerLink2Block\BaseClasses\ControlBase.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalAction.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalButton.cs" />
@@ -158,29 +158,34 @@
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalSliderBar.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalSwitch.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalTextBox.cs" />
+    <Compile Include="ControllerLink2Block\BaseClasses\CtrlInterface.cs" />
+    <Compile Include="ControllerLink2Block\GroundMachines\PlanetVech.cs" />
+    <Compile Include="ControllerLink2Block\GroundMachines\ShipCtrl.cs" />
     <Compile Include="ControllerLogic\ControllerBase\FlyingMachineCtrl_Base.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\AirplaneController.cs" />
+    <Compile Include="ControllerLogic\ImplementsControllers\AeroMachines\AirplaneController.cs" />
     <Compile Include="ControllerLogic\ControllerBase\ControllerManageBase.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\HelicopterController.cs" />
+    <Compile Include="ControllerLogic\ImplementsControllers\AeroMachines\HelicopterController.cs" />
     <Compile Include="ControllerLogic\ControllerInterface\ControllerInterface.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\SpaceShipCtrl.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\VTOLController.cs" />
+    <Compile Include="ControllerLogic\ControllerBase\PlanetVehicle_Base.cs" />
+    <Compile Include="ControllerLogic\ImplementsControllers\SeaMachines\ShipController.cs" />
+    <Compile Include="ControllerLogic\ImplementsControllers\SpaceMachines\SpaceShipCtrl.cs" />
+    <Compile Include="ControllerLogic\ImplementsControllers\SpaceMachines\VTOLController.cs" />
     <Compile Include="ControllerLogic\SubControllers\GyroControllerSystem.cs" />
     <Compile Include="ControllerLogic\SubControllers\ThrustControllerSystem.cs" />
     <Compile Include="ControllerLink2Block\BaseClasses\FlyMachineCtrl.cs" />
-    <Compile Include="ControllerLink2Block\HeliCtrl.cs" />
+    <Compile Include="ControllerLink2Block\FlyMachines\HeliCtrl.cs" />
     <Compile Include="ModAPISample.cs" />
     <Compile Include="GameBlockLogicOverrideSample.cs" />
     <Compile Include="ParameterClass\ParametersAndConstants.cs" />
-    <Compile Include="PRCBlockLogic.cs" />
-    <Compile Include="ControllerLink2Block\SpaceCtrl.cs" />
-    <Compile Include="ControllerLink2Block\TankCtrl.cs" />
+    <Compile Include="FunctionService\ControllerService.cs" />
+    <Compile Include="ControllerLink2Block\FlyMachines\SpaceCtrl.cs" />
+    <Compile Include="ControllerLink2Block\GroundMachines\TankCtrl.cs" />
     <Compile Include="UsefulFunctions\ProcessPlaneFunctions.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\TankController.cs" />
+    <Compile Include="ControllerLogic\ImplementsControllers\LandMachines\TankController.cs" />
     <Compile Include="UsefulFunctions\Utils.cs" />
     <Compile Include="ControllerLogic\ControllerBase\VehicleController_Base.cs" />
-    <Compile Include="ControllerLink2Block\VTOLCtrl.cs" />
-    <Compile Include="ControllerLink2Block\VehcCtrl.cs" />
+    <Compile Include="ControllerLink2Block\FlyMachines\VTOLCtrl.cs" />
+    <Compile Include="ControllerLink2Block\BaseClasses\VehcCtrl.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

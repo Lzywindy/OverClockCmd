@@ -11,7 +11,7 @@ namespace SuperBlocks
     /// </summary>
     public static partial class ProcessPlaneFunctions
     {
-        
+
         /// <summary>
         /// 计算参照平面
         /// 操控为：垂直起降的飞机的垂降模式、及直升机
@@ -103,7 +103,7 @@ namespace SuperBlocks
         /// <param name="current_normal">当前的参考平面的法向量</param>
         /// <param name="LocationSensetive">对角度差的敏感程度</param>
         /// <param name="Angular_Damper_Rate">角速度减速阻抗因素（适量大有助于减少震荡）</param>
-        public static Vector3 ProcessPose_Roll_Pitch(IMyTerminalBlock Me, Vector3 current_normal)
+        public static Vector3 ProcessPose_Roll_Pitch(IMyTerminalBlock Me, Vector3 current_normal,Vector3? AngularDampeners = null)
         {
             var current_velocity_angular = Me.CubeGrid.Physics.AngularVelocity;
             var up_project = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Up);
@@ -113,8 +113,9 @@ namespace SuperBlocks
             if (Math.Abs(Roll_current_angular_local) < 0.005f && current_angular_local_add < 0) { Roll_current_angular_local = current_angular_local_add; Roll_current_angular_velocity = 80f; }
             var Pitch_current_angular_local = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Backward);
             var Pitch_current_angular_velocity = Calc_Direction_Vector(current_velocity_angular, Me.WorldMatrix.Right);
-            var roll_indicate = Dampener(Roll_current_angular_local) + Dampener(Roll_current_angular_velocity);
-            var pitch_indicate = Dampener(Pitch_current_angular_local) + Dampener(Pitch_current_angular_velocity);
+            Vector3 AngularDampener_In = AngularDampeners ?? Vector3.One;
+            var roll_indicate = Dampener(Roll_current_angular_local) + Dampener(Roll_current_angular_velocity)* AngularDampener_In.Z;
+            var pitch_indicate = Dampener(Pitch_current_angular_local) + Dampener(Pitch_current_angular_velocity) * AngularDampener_In.X;
             return new Vector3(pitch_indicate, 0, roll_indicate);
         }
         /// <summary>
@@ -136,11 +137,12 @@ namespace SuperBlocks
     }
     public static partial class ProcessPlaneFunctions
     {
-        public static Vector3 ProcessPose_RPY(IMyTerminalBlock Me, Vector3 direction, Vector3 current_normal, bool HoverMode = true, float AngularDampener = 10f)
+        public static Vector3 ProcessPose_RPY(IMyTerminalBlock Me, Vector3 direction, Vector3 current_normal, bool HoverMode = true, Vector3? AngularDampeners = null)
         {
-            var roll_indicate = CalculateIndicate_Roll(Me, current_normal, AngularDampener);
-            var pitch_indicate = CalculateIndicate_Pitch(Me, current_normal, direction, HoverMode, AngularDampener);
-            var yaw_indicate = CalculateIndicate_Yaw(Me, direction, AngularDampener);
+            Vector3 AngularDampener_In = AngularDampeners ?? Vector3.One;
+            var roll_indicate = CalculateIndicate_Roll(Me, current_normal, AngularDampener_In.Z);
+            var pitch_indicate = CalculateIndicate_Pitch(Me, current_normal, direction, HoverMode, AngularDampener_In.X);
+            var yaw_indicate = CalculateIndicate_Yaw(Me, direction, AngularDampener_In.Y);
             return new Vector3(pitch_indicate, yaw_indicate, roll_indicate);
         }
         public static Vector2 TurretDirection_YP(IMyTerminalBlock Block, Vector3 direction, float AngularDampener = 10f)

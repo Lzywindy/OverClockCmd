@@ -39,7 +39,6 @@ namespace SuperBlocks
             return 飞船朝向处理(MainCtrl.RotationIndicator.X, MainCtrl.RotationIndicator.Y, _EnabledCuriser, GyroSignal.Value, ref 朝向);
         }
         protected override Vector3 推进器控制参数 => MainCtrl.MoveIndicator * Vector3.Backward;
-
         public bool EnabledCuriser { get; set; }
         protected override bool PoseMode => false;
         protected override bool 保持高度 => false;

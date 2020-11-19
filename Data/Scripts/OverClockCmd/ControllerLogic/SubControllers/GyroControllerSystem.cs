@@ -26,12 +26,12 @@ namespace SuperBlocks
                 if (Me == null) gyro.Roll = gyro.Yaw = gyro.Pitch = 0;
             }
             if (!RotationIndicate.HasValue) return;
-            Matrix matrix_Main;
-            Me.Orientation.GetMatrix(out matrix_Main);
+            Matrix matrix_Main = Utils.GetWorldMatrix(Me);
+            //Me.Orientation.GetMatrix(out matrix_Main);
             foreach (var gyro in gyros)
             {
-                Matrix matrix_Gyro;
-                gyro.Orientation.GetMatrix(out matrix_Gyro);
+                Matrix matrix_Gyro = Utils.GetWorldMatrix(gyro);
+                //gyro.Orientation.GetMatrix(out matrix_Gyro);
                 var result = Vector3.TransformNormal(RotationIndicate.Value * PowerScale3Axis, matrix_Main * Matrix.Transpose(matrix_Gyro));
                 gyro.Roll = result.Z; gyro.Yaw = result.Y; gyro.Pitch = result.X;
             }

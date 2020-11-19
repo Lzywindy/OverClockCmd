@@ -13,7 +13,7 @@ namespace SuperBlocks
     /// 重力圈中的地面载具（坦克）
     /// 可选择悬浮、轮子、转子的驱动方式
     /// </summary>
-    public class TankController : PlanetVehicle
+    public class TankController : PlanetVehicle, ICtrlDevCtrl, IPlanetVehicle, ILandVehicle
     {
         public bool IsTank { get; set; }
         public TankController(IMyTerminalBlock refered_block) : base(refered_block) { }
@@ -71,26 +71,15 @@ namespace SuperBlocks
             }
             return UtilsCtrl;
         }
-        protected override void PoseCtrl()
-        {
-            var Roll_current_angular_velocity = Calc_Direction_Vector(AngularVelocity, Me.WorldMatrix.Forward, 1f);
-            var Pitch_current_angular_velocity = Calc_Direction_Vector(AngularVelocity, Me.WorldMatrix.Right, 1f);
-            var Yaw_current_angular_velocity = Calc_Direction_Vector(AngularVelocity, Me.WorldMatrix.Up, 1f);
-            GyroControllerSystem?.SetEnabled(TurnIndicator != 0 || (MathHelper.RoundOn2(Yaw_current_angular_velocity) != 0 || MathHelper.RoundOn2(Roll_current_angular_velocity / 10) != 0 || MathHelper.RoundOn2(Pitch_current_angular_velocity / 10) != 0));
-            GyroControllerSystem?.GyrosOverride(NoGravity ? null : new Vector3?(new Vector3(0, TurnIndicator * 180000F, 0)));
-        }
-        protected override void ThrustControl()
-        {
-            Vector3 Ctrl = (MainCtrl.HandBrake ? Vector3.Zero : Vector3.Backward) * MainCtrl.MoveIndicator;
-            ThrustControllerSystem?.SetupMode(false, true, (!EnabledThrusters), MaximumSpeed);
-            ThrustControllerSystem?.Running((Ctrl != Vector3.Zero) ? Ctrl : Vector3.Forward, 0, true);
-        }
         public float MaxiumRpm { get; set; } = 90f;
         public float DiffRpmPercentage { get; set; } = 1f;
         public float Friction { get; set; } = 80f;
         public float TurnFaction { get; set; } = 20f;
         public float ForwardIndicator { get; set; } = 0;
         public float TurnIndicator { get; set; } = 0;
+        protected override Vector3? CtrlSignal_Gyros { get { if (NoGravity) return null; return Vector3.Up * 180000F * TurnIndicator; } }
+        protected override Vector3 CtrlSignal_Thrusts { get { if (HandBrake) return Vector3.Zero; Vector3 Ctrl = Vector3.Backward * ForwardIndicator; return (Ctrl != Vector3.Zero) ? Ctrl : Vector3.Forward; } }
+        protected override bool ExtraEnabledGyros => (TurnIndicator != 0 || Vector3.Round(Vector3.TransformNormal(AngularVelocity, Matrix.Transpose(GetWorldMatrix(Me))) * (new Vector3(0.1f, 1, 0.1f)), 2) != Vector3.Zero);
         #region 私有函数
         private const string MotorOverrideId = @"Propulsion override";
         private float 差速转向信号(int sign)
@@ -143,34 +132,12 @@ namespace SuperBlocks
             return 可以控制(Motors_Hover);
         }
         #endregion
-    }
-    public class PlanetVehicle : VehicleControllerBase
-    {
-        public PlanetVehicle(IMyTerminalBlock refered_block) : base(refered_block) { }
-        protected virtual Vector3? CtrlSignal_Gyros { get; }
-        protected virtual Vector3 CtrlSignal_Thrusts { get; }
-        protected virtual Action Init4GetAction() { return () => { }; }
-        protected virtual Action Init4GetAction10() { return () => { }; }
-        protected virtual Action Init4GetAction100() { return () => { }; }
-        protected override void Init(IMyTerminalBlock refered_block)
-        {
-            base.Init(refered_block);
-            AppRunning1 += Init4GetAction();
-            AppRunning10 += Init4GetAction10();
-            AppRunning100 += Init4GetAction100();
-        }
-        protected override void PoseCtrl()
-        {
-            GyroControllerSystem?.SetEnabled(EnabledGyros);
-            GyroControllerSystem?.GyrosOverride(CtrlSignal_Gyros);
-        }
-        protected override void ThrustControl()
-        {
-            ThrustControllerSystem?.SetupMode(false, true, (!EnabledThrusters), MaximumSpeed);
-            ThrustControllerSystem?.Running(CtrlSignal_Thrusts, 0, true);
-        }
-        public float MaximumCruiseSpeed { get { return _MaxiumSpeed * 3.6f; } set { _MaxiumSpeed = Math.Abs(value / 3.6f); } }
-        protected override float MaximumSpeed => _MaxiumSpeed;
-        private float _MaxiumSpeed;
+        protected override bool Refer2Gravity => true;
+        protected override bool Refer2Velocity => false;
+        protected override bool Need2CtrlSignal => false;
+        protected override bool IngroForwardVelocity => true;
+        protected override bool ForwardOrUp => false;
+        protected override bool EnabledAllDirection => true;
+        protected override bool PoseMode => false;
     }
 }

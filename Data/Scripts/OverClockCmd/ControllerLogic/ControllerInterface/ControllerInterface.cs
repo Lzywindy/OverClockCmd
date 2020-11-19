@@ -26,4 +26,16 @@
         bool EnabledThrusters { get; set; }
         bool EnabledGyros { get; set; }
     }
+    public interface IPlanetVehicle
+    {
+        float MaximumCruiseSpeed { get; set; }
+    }
+    public interface ILandVehicle
+    {
+        bool IsTank { get; set; }
+    }
+    public interface ISeaVehicle
+    {
+        bool IsSubmarine { get; set; }
+    }
 }

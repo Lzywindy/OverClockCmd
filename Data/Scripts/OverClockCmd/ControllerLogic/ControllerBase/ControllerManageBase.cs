@@ -66,6 +66,7 @@ namespace SuperBlocks
         protected Vector3 AngularVelocity { get { return Me.CubeGrid.Physics.AngularVelocity; } }
         protected Vector3 Gravity { get { return Me.CubeGrid.Physics.Gravity; } }
         protected virtual void SetDefault() { }
+        public virtual void SaveDatas() { }
         #endregion
     }
 }

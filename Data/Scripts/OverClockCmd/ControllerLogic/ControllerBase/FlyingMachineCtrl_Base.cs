@@ -17,6 +17,7 @@ namespace SuperBlocks
             base.SensorReading();
             if (NoGravity) return;
             MainCtrl?.TryGetPlanetElevation(Sandbox.ModAPI.Ingame.MyPlanetElevation.Sealevel, out sealevel);
+            UpdateTargetSealevel();
         }
 
         public FlyingMachineCtrl_Base(IMyTerminalBlock Me) : base(Me) { }
@@ -24,7 +25,10 @@ namespace SuperBlocks
         {
             base.Init(refered_block);
             ForwardDirection = Me.WorldMatrix.Forward;
-            UpdateTargetSealevel();
+            MainCtrl?.TryGetPlanetElevation(Sandbox.ModAPI.Ingame.MyPlanetElevation.Sealevel, out sealevel);
+            _Target_Sealevel = sealevel;
+            diffsealevel = 0;
+            //UpdateTargetSealevel();
         }
         protected override void PoseCtrl()
         {
@@ -38,9 +42,9 @@ namespace SuperBlocks
             if (!ThrustsIsReady) return;
             Vector3 Ctrl = 推进器控制参数;
             bool CtrlOrCruise = (!ForwardOrUp || (Ctrl != Vector3.Zero));
+            UpdateTargetSealevel();
             target_speed = MathHelper.Clamp(HandBrake ? 0 : (Ctrl != Vector3.Zero) ? ForwardOrUp ? Me.CubeGrid.Physics.LinearVelocity.Dot(Me.WorldMatrix.Forward) : 0 : target_speed, 0, MaximumSpeed);
             ThrustControllerSystem?.SetupMode((!ForwardOrUp), EnabledAllDirection, (!EnabledThrusters), CtrlOrCruise ? MaximumSpeed : target_speed);
-            UpdateTargetSealevel();
             ThrustControllerSystem?.Running(CtrlOrCruise ? Ctrl : Vector3.Forward, diffsealevel, Dampener);
         }
 
