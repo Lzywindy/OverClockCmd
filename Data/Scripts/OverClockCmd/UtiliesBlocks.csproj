@@ -186,6 +186,7 @@
     <Compile Include="ControllerLogic\ControllerBase\VehicleController_Base.cs" />
     <Compile Include="ControllerLink2Block\FlyMachines\VTOLCtrl.cs" />
     <Compile Include="ControllerLink2Block\BaseClasses\VehcCtrl.cs" />
+    <Compile Include="VitrualController.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

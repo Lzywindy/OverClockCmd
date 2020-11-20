@@ -31,7 +31,7 @@ namespace SuperBlocks
             GyroControllerSystem?.SetEnabled(EnabledGyros && ExtraEnabledGyros);
             GyroControllerSystem?.GyrosOverride(CtrlSignal_Gyros);
         }
-        protected override bool ExtraEnabledGyros => true;
+        
         protected override Vector3 CtrlSignal_Thrusts { get { if (HandBrake) return Vector3.Zero; Vector3 Ctrl = Vector3.Backward; if (IsSubmarine) Ctrl += Vector3.Up; Ctrl *= MainCtrl.MoveIndicator; return (Ctrl != Vector3.Zero) ? Ctrl : Vector3.Forward; } }
         protected override Vector3? CtrlSignal_Gyros
         {
@@ -42,6 +42,7 @@ namespace SuperBlocks
                 return (ProcessPlaneFunctions.ProcessPose_Roll_Pitch(Me, Gravity, AngularDampeners) + Me.WorldMatrix.Up * MainCtrl.MoveIndicator.X)* MaxReactions_AngleV;
             }
         }
+        protected override bool ExtraEnabledGyros => true;
         public bool IsSubmarine { get; set; } = false;
         protected override bool Refer2Gravity => true;
         protected override bool Refer2Velocity => false;
