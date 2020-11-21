@@ -16,7 +16,7 @@ namespace SuperBlocks
         {
             base.SensorReading();
             if (NoGravity) return;
-            MainCtrl?.TryGetPlanetElevation(Sandbox.ModAPI.Ingame.MyPlanetElevation.Sealevel, out sealevel);
+            sealevel = MainCtrl.SeaLevel;
             UpdateTargetSealevel();
         }
 
@@ -25,7 +25,7 @@ namespace SuperBlocks
         {
             base.Init(refered_block);
             ForwardDirection = Me.WorldMatrix.Forward;
-            MainCtrl?.TryGetPlanetElevation(Sandbox.ModAPI.Ingame.MyPlanetElevation.Sealevel, out sealevel);
+            sealevel = MainCtrl.SeaLevel;
             _Target_Sealevel = sealevel;
             diffsealevel = 0;
             //UpdateTargetSealevel();
@@ -54,7 +54,7 @@ namespace SuperBlocks
             if (MainCtrl == null) return null;
             var 参照面法线 = 参考平面处理(0, 0, MaximumSpeed);
             if (!参照面法线.HasValue) { return null; }
-            return 飞船朝向处理(MainCtrl.RotationIndicator.X, MainCtrl.RotationIndicator.Y, _EnabledCuriser, 参照面法线.Value, ref 朝向);
+            return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, 参照面法线.Value, ref 朝向);
         }
 
         protected double sealevel;

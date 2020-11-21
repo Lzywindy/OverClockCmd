@@ -36,7 +36,7 @@ namespace SuperBlocks
             if (MainCtrl == null || NoGravity) return null;
             var GyroSignal = 参考平面处理(0, 0, MaximumSpeed);
             if (!GyroSignal.HasValue) { return null; }
-            return 飞船朝向处理(MainCtrl.RotationIndicator.X, MainCtrl.RotationIndicator.Y, _EnabledCuriser, GyroSignal.Value, ref 朝向);
+            return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, GyroSignal.Value, ref 朝向);
         }
         protected override Vector3 推进器控制参数 => MainCtrl.MoveIndicator * Vector3.Backward;
         public bool EnabledCuriser { get; set; }

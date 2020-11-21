@@ -171,6 +171,7 @@
     <Compile Include="ControllerLogic\ImplementsControllers\SpaceMachines\SpaceShipCtrl.cs" />
     <Compile Include="ControllerLogic\ImplementsControllers\SpaceMachines\VTOLController.cs" />
     <Compile Include="ControllerLogic\SubControllers\GyroControllerSystem.cs" />
+    <Compile Include="ControllerLogic\SubControllers\SignalController.cs" />
     <Compile Include="ControllerLogic\SubControllers\ThrustControllerSystem.cs" />
     <Compile Include="ControllerLink2Block\BaseClasses\FlyMachineCtrl.cs" />
     <Compile Include="ControllerLink2Block\FlyMachines\HeliCtrl.cs" />

@@ -38,7 +38,7 @@ namespace SuperBlocks
         public string Information { get; protected set; } = "";
         public bool IsReadyForControl { get; private set; } = false;
         protected IMyTerminalBlock Me;
-        protected IMyShipController MainCtrl;
+        //protected IMyShipController MainCtrl;
         protected Action AppRunning1 = () => { };
         protected Action AppRunning10 = () => { };
         protected Action AppRunning100 = () => { };
@@ -51,7 +51,7 @@ namespace SuperBlocks
             {
                 Information = "";
                 Me = refered_block;
-                MainCtrl = GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit);
+                MainCtrl.MainCtrl = GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit);
                 Init(refered_block);
                 IsReadyForControl = true;
             }
@@ -67,6 +67,7 @@ namespace SuperBlocks
         protected Vector3 Gravity { get { return Me.CubeGrid.Physics.Gravity; } }
         protected virtual void SetDefault() { }
         public virtual void SaveDatas() { }
+        protected SignalController MainCtrl { get; } = new SignalController();
         #endregion
     }
 }

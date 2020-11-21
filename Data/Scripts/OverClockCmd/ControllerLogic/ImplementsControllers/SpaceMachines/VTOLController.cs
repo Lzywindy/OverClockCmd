@@ -29,9 +29,9 @@ namespace SuperBlocks
                 float yaw_indicate = 0;
                 if (MainCtrl != null)
                 {
-                    pitch_indicate = HasGravity_HoverMode ? MainCtrl.MoveIndicator.Z : MainCtrl.RotationIndicator.X;
+                    pitch_indicate = HasGravity_HoverMode ? MainCtrl.MoveIndicator.Z : MainCtrl.RotateIndicator.X;
                     roll_indicate = HasGravity_HoverMode ? MainCtrl.MoveIndicator.X : 0;
-                    yaw_indicate = HasGravity_HoverMode ? MainCtrl.RollIndicator : MainCtrl.RotationIndicator.Y;
+                    yaw_indicate = HasGravity_HoverMode ? MainCtrl.RotateIndicator.Z : MainCtrl.RotateIndicator.Y;
                 }
                 var GyroSignal = 参考平面处理(HasGravity_HoverMode ? pitch_indicate : 0, roll_indicate, MaximumSpeed);
                 if (!GyroSignal.HasValue) { return null; }

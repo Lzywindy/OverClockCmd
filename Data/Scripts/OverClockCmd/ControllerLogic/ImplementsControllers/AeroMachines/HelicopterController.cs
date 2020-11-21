@@ -32,7 +32,7 @@ namespace SuperBlocks
             if (MainCtrl == null || NoGravity) return null;
             var GyroSignal = 参考平面处理(MainCtrl.MoveIndicator.Z, MainCtrl.MoveIndicator.X, MaximumSpeed);
             if (!GyroSignal.HasValue) { return null; }
-            return 飞船朝向处理(0, MainCtrl.RollIndicator, _EnabledCuriser, GyroSignal.Value, ref 朝向);
+            return 飞船朝向处理(0, MainCtrl.RotateIndicator.Z, _EnabledCuriser, GyroSignal.Value, ref 朝向);
         }
         protected override Vector3 推进器控制参数 => MainCtrl.MoveIndicator * Vector3.Up;
         public bool HoverMode { get { return true; } set { } }
