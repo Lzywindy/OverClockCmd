@@ -69,6 +69,7 @@ namespace SuperBlocks
             }
             set { _Brake = value; }
         }
+        public bool NullMainCtrl { get { return MainCtrl == null; } }
         private Vector3 _MoveIndicator;
         private Vector3 _RotateIndicator;
         private bool _Brake;
