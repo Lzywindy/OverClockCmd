@@ -30,9 +30,9 @@ namespace SuperBlocks
             //Me.Orientation.GetMatrix(out matrix_Main);
             foreach (var gyro in gyros)
             {
-                Matrix matrix_Gyro = Utils.GetWorldMatrix(gyro);
+                //Matrix matrix_Gyro = Utils.GetWorldMatrix(gyro);
                 //gyro.Orientation.GetMatrix(out matrix_Gyro);
-                var result = Vector3.TransformNormal(RotationIndicate.Value * PowerScale3Axis, matrix_Main * Matrix.Transpose(matrix_Gyro));
+                var result = Vector3.TransformNormal(RotationIndicate.Value * PowerScale3Axis, matrix_Main * Matrix.Transpose(Utils.GetWorldMatrix(gyro)));
                 gyro.Roll = result.Z; gyro.Yaw = result.Y; gyro.Pitch = result.X;
             }
         }

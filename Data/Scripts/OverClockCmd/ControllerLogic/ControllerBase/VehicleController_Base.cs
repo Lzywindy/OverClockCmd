@@ -60,7 +60,9 @@ namespace SuperBlocks
         protected Vector3 飞船朝向处理(float 向前信号, float 向右信号, bool 是否巡航, Vector3 法向量, ref Vector3 朝向)
         {
             AngularDampeners = Vector3.Clamp(AngularDampeners, Vector3.One, Vector3.One * 50);
-            var CtrlGyro = ProcessPlaneFunctions.ProcessPose_RPY(Me, (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : 朝向, 法向量, PoseMode, AngularDampeners) * MaxReactions_AngleV;
+            //var CtrlGyro = ProcessPlaneFunctions.ProcessPose_RPY(Me, (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : 朝向, 法向量, PoseMode, AngularDampeners) * MaxReactions_AngleV;
+            var CtrlGyro = ProcessPlaneFunctions.ProcessPose_RPY_NoA(Me, (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : 朝向, 法向量, PoseMode) * MaxReactions_AngleV
+                + Vector3.TransformNormal(AngularVelocity, Matrix.Transpose(Me.WorldMatrix)) * AngularDampeners * InitAngularDampener;
             var direction = 朝向;
             if (向右信号 != 0 || 向前信号 != 0) direction = Me.WorldMatrix.Forward;
             if (是否巡航 && ForwardOrUp && (!NoGravity))
@@ -79,7 +81,7 @@ namespace SuperBlocks
             else if (!current_velocity_linear.HasValue)
                 return current_gravity;
             else
-                return Vector3.ClampToSphere(current_velocity_linear.Value + ProcessPlaneFunctions.Dampener(current_gravity.Value) * SafetyStage, 1f);
+                return Vector3.ClampToSphere(current_velocity_linear.Value + Utils.Dampener(current_gravity.Value) * SafetyStage, 1f);
         }
         protected static Vector3 ProjectOnPlane(Vector3 direction, Vector3 planeNormal)
         {
@@ -118,6 +120,7 @@ namespace SuperBlocks
         private float SafetyStageCurrent;
         private float _LocationSensetive;
         private float _MaxReactions_AngleV;
+        protected Vector3 InitAngularDampener { get; } = new Vector3(50, 50, 10);
         #endregion
     }
 }

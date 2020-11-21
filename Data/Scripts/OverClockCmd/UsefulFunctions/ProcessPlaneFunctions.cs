@@ -145,6 +145,13 @@ namespace SuperBlocks
             var yaw_indicate = CalculateIndicate_Yaw(Me, direction, AngularDampener_In.Y);
             return new Vector3(pitch_indicate, yaw_indicate, roll_indicate);
         }
+        public static Vector3 ProcessPose_RPY_NoA(IMyTerminalBlock Me, Vector3 direction, Vector3 current_normal, bool HoverMode = true)
+        {
+            var roll_indicate = CalculateIndicate_Roll_NoA(Me, current_normal);
+            var pitch_indicate = CalculateIndicate_Pitch_NoA(Me, current_normal, direction, HoverMode);
+            var yaw_indicate = CalculateIndicate_Yaw_NoA(Me, direction);
+            return new Vector3(pitch_indicate, yaw_indicate, roll_indicate);
+        }
         public static Vector2 TurretDirection_YP(IMyTerminalBlock Block, Vector3 direction, float AngularDampener = 10f)
         {
             var pitch_indicate = CalculateIndicate_Pitch(Block, Vector3.Zero, direction, false, AngularDampener);
@@ -154,8 +161,6 @@ namespace SuperBlocks
     }
     public static partial class ProcessPlaneFunctions
     {
-        public static float Dampener(float value) { return value * Math.Abs(value); }
-        public static Vector3 Dampener(Vector3 value) { return value * Math.Abs(value.Length()); }
         static float CalculateIndicate_Roll(IMyTerminalBlock Me, Vector3 current_normal, float AngularDampener = 10f)
         {
             var Roll_current_angular_local = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Left);
@@ -177,6 +182,25 @@ namespace SuperBlocks
             float Pitch_current_angular_local = HoverMode ? Calc_Direction_Vector(current_normal, Me.WorldMatrix.Backward) : Calc_Direction_Vector(direction, Me.WorldMatrix.Down);
             var Pitch_current_angular_velocity = Calc_Direction_Vector(Me.CubeGrid.Physics.AngularVelocity, Me.WorldMatrix.Right);
             return Dampener(Pitch_current_angular_local) + Dampener(Pitch_current_angular_velocity) * AngularDampener;
+        }
+        static float CalculateIndicate_Roll_NoA(IMyTerminalBlock Me, Vector3 current_normal)
+        {
+            var Roll_current_angular_local = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Left);
+            var current_angular_local_add = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Down);
+            if (Math.Abs(Roll_current_angular_local) < 0.005f && current_angular_local_add < 0) { Roll_current_angular_local = current_angular_local_add; }
+            return Dampener(Roll_current_angular_local);
+        }
+        static float CalculateIndicate_Yaw_NoA(IMyTerminalBlock Me, Vector3 direction)
+        {
+            var Yaw_current_angular_add = Calc_Direction_Vector(direction, Me.WorldMatrix.Forward);
+            var Yaw_current_angular_local = Calc_Direction_Vector(direction, Me.WorldMatrix.Right);
+            if (Math.Abs(Yaw_current_angular_local) < 0.005f && Yaw_current_angular_add < 0) { Yaw_current_angular_local = Yaw_current_angular_add; }
+            return Dampener(Yaw_current_angular_local);
+        }
+        static float CalculateIndicate_Pitch_NoA(IMyTerminalBlock Me, Vector3 current_normal, Vector3 direction, bool HoverMode = true)
+        {
+            float Pitch_current_angular_local = HoverMode ? Calc_Direction_Vector(current_normal, Me.WorldMatrix.Backward) : Calc_Direction_Vector(direction, Me.WorldMatrix.Down);
+            return Dampener(Pitch_current_angular_local);
         }
     }
 }
