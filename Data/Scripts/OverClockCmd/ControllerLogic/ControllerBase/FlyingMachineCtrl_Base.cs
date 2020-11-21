@@ -33,9 +33,8 @@ namespace SuperBlocks
         protected override void PoseCtrl()
         {
             if (!GyrosIsReady) return;
-            var value = 姿态调整参数;
             GyroControllerSystem?.SetEnabled(EnabledGyros);
-            GyroControllerSystem?.GyrosOverride(value);
+            GyroControllerSystem?.GyrosOverride(姿态调整参数);
         }
         protected override void ThrustControl()
         {
@@ -51,7 +50,7 @@ namespace SuperBlocks
         #region 一些私有函数
         protected virtual Vector3? 姿态处理(ref Vector3 朝向, bool _EnabledCuriser)
         {
-            if (MainCtrl == null) return null;
+            if (!GyrosIsReady || MainCtrl.NullMainCtrl) return null;
             var 参照面法线 = 参考平面处理(0, 0, MaximumSpeed);
             if (!参照面法线.HasValue) { return null; }
             return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, 参照面法线.Value, ref 朝向);
