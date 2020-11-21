@@ -79,16 +79,7 @@ namespace SuperBlocks
             else if (!current_velocity_linear.HasValue)
                 return current_gravity;
             else
-            {
-                var current_velocity_linear_p_1 = Vector3.ClampToSphere(ProjectOnPlane(current_velocity_linear.Value, current_gravity.Value), 1f);
-                var current_gravity_1 = Vector3.ClampToSphere(current_gravity.Value, 1f);
-                var ls_cv = current_velocity_linear_p_1.Normalize();
-                Vector2 vector = Vector2.Normalize(new Vector2(MathHelper.Clamp(ls_cv, -1, 1) * SafetyStage, MathHelper.Clamp(current_gravity_1.Normalize(), -1, 1)));
-                if (ls_cv == 0)
-                    return current_gravity;
-                else
-                    return vector.X * current_velocity_linear_p_1 + vector.Y * current_gravity_1;
-            }
+                return Vector3.ClampToSphere(current_velocity_linear.Value + ProcessPlaneFunctions.Dampener(current_gravity.Value) * SafetyStage, 1f);
         }
         protected static Vector3 ProjectOnPlane(Vector3 direction, Vector3 planeNormal)
         {

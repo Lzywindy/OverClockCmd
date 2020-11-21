@@ -103,7 +103,7 @@ namespace SuperBlocks
         /// <param name="current_normal">当前的参考平面的法向量</param>
         /// <param name="LocationSensetive">对角度差的敏感程度</param>
         /// <param name="Angular_Damper_Rate">角速度减速阻抗因素（适量大有助于减少震荡）</param>
-        public static Vector3 ProcessPose_Roll_Pitch(IMyTerminalBlock Me, Vector3 current_normal,Vector3? AngularDampeners = null)
+        public static Vector3 ProcessPose_Roll_Pitch(IMyTerminalBlock Me, Vector3 current_normal, Vector3? AngularDampeners = null)
         {
             var current_velocity_angular = Me.CubeGrid.Physics.AngularVelocity;
             var up_project = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Up);
@@ -114,7 +114,7 @@ namespace SuperBlocks
             var Pitch_current_angular_local = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Backward);
             var Pitch_current_angular_velocity = Calc_Direction_Vector(current_velocity_angular, Me.WorldMatrix.Right);
             Vector3 AngularDampener_In = AngularDampeners ?? Vector3.One;
-            var roll_indicate = Dampener(Roll_current_angular_local) + Dampener(Roll_current_angular_velocity)* AngularDampener_In.Z;
+            var roll_indicate = Dampener(Roll_current_angular_local) + Dampener(Roll_current_angular_velocity) * AngularDampener_In.Z;
             var pitch_indicate = Dampener(Pitch_current_angular_local) + Dampener(Pitch_current_angular_velocity) * AngularDampener_In.X;
             return new Vector3(pitch_indicate, 0, roll_indicate);
         }
@@ -154,7 +154,8 @@ namespace SuperBlocks
     }
     public static partial class ProcessPlaneFunctions
     {
-        static float Dampener(float value) { return value * Math.Abs(value); }
+        public static float Dampener(float value) { return value * Math.Abs(value); }
+        public static Vector3 Dampener(Vector3 value) { return value * Math.Abs(value.Length()); }
         static float CalculateIndicate_Roll(IMyTerminalBlock Me, Vector3 current_normal, float AngularDampener = 10f)
         {
             var Roll_current_angular_local = Calc_Direction_Vector(current_normal, Me.WorldMatrix.Left);
