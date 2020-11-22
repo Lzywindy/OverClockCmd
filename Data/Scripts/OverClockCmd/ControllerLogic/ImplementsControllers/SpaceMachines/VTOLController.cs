@@ -19,7 +19,7 @@ namespace SuperBlocks
                 MaxReactions_AngleV = 90f;
             }
         }
-        protected override Vector3? 姿态处理(ref Vector3 朝向, bool _EnabledCuriser)
+        protected override Vector3? 姿态处理(bool _EnabledCuriser)
         {
             if (HasWings)
             {
@@ -35,14 +35,14 @@ namespace SuperBlocks
                 }
                 var GyroSignal = 参考平面处理(HasGravity_HoverMode ? pitch_indicate : 0, roll_indicate, MaximumSpeed);
                 if (!GyroSignal.HasValue) { return null; }
-                return 飞船朝向处理(HasGravity_HoverMode ? 0 : pitch_indicate, yaw_indicate, _EnabledCuriser, GyroSignal.Value, ref 朝向);
+                return 飞船朝向处理(HasGravity_HoverMode ? 0 : pitch_indicate, yaw_indicate, _EnabledCuriser, GyroSignal.Value);
             }
             else
-                return base.姿态处理(ref 朝向, _EnabledCuriser);
+                return base.姿态处理(_EnabledCuriser);
         }
         #region 控制信号映射
         protected override Vector3 推进器控制参数 => MainCtrl.MoveIndicator * (HandBrake ? Vector3.Zero : EnabledAllDirection ? Vector3.One : ForwardOrUp ? Vector3.Backward : Vector3.Up);
-        protected override Vector3? 姿态调整参数 => 姿态处理(ref ForwardDirection, EnabledCuriser);
+        protected override Vector3? 姿态调整参数 => 姿态处理(EnabledCuriser);
         protected override bool Refer2Velocity => (HasWings && (!NoGravity)) || base.Refer2Velocity;
         protected override bool EnabledAllDirection => HandBrake || NoGravity || (!HasWings);
         protected override bool PoseMode => HasWings ? (!ForwardOrUp) : (EnabledCuriser && (!NoGravity));

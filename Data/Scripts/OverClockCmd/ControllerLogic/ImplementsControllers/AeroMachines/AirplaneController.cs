@@ -30,13 +30,13 @@ namespace SuperBlocks
             EnabledCuriser = false;
             HasWings = false;
         }
-        protected override Vector3? 姿态调整参数 => 姿态处理(ref ForwardDirection, EnabledCuriser);
-        protected override Vector3? 姿态处理(ref Vector3 朝向, bool _EnabledCuriser)
+        protected override Vector3? 姿态调整参数 => 姿态处理(EnabledCuriser);
+        protected override Vector3? 姿态处理(bool _EnabledCuriser)
         {
             if (MainCtrl == null || NoGravity) return null;
             var GyroSignal = 参考平面处理(0, 0, MaximumSpeed);
             if (!GyroSignal.HasValue) { return null; }
-            return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, GyroSignal.Value, ref 朝向);
+            return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, GyroSignal.Value);
         }
         protected override Vector3 推进器控制参数 => MainCtrl.MoveIndicator * Vector3.Backward;
         public bool EnabledCuriser { get; set; }

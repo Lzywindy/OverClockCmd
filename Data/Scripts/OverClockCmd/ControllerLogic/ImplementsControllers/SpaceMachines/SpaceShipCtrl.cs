@@ -25,7 +25,7 @@ namespace SuperBlocks
         protected override bool ForwardOrUp => !HoverMode;
         protected override bool EnabledAllDirection => true;
         protected override float MaximumSpeed => ForwardOrUp ? MaxiumFlightSpeed : MaxiumHoverSpeed;
-        protected override Vector3? 姿态调整参数 => 姿态处理(ref ForwardDirection, EnabledCuriser);
+        protected override Vector3? 姿态调整参数 => 姿态处理(EnabledCuriser);
         protected override Vector3 推进器控制参数 => HandBrake ? Vector3.Zero : MainCtrl.MoveIndicator;
         protected override bool 保持高度 => (!ForwardOrUp) && MainCtrl.MoveIndicator.Y == 0;
         protected override bool 忽略高度 => ForwardOrUp || NoGravity;

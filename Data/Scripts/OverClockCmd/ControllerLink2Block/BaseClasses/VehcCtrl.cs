@@ -68,7 +68,7 @@ namespace SuperBlocks.Controller
             var target = Me.GameLogic.GetAs<FlyMachineCtrl>();
             if (target == null || target.Control == null) return 0f;
             if (target.Control is VehicleControllerBase)
-                return (target.Control as VehicleControllerBase).AngularDampeners.Z;
+                return (target.Control as VehicleControllerBase).AngularDampeners_Roll;
             return 0f;
         }
         public static void AngularDampener_R_Setter(IMyTerminalBlock Me, float value)
@@ -76,28 +76,28 @@ namespace SuperBlocks.Controller
             var target = Me.GameLogic.GetAs<FlyMachineCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.Z = MathHelper.Clamp(value, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Roll = value;
         }
         public static void AngularDampener_R_Inc(IMyTerminalBlock block)
         {
             var target = block.GameLogic.GetAs<VehcCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.Z = MathHelper.Clamp((target.Control as VehicleControllerBase).AngularDampeners.Z + 1, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Roll += 0.5f;
         }
         public static void AngularDampener_R_Dec(IMyTerminalBlock block)
         {
             var target = block.GameLogic.GetAs<VehcCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.Z = MathHelper.Clamp((target.Control as VehicleControllerBase).AngularDampeners.Z - 1, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Roll -= 0.5f;
         }
         public static float AngularDampener_P_Getter(IMyTerminalBlock Me)
         {
             var target = Me.GameLogic.GetAs<FlyMachineCtrl>();
             if (target == null || target.Control == null) return 0f;
             if (target.Control is VehicleControllerBase)
-                return (target.Control as VehicleControllerBase).AngularDampeners.X;
+                return (target.Control as VehicleControllerBase).AngularDampeners_Pitch;
             return 0f;
         }
         public static void AngularDampener_P_Setter(IMyTerminalBlock Me, float value)
@@ -105,28 +105,28 @@ namespace SuperBlocks.Controller
             var target = Me.GameLogic.GetAs<FlyMachineCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.X = MathHelper.Clamp(value, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Pitch = value;
         }
         public static void AngularDampener_P_Inc(IMyTerminalBlock block)
         {
             var target = block.GameLogic.GetAs<VehcCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.X = MathHelper.Clamp((target.Control as VehicleControllerBase).AngularDampeners.X + 1, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Pitch += 0.5f;
         }
         public static void AngularDampener_P_Dec(IMyTerminalBlock block)
         {
             var target = block.GameLogic.GetAs<VehcCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.X = MathHelper.Clamp((target.Control as VehicleControllerBase).AngularDampeners.X - 1, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Pitch -= 0.5f;
         }
         public static float AngularDampener_Y_Getter(IMyTerminalBlock Me)
         {
             var target = Me.GameLogic.GetAs<FlyMachineCtrl>();
             if (target == null || target.Control == null) return 0f;
             if (target.Control is VehicleControllerBase)
-                return (target.Control as VehicleControllerBase).AngularDampeners.Y;
+                return (target.Control as VehicleControllerBase).AngularDampeners_Yaw;
             return 0f;
         }
         public static void AngularDampener_Y_Setter(IMyTerminalBlock Me, float value)
@@ -134,21 +134,21 @@ namespace SuperBlocks.Controller
             var target = Me.GameLogic.GetAs<FlyMachineCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.Y = MathHelper.Clamp(value, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Yaw = value;
         }
         public static void AngularDampener_Y_Inc(IMyTerminalBlock block)
         {
             var target = block.GameLogic.GetAs<VehcCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.Y = MathHelper.Clamp((target.Control as VehicleControllerBase).AngularDampeners.Y + 1, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Yaw += 0.5f;
         }
         public static void AngularDampener_Y_Dec(IMyTerminalBlock block)
         {
             var target = block.GameLogic.GetAs<VehcCtrl>();
             if (target == null || target.Control == null) return;
             if (target.Control is VehicleControllerBase)
-                (target.Control as VehicleControllerBase).AngularDampeners.Y = MathHelper.Clamp((target.Control as VehicleControllerBase).AngularDampeners.Y - 1, 1, 50);
+                (target.Control as VehicleControllerBase).AngularDampeners_Yaw -= 0.5f;
         }
     }
 }

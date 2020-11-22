@@ -7,9 +7,6 @@ namespace SuperBlocks
     using static Utils;
     public class FlyingMachineCtrl_Base : VehicleControllerBase
     {
-
-        protected virtual Vector3? 姿态调整参数 { get; }
-        protected virtual Vector3 推进器控制参数 { get; }
         protected virtual bool 保持高度 { get; }
         protected virtual bool 忽略高度 { get; }
         protected override void SensorReading()
@@ -24,7 +21,6 @@ namespace SuperBlocks
         protected override void Init(IMyTerminalBlock refered_block)
         {
             base.Init(refered_block);
-            ForwardDirection = Me.WorldMatrix.Forward;
             sealevel = MainCtrl.SeaLevel;
             _Target_Sealevel = sealevel;
             diffsealevel = 0;
@@ -48,12 +44,12 @@ namespace SuperBlocks
         }
 
         #region 一些私有函数
-        protected virtual Vector3? 姿态处理(ref Vector3 朝向, bool _EnabledCuriser)
+        protected virtual Vector3? 姿态处理( bool _EnabledCuriser)
         {
             if (!GyrosIsReady || MainCtrl.NullMainCtrl) return null;
             var 参照面法线 = 参考平面处理(0, 0, MaximumSpeed);
             if (!参照面法线.HasValue) { return null; }
-            return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, 参照面法线.Value, ref 朝向);
+            return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, 参照面法线.Value);
         }
 
         protected double sealevel;

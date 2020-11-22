@@ -194,8 +194,8 @@ namespace SuperBlocks.Controller
         private CreateTerminalSwitch 坦克驱动模式 { get; } = new CreateTerminalSwitch(@"ControlTankModeID", @"Tank Mode", (ControllerManageBase logic) => logic is ILandVehicle);
         private CreateTerminalSwitch 潜艇驱动模式 { get; } = new CreateTerminalSwitch(@"ControlSubModID", @"Submarine Mode", (ControllerManageBase logic) => logic is ISeaVehicle);
         private CreateTerminalSliderBar 最大辅助速度设置 { get; } = new CreateTerminalSliderBar(@"ControlCruiseSpeedID", @"Cruise Speed", (ControllerManageBase logic) => logic is IPlanetVehicle, 0f, 360f);
-        private CreateTerminalSliderBar 滚转角速度阻尼设置 { get; } = new CreateTerminalSliderBar(@"ControlRollDampenerID", @"Roll Dampener", (ControllerManageBase logic) => logic is FlyingMachineCtrl_Base, 1f, 50f);
-        private CreateTerminalSliderBar 俯仰角速度阻尼设置 { get; } = new CreateTerminalSliderBar(@"ControlPitchDampenerID", @"Pitch Dampener", (ControllerManageBase logic) => logic is FlyingMachineCtrl_Base, 1f, 50f);
-        private CreateTerminalSliderBar 摇摆角速度阻尼设置 { get; } = new CreateTerminalSliderBar(@"ControlYawDampenerID", @"Yaw Dampener", (ControllerManageBase logic) => logic is FlyingMachineCtrl_Base, 1f, 50f);
+        private CreateTerminalSliderBar 滚转角速度阻尼设置 { get; } = new CreateTerminalSliderBar(@"ControlRollDampenerID", @"Roll Dampener", (ControllerManageBase logic) => logic is FlyingMachineCtrl_Base, 0.1f, 10f);
+        private CreateTerminalSliderBar 俯仰角速度阻尼设置 { get; } = new CreateTerminalSliderBar(@"ControlPitchDampenerID", @"Pitch Dampener", (ControllerManageBase logic) => logic is FlyingMachineCtrl_Base, 0.1f, 10f);
+        private CreateTerminalSliderBar 摇摆角速度阻尼设置 { get; } = new CreateTerminalSliderBar(@"ControlYawDampenerID", @"Yaw Dampener", (ControllerManageBase logic) => logic is FlyingMachineCtrl_Base, 0.1f, 10f);
     }
 }
