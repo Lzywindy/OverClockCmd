@@ -83,10 +83,10 @@ namespace SuperBlocks
         }
         private void 初始化推进器和陀螺仪()
         {
-            var gyros = GetTs(GridTerminalSystem, (IMyGyro gyro) => gyro.CubeGrid == Me.CubeGrid);
+            var gyros = GetTs(GridTerminalSystem, (IMyGyro gyro) => 排除的关键关键字(gyro) && gyro.CubeGrid == Me.CubeGrid);
             if (!可以控制(gyros)) { Information += "Warning:Missing Gyros!"; }
             else GyroControllerSystem = new 姿态控制器(gyros, Me);
-            var thrusts = GetTs(GridTerminalSystem, (IMyThrust thrust) => !thrust.BlockDefinition.SubtypeId.Contains("Hover") && thrust.CubeGrid == Me.CubeGrid);
+            var thrusts = GetTs(GridTerminalSystem, (IMyThrust thrust) => 排除的关键关键字(thrust) && thrust.CubeGrid == Me.CubeGrid);
             if (!可以控制(thrusts)) { Information += "Warning:Missing Thrusts!"; }
             else ThrustControllerSystem = new 推进控制器(thrusts, Me);
         }
@@ -97,16 +97,12 @@ namespace SuperBlocks
         public bool EnabledThrusters { get; set; } = true;
         public bool EnabledGyros { get; set; } = true;
         public float SafetyStage { get { return SafetyStageCurrent; } set { SafetyStageCurrent = MathHelper.Clamp(value, SafetyStageMin, SafetyStageMax); } }
-
         protected uint CtrlMode { get; } = 0;
-
         public const float SafetyStageMin = 0f;
         public const float SafetyStageMax = 9f;
         protected virtual float SafetyStageCurrent { get; set; }
         protected virtual float _LocationSensetive { get; set; }
         protected virtual float _MaxReactions_AngleV { get; set; }
-
-
         #endregion       
         #region 角速度阻尼
         public float AngularDampeners_Roll { get { AngularDampeners.Z = SetInRange_AngularDampeners(AngularDampeners.Z); return AngularDampeners.Z; } set { AngularDampeners.Z = SetInRange_AngularDampeners(value); } }
@@ -174,5 +170,17 @@ namespace SuperBlocks
         protected bool HandBrake { get { if (MainCtrl.NullMainCtrl) return true; return MainCtrl.HandBrake; } }
         protected Vector3 ProjectLinnerVelocity_CockpitForward { get { return ProjectOnPlane(LinearVelocity, Me.WorldMatrix.Forward); } }
         #endregion
+
+        protected bool 排除的关键关键字(IMyTerminalBlock block)
+        {
+            foreach (var item in BlackList)
+            {
+                if (block.BlockDefinition.SubtypeId.Contains(item))
+                    return false;
+            }
+            return true;
+        }
+        private string[] BlackList { get; } = new string[] { "Hover", "Torpedo","Torp","Payload", "Missile",
+            "At_Hybrid_Main_Thruster_Large", "At_Hybrid_Main_Thruster_Small", };
     }
 }
