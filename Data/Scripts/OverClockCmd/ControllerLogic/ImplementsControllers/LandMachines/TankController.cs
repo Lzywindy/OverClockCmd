@@ -77,8 +77,8 @@ namespace SuperBlocks
         public float TurnFaction { get; set; } = 20f;
         public float ForwardIndicator { get; set; } = 0;
         public float TurnIndicator { get; set; } = 0;
-        protected override Vector3? CtrlSignal_Gyros { get { if (NoGravity) return null; return Vector3.Up * 180000F * TurnIndicator; } }
-        protected override Vector3 CtrlSignal_Thrusts { get { if (HandBrake) return Vector3.Zero; Vector3 Ctrl = Vector3.Backward * ForwardIndicator; return (Ctrl != Vector3.Zero) ? Ctrl : Vector3.Forward; } }
+        protected override Vector3? 姿态调整参数 { get { if (NoGravity) return null; return Vector3.Up * 180000F * TurnIndicator; } }
+        protected override Vector3 推进器控制参数 { get { if (HandBrake) return Vector3.Zero; Vector3 Ctrl = Vector3.Backward * ForwardIndicator; return (Ctrl != Vector3.Zero) ? Ctrl : Vector3.Forward; } }
         protected override bool ExtraEnabledGyros => (TurnIndicator != 0 || Vector3.Round(Vector3.TransformNormal(AngularVelocity, Matrix.Transpose(GetWorldMatrix(Me))) * (new Vector3(0.1f, 1, 0.1f)), 2) != Vector3.Zero);
         #region 私有函数
         private const string MotorOverrideId = @"Propulsion override";

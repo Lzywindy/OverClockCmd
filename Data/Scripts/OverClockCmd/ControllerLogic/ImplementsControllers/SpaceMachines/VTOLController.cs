@@ -18,28 +18,9 @@ namespace SuperBlocks
             {
                 MaxReactions_AngleV = 90f;
             }
-        }
-        protected override Vector3? 姿态处理(bool _EnabledCuriser)
-        {
-            if (HasWings)
-            {
-                bool HasGravity_HoverMode = (!ForwardOrUp) && (!NoGravity);
-                float pitch_indicate = 0;
-                float roll_indicate = 0;
-                float yaw_indicate = 0;
-                if (MainCtrl != null)
-                {
-                    pitch_indicate = HasGravity_HoverMode ? MainCtrl.MoveIndicator.Z : MainCtrl.RotateIndicator.X;
-                    roll_indicate = HasGravity_HoverMode ? MainCtrl.MoveIndicator.X : 0;
-                    yaw_indicate = HasGravity_HoverMode ? MainCtrl.RotateIndicator.Z : MainCtrl.RotateIndicator.Y;
-                }
-                var GyroSignal = 参考平面处理(HasGravity_HoverMode ? pitch_indicate : 0, roll_indicate, MaximumSpeed);
-                if (!GyroSignal.HasValue) { return null; }
-                return 飞船朝向处理(HasGravity_HoverMode ? 0 : pitch_indicate, yaw_indicate, _EnabledCuriser, GyroSignal.Value);
-            }
-            else
-                return base.姿态处理(_EnabledCuriser);
-        }
+        }      
+        protected override Vector4 RotationCtrlLines => (HasWings && (!ForwardOrUp) && (!NoGravity)) ? (new Vector4(MainCtrl.MoveIndicator.Z, MainCtrl.MoveIndicator.X, 0, MainCtrl.RotateIndicator.Z)) : base.RotationCtrlLines;
+        protected override bool DisabledRotation => !HasWings && base.DisabledRotation;
         #region 控制信号映射
         protected override Vector3 推进器控制参数 => MainCtrl.MoveIndicator * (HandBrake ? Vector3.Zero : EnabledAllDirection ? Vector3.One : ForwardOrUp ? Vector3.Backward : Vector3.Up);
         protected override Vector3? 姿态调整参数 => 姿态处理(EnabledCuriser);

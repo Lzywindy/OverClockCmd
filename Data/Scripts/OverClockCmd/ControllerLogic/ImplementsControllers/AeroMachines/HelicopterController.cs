@@ -25,14 +25,9 @@ namespace SuperBlocks
             MaxReactions_AngleV = 20f;
         }
 
-        protected override Vector3? 姿态调整参数 => 姿态处理(true);
-        protected override Vector3? 姿态处理(bool _EnabledCuriser)
-        {
-            if (MainCtrl == null || NoGravity) return null;
-            var GyroSignal = 参考平面处理(MainCtrl.MoveIndicator.Z, MainCtrl.MoveIndicator.X, MaximumSpeed);
-            if (!GyroSignal.HasValue) { return null; }
-            return 飞船朝向处理(0, MainCtrl.RotateIndicator.Z, _EnabledCuriser, GyroSignal.Value);
-        }
+        protected override Vector3? 姿态调整参数 => 姿态处理(false);
+        protected override Vector4 RotationCtrlLines => new Vector4(MainCtrl.MoveIndicator.Z, MainCtrl.MoveIndicator.X, 0, MainCtrl.RotateIndicator.Z);
+        protected override bool DisabledRotation => (MainCtrl.NullMainCtrl || NoGravity);
         protected override Vector3 推进器控制参数 => MainCtrl.MoveIndicator * Vector3.Up;
         public bool HoverMode { get { return true; } set { } }
         protected override bool 保持高度 => MainCtrl.MoveIndicator.Y == 0;

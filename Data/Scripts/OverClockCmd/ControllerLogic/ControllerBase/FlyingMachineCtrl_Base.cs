@@ -43,15 +43,9 @@ namespace SuperBlocks
             ThrustControllerSystem?.Running(CtrlOrCruise ? Ctrl : Vector3.Forward, diffsealevel, Dampener);
         }
 
-        #region 一些私有函数
-        protected virtual Vector3? 姿态处理( bool _EnabledCuriser)
-        {
-            if (!GyrosIsReady || MainCtrl.NullMainCtrl) return null;
-            var 参照面法线 = 参考平面处理(0, 0, MaximumSpeed);
-            if (!参照面法线.HasValue) { return null; }
-            return 飞船朝向处理(MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y, _EnabledCuriser, 参照面法线.Value);
-        }
-
+        #region 一些私有函数       
+        protected override bool DisabledRotation => (!GyrosIsReady || MainCtrl.NullMainCtrl);
+        protected override Vector4 RotationCtrlLines => new Vector4(0, 0, MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y);
         protected double sealevel;
         protected double _Target_Sealevel;
         protected float target_speed = 0;

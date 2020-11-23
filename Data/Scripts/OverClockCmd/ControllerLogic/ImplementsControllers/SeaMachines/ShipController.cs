@@ -26,30 +26,21 @@ namespace SuperBlocks
             }
             return UtilsCtrl;
         }
-        protected override void PoseCtrl()
-        {
-            GyroControllerSystem?.SetEnabled(EnabledGyros && ExtraEnabledGyros);
-            GyroControllerSystem?.GyrosOverride(CtrlSignal_Gyros);
-        }
-        
-        protected override Vector3 CtrlSignal_Thrusts { get { if (HandBrake) return Vector3.Zero; Vector3 Ctrl = Vector3.Backward; if (IsSubmarine) Ctrl += Vector3.Up; Ctrl *= MainCtrl.MoveIndicator; return (Ctrl != Vector3.Zero) ? Ctrl : Vector3.Forward; } }
-        protected override Vector3? CtrlSignal_Gyros
-        {
-            get
-            {
-                if (MainCtrl == null || NoGravity) return null;
-                AngularDampeners = Vector3.Clamp(AngularDampeners, Vector3.One, Vector3.One * 50);
-                return (ProcessPlaneFunctions.ProcessPose_Roll_Pitch(Me, Gravity, AngularDampeners) + Me.WorldMatrix.Up * MainCtrl.MoveIndicator.X)* MaxReactions_AngleV;
-            }
-        }
+        protected override Vector3 推进器控制参数 { get { if (HandBrake) return Vector3.Zero; return new Vector3(0, IsSubmarine ? MainCtrl.MoveIndicator.Y : 0, MainCtrl.MoveIndicator.Z); } }
+        protected override Vector3? 姿态调整参数 => 姿态处理(true);
+        protected override Vector4 RotationCtrlLines => new Vector4(0, 0, 0, MainCtrl.MoveIndicator.X);
+        protected override bool DisabledRotation => (MainCtrl.NullMainCtrl || NoGravity);
         protected override bool ExtraEnabledGyros => true;
         public bool IsSubmarine { get; set; } = false;
         protected override bool Refer2Gravity => true;
         protected override bool Refer2Velocity => false;
         protected override bool Need2CtrlSignal => false;
         protected override bool IngroForwardVelocity => true;
-        protected override bool ForwardOrUp => false;
+        protected override bool ForwardOrUp => true;
         protected override bool EnabledAllDirection => true;
         protected override bool PoseMode => false;
+        protected override float SafetyStageCurrent { get { return 1; } set { } }
+        protected override float _LocationSensetive { get { return 1; } set { } }
+        protected override float _MaxReactions_AngleV { get { return 1; } set { } }
     }
 }

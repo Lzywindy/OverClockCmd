@@ -7,8 +7,6 @@ namespace SuperBlocks
     public class PlanetVehicle : VehicleControllerBase, ICtrlDevCtrl, IPlanetVehicle
     {
         public PlanetVehicle(IMyTerminalBlock refered_block) : base(refered_block) { }
-        protected virtual Vector3? CtrlSignal_Gyros { get; }
-        protected virtual Vector3 CtrlSignal_Thrusts { get; }
         protected virtual Action Init4GetAction() { return () => { }; }
         protected virtual Action Init4GetAction10() { return () => { }; }
         protected virtual Action Init4GetAction100() { return () => { }; }
@@ -22,12 +20,12 @@ namespace SuperBlocks
         protected override void PoseCtrl()
         {
             GyroControllerSystem?.SetEnabled(EnabledGyros && ExtraEnabledGyros);
-            GyroControllerSystem?.GyrosOverride(CtrlSignal_Gyros);
+            GyroControllerSystem?.GyrosOverride(姿态调整参数);
         }
         protected override void ThrustControl()
         {
             ThrustControllerSystem?.SetupMode(false, true, (!EnabledThrusters), MaximumSpeed);
-            ThrustControllerSystem?.Running(CtrlSignal_Thrusts, 0, true);
+            ThrustControllerSystem?.Running(推进器控制参数, 0, true);
         }
         protected virtual bool ExtraEnabledGyros => true;
         public float MaximumCruiseSpeed { get { return _MaxiumSpeed * 3.6f; } set { _MaxiumSpeed = MathHelper.Clamp(Math.Abs(value / 3.6f), -360f, 360f); } }
