@@ -161,6 +161,7 @@
     <Compile Include="ControllerLink2Block\BaseClasses\CtrlInterface.cs" />
     <Compile Include="ControllerLink2Block\GroundMachines\PlanetVech.cs" />
     <Compile Include="ControllerLink2Block\GroundMachines\ShipCtrl.cs" />
+    <Compile Include="ControllerLogic\CannonTurret\CannonTurret.cs" />
     <Compile Include="ControllerLogic\ControllerBase\FlyingMachineCtrl_Base.cs" />
     <Compile Include="ControllerLogic\ImplementsControllers\AeroMachines\AirplaneController.cs" />
     <Compile Include="ControllerLogic\ControllerBase\ControllerManageBase.cs" />
