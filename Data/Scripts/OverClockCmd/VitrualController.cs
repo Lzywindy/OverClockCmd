@@ -52,6 +52,21 @@ namespace SuperBlocks
         public bool 忽略自己的速度 { get; set; } = false;
         public bool 忽略重力影响 { get; set; } = false;
         public bool 是否是直瞄武器 { get; set; } = true;
+
+        public Vector3? 直瞄武器炮口方向
+        {
+            get
+            {
+                var FirePoint = GunFirePoint;
+                if (Me == null || Me.CubeGrid.Physics == null || !FirePoint.HasValue)
+                    return null;
+                var v_dis = Target.GetPosition() - GunFirePoint.Value;
+                if (v_dis.Normalize() > 0)
+                    return v_dis;
+                return null;
+            }
+        }
+
         public Vector3? 炮口方向带长度
         {
             get
