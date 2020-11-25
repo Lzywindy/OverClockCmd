@@ -68,6 +68,7 @@ namespace SuperBlocks
         protected virtual void SetDefault() { }
         public virtual void SaveDatas() { }
         protected SignalController MainCtrl { get; } = new SignalController();
+        public Vector3? 附加朝向 { get; set; } = null;
         #endregion
     }
 }

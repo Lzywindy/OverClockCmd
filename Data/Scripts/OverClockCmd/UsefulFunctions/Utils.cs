@@ -9,7 +9,35 @@ using VRage.Game.ModAPI;
 namespace SuperBlocks
 {
     public static class Utils
-    {
+    {        
+        public static Dictionary<string, string> SolveLine(string configline)
+        {
+            var temp = configline.Split(new string[] { "{", "}", "," }, StringSplitOptions.RemoveEmptyEntries);
+            if (temp == null || temp.Length < 1) return null;
+            Dictionary<string, string> Config_Pairs = new Dictionary<string, string>();
+            foreach (var item in temp)
+            {
+                var config_pair = item.Split(new string[] { " ", "\t", "=" }, StringSplitOptions.RemoveEmptyEntries);
+                if (config_pair == null || config_pair.Length < 1) continue;
+                if (config_pair.Length < 2) { Config_Pairs.Add(config_pair[0], ""); continue; }
+                if (config_pair.Length < 3) { Config_Pairs.Add(config_pair[0], config_pair[1]); continue; }
+            }
+            if (Config_Pairs.Count < 1) return null;
+            return Config_Pairs;
+        }
+        public static List<Dictionary<string, string>> GetConfigLines(string configlines)
+        {
+            var linesarray = configlines.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+            if (linesarray == null || linesarray.Length < 1) return null;
+            List<Dictionary<string, string>> configpaires = new List<Dictionary<string, string>>();
+            foreach (var line in linesarray)
+            {
+                var temp = SolveLine(line);
+                if (temp == null) continue;
+                configpaires.Add(temp);
+            }
+            return configpaires;
+        }
         public static Matrix GetWorldMatrix(IMyTerminalBlock Me)
         {
             Matrix me_matrix;

@@ -47,12 +47,14 @@ namespace SuperBlocks
         }
         private Vector3 飞船朝向处理(float 向前信号, float 向右信号, bool 是否巡航, Vector3 法向量)
         {
-            Direction(向右信号 != 0 || 向前信号 != 0, 是否巡航);
+            //bool 附加朝向控制 = (!附加朝向.HasValue || 附加朝向.Value == null);
+            //Direction(向右信号 != 0 || 向前信号 != 0, 是否巡航);
             return ProcessDampeners() +
-                ProcessPose_RPY(
-                    (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : ForwardDirection,
-                    法向量,
-                    PoseMode);
+                //ProcessPose_RPY(
+                //    (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : ForwardDirection,
+                //    法向量,
+                //    PoseMode);
+                ProcessPose_RPY(朝向处理(向前信号, 向右信号, 是否巡航), 法向量, PoseMode);
         }
         private static Vector3 ProjectOnPlane(Vector3 direction, Vector3 planeNormal)
         {
@@ -109,17 +111,37 @@ namespace SuperBlocks
             var a_temp = Vector3.Abs(temp);
             return Vector3.Clamp(a_temp * temp * InitAngularDampener / 4, -InitAngularDampener, InitAngularDampener) * AngularDampeners;
         }
-        protected void Direction(bool EnabledUpdate, bool Project2Gravity)
+        private Vector3 朝向处理(float 向前信号, float 向右信号, bool 是否巡航)
         {
-            Vector3 direction = EnabledUpdate ? (Vector3)Me.WorldMatrix.Forward : ForwardDirection;
-            if (Project2Gravity && ForwardOrUp && (!NoGravity))
-            {
-                direction = ProjectOnPlane(Me.WorldMatrix.Forward, Gravity);
-                if (direction == Vector3.Zero)
-                    direction = ProjectOnPlane(Me.WorldMatrix.Down, Gravity);
-            }
-            if (direction != Vector3.Zero) ForwardDirection = ScaleVectorTimes(Vector3.Normalize(direction));
+            if (向右信号 != 0 || 向前信号 != 0)
+                ForwardDirection = Me.WorldMatrix.Forward;
+            是否投射到平面(ref ForwardDirection, 是否巡航);
+            if (附加朝向.HasValue && 附加朝向.Value != Vector3.Zero)
+                return 附加朝向.Value + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up;
+            return ForwardDirection + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up;
         }
+        private void 是否投射到平面(ref Vector3 朝向, bool 是否巡航)
+        {
+            if (是否巡航 && ForwardOrUp && (!NoGravity))
+            {
+                朝向 = ProjectOnPlane(朝向, Gravity);
+                if (朝向 == Vector3.Zero)
+                    朝向 = ProjectOnPlane(Me.WorldMatrix.Down, Gravity);
+            }
+            if (朝向 != Vector3.Zero)
+                朝向 = ScaleVectorTimes(Vector3.Normalize(朝向));
+        }
+        //protected void Direction(bool EnabledUpdate, bool Project2Gravity)
+        //{
+        //    Vector3 direction = EnabledUpdate ? (Vector3)Me.WorldMatrix.Forward : ForwardDirection;
+        //    if (Project2Gravity && ForwardOrUp && (!NoGravity))
+        //    {
+        //        direction = ProjectOnPlane(Me.WorldMatrix.Forward, Gravity);
+        //        if (direction == Vector3.Zero)
+        //            direction = ProjectOnPlane(Me.WorldMatrix.Down, Gravity);
+        //    }
+        //    if (direction != Vector3.Zero) ForwardDirection = ScaleVectorTimes(Vector3.Normalize(direction));
+        //}
         protected virtual Vector3 InitAngularDampener { get; } = new Vector3(70, 30, 10);
         private static float SetInRange_AngularDampeners(float data)
         {
