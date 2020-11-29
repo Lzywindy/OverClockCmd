@@ -5,8 +5,9 @@ using VRageMath;
 namespace SuperBlocks
 {
     using static Utils;
-    public partial class BallisticComputer : ControllerManageBase
+    public sealed partial class BallisticComputer : ControllerManageBase, ICombot
     {
+        public int 牛顿迭代次数 { get { return _PredictionPosition.牛顿迭代次数; } set { _PredictionPosition.牛顿迭代次数 = value; } }
         public float 炮口位置偏移 { get { return _炮口位置偏移; } set { _炮口位置偏移 = MathHelper.Clamp(value, -100, 100); } }
         public float 弹头速度 { get { return _PredictionPosition.弹头速度; } set { _PredictionPosition.弹头速度 = value; } }
         public float 瞄准微调 { get { return _PredictionPosition.瞄准微调; } set { _PredictionPosition.瞄准微调 = value; } }
@@ -15,8 +16,7 @@ namespace SuperBlocks
         public bool 忽略重力影响 { get { return _PredictionPosition.忽略重力影响; } set { _PredictionPosition.忽略重力影响 = value; } }
         public bool 是否是直瞄武器 { get { return _PredictionPosition.是否是直瞄武器; } set { _PredictionPosition.是否是直瞄武器 = value; } }
         public IMyBlockGroup CurrentWeapons { get; set; }
-        public IMyCameraBlock TargetLocker { get; set; }
-        public IMyTerminalBlock ReferedControlBlock { get { return _ReferedControlBlock; } set { } }
+        public IMyCameraBlock TargetLocker { get; private set; }
         public BallisticComputer(IMyTerminalBlock refered_block) : base(refered_block) { }
         protected override void Init(IMyTerminalBlock refered_block)
         {
@@ -32,6 +32,24 @@ namespace SuperBlocks
             {
                 _TargetManager.TargetLocker = TargetLocker;
             };
+        }
+        public Vector3? 目标炮口方向 { get { return _PredictionPosition.炮口方向; } set { } }
+        public Vector3? 当前炮口指向
+        {
+            get
+            {
+                if (CurrentWeapons == null) return null;
+                var Weapons = GetTs<IMyUserControllableGun>(CurrentWeapons);
+                if (Weapons == null || Weapons.Count < 1) return null;
+                Vector3 vector = Vector3.Zero;
+                foreach (var weapon in Weapons)
+                    vector += weapon.WorldMatrix.Forward;
+                if (vector == Vector3.Zero)
+                    return null;
+                vector.Normalize();
+                return vector;
+            }
+            set { }
         }
         public void CycleGroup()
         {
@@ -72,10 +90,24 @@ namespace SuperBlocks
                         if (float.TryParse(configitem.Value, out offset))
                             炮口位置偏移 = offset;
                         break;
+                    case "delta_t":
+                        float delta_t;
+                        if (float.TryParse(configitem.Value, out delta_t))
+                            瞄准微调 = delta_t;
+                        break;
+                    case "calc_t":
+                        int calc_t;
+                        if (int.TryParse(configitem.Value, out calc_t))
+                            牛顿迭代次数 = calc_t;
+                        break;
                     case "distance":
                         double distance;
                         if (double.TryParse(configitem.Value, out distance))
                             锁定距离 = distance;
+                        break;
+                    case "camera":
+                        if (CurrentWeapons == null) break;
+                        TargetLocker = GetT(CurrentWeapons, (IMyCameraBlock camera) => camera.CustomName == configitem.Value);
                         break;
                     default:
                         break;
@@ -103,9 +135,8 @@ namespace SuperBlocks
             _TargetManager.ResetLockTarget();
         }
         public string Configs { get { return configs; } set { configs = value; _ConfigManager.ReadConfigs(configs); } }
-
     }
-    public partial class BallisticComputer
+    public sealed partial class BallisticComputer
     {
         private PredictionPosition _PredictionPosition { get; } = new PredictionPosition();
         private TargetManager _TargetManager { get; } = new TargetManager();
@@ -122,22 +153,6 @@ namespace SuperBlocks
                     position += weapon.GetPosition() + 炮口位置偏移 * weapon.WorldMatrix.Forward;
                 position /= Weapons.Count;
                 return position;
-            }
-        }
-        private Vector3? 当前炮口指向
-        {
-            get
-            {
-                if (CurrentWeapons == null) return null;
-                var Weapons = GetTs<IMyUserControllableGun>(CurrentWeapons);
-                if (Weapons == null || Weapons.Count < 1) return null;
-                Vector3 vector = Vector3.Zero;
-                foreach (var weapon in Weapons)
-                    vector += weapon.WorldMatrix.Forward;
-                if (vector == Vector3.Zero)
-                    return null;
-                vector.Normalize();
-                return vector;
             }
         }
         private float _炮口位置偏移 = 0;

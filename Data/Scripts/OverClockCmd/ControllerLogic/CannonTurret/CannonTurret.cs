@@ -21,28 +21,19 @@ namespace SuperBlocks
     }
     public partial class CannonTurret
     {
-        private const string 瞄准镜组ID = @"TargetFinder";
-        private const string 炮塔组ID = @"TurretGroup";
-        private IMyEntity Target;
-        private IMyTerminalBlock TargetLocker;
-        private Vector3 RelativePosition;
-        private double _Range = 2e3;
-        public double Range { get { return _Range; } set { _Range = MathHelper.Clamp(value, 1e3, 1e6); } }
-        public void TriggerLockTarget()
+        private void InitTurretGroup()
         {
-            Target = null;
-            if (TargetLocker == null) return;
-            VRage.Game.ModAPI.IHitInfo target;
-            bool HasEntity = MyAPIGateway.Physics.CastLongRay(TargetLocker.GetPosition(), TargetLocker.GetPosition() + TargetLocker.WorldMatrix.Forward * Range, out target, true);
-            if (!HasEntity || target == null) return;
-            if (target.HitEntity is IMyVoxelBase) return;
-            Target = target.HitEntity;
-            RelativePosition = Vector3.TransformNormal(target.Position - Target.GetPosition(), Matrix.Transpose(Target.WorldMatrix));
+            List<IMyBlockGroup> blockGroups = new List<IMyBlockGroup>();
+            MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Me.CubeGrid).GetBlockGroups(blockGroups);
+            List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+
+            foreach (var blockGroup in blockGroups)
+            {
+                blockGroup.GetBlocks(blocks, (IMyTerminalBlock block) => block == Me);
+                if (blocks.Count < 1) { blocks.Clear(); continue; }
+                TurretGroups.Add(blockGroup);
+            }
         }
-        public void ResetLockTarget()
-        {
-            Target = null;
-            RelativePosition = Vector3.Zero;
-        }
+        private List<IMyBlockGroup> TurretGroups { get; } = new List<IMyBlockGroup>();
     }
 }

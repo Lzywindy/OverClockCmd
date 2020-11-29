@@ -19,6 +19,7 @@ namespace SuperBlocks
             InitDirection();
             初始化推进器和陀螺仪();
             SensorReading();
+            MainCtrl.MainCtrl = GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit);
             AppRunning1 += SensorReading;
             AppRunning1 += PoseCtrl;
             AppRunning1 += ThrustControl;
@@ -196,5 +197,6 @@ namespace SuperBlocks
         protected virtual float SafetyStageCurrent { get; set; }
         protected virtual float _LocationSensetive { get; set; }
         protected virtual float _MaxReactions_AngleV { get; set; }
+        protected SignalController MainCtrl { get; } = new SignalController();
     }
 }

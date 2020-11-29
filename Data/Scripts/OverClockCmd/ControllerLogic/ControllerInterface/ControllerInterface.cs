@@ -1,4 +1,6 @@
-﻿namespace SuperBlocks
+﻿using VRageMath;
+
+namespace SuperBlocks
 {
     public interface IHeilController
     {
@@ -37,5 +39,10 @@
     public interface ISeaVehicle
     {
         bool IsSubmarine { get; set; }
+    }
+    public interface ICombot
+    {
+        Vector3? 目标炮口方向 { get; set; }
+        Vector3? 当前炮口指向 { get; set; }
     }
 }

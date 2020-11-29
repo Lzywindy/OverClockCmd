@@ -50,8 +50,7 @@ namespace SuperBlocks
             try
             {
                 Information = "";
-                Me = refered_block;
-                MainCtrl.MainCtrl = GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit);
+                Me = refered_block;               
                 Init(refered_block);
                 IsReadyForControl = true;
             }
@@ -67,7 +66,6 @@ namespace SuperBlocks
         protected Vector3 Gravity { get { return Me.CubeGrid.Physics.Gravity; } }
         protected virtual void SetDefault() { }
         public virtual void SaveDatas() { }
-        protected SignalController MainCtrl { get; } = new SignalController();
         public Vector3? 附加朝向 { get; set; } = null;
         #endregion
     }
