@@ -33,29 +33,51 @@ namespace SuperBlocks
         }
         protected Vector3? 姿态处理(bool _EnabledCuriser)
         {
-            if (DisabledRotation) return null;
-            var 参照面法线 = 参考平面处理(RotationCtrlLines.X, RotationCtrlLines.Y, MaximumSpeed);
-            if (!参照面法线.HasValue) { return null; }
-            return 飞船朝向处理(RotationCtrlLines.Z, RotationCtrlLines.W, _EnabledCuriser, 参照面法线.Value);
-        }
-        private Vector3? 参考平面处理(float 向前信号, float 向右信号, float 最大限速)
-        {
-            Vector3? current_velocity_linear = null;
-            Vector3 current_gravity = Refer2Gravity ? Gravity : Vector3.Zero;
-            if (Refer2Velocity)
-                current_velocity_linear = (IngroForwardVelocity ? ProjectLinnerVelocity_CockpitForward : LinearVelocity) - ((Need2CtrlSignal ? (Vector3.ClampToSphere((-Me.WorldMatrix.Forward * 向前信号 + Me.WorldMatrix.Right * 向右信号), 1) * 最大限速) : Vector3.Zero));
-            return 参考平面决策(current_velocity_linear, current_gravity);
-        }
-        private Vector3 飞船朝向处理(float 向前信号, float 向右信号, bool 是否巡航, Vector3 法向量)
-        {
-            //bool 附加朝向控制 = (!附加朝向.HasValue || 附加朝向.Value == null);
-            //Direction(向右信号 != 0 || 向前信号 != 0, 是否巡航);
-            return ProcessDampeners() +
-                //ProcessPose_RPY(
-                //    (向右信号 != 0 || 向前信号 != 0) ? ScaleVectorTimes(Me.WorldMatrix.Forward + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up) : ForwardDirection,
-                //    法向量,
-                //    PoseMode);
-                ProcessPose_RPY(朝向处理(向前信号, 向右信号, 是否巡航), 法向量, PoseMode);
+            return ProcessRotation(_EnabledCuriser, Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners,
+                ForwardOrUp, PoseMode, MaximumSpeed, MaxReactions_AngleV, Need2CtrlSignal, LocationSensetive
+                , SafetyStage, IgnoreForwardVelocity, Refer2Gravity, Refer2Gravity, DisabledRotation, 附加朝向, null);
+
+            //if (DisabledRotation) return null;
+            ////参考平面法线
+            ////飞船以该方块的down方向与实际的down方向对齐
+            //Vector3? current_velocity_linear = Refer2Velocity ? ((Vector3?)((IgnoreForwardVelocity ? ProjectLinnerVelocity_CockpitForward : LinearVelocity)
+            //        - ((Need2CtrlSignal ? (Vector3.ClampToSphere((-Me.WorldMatrix.Forward * RotationCtrlLines.X + Me.WorldMatrix.Right * RotationCtrlLines.Y), 1) * MaximumSpeed) : Vector3.Zero)))) : null;
+            //Vector3 current_gravity = Refer2Gravity ? Gravity : Vector3.Zero;
+            //Vector3? 参照面法线;
+            //if (current_gravity == Vector3.Zero)
+            //    参照面法线 = current_velocity_linear;
+            //else if (!current_velocity_linear.HasValue)
+            //    参照面法线 = current_gravity;
+            //else
+            //    参照面法线 = Vector3.ClampToSphere(current_velocity_linear.Value * LocationSensetive + Utils.Dampener(current_gravity) * SafetyStage, 1f);
+            ////如果参考面法线为空，则让飞船恢复飞控控制之前的控制方式
+            ////ToDo:这个地方实际可以加入一个变量，使得该飞行器可以直接对齐所需的参考平面
+            ////比如对齐航母的甲板法线或者是自动停泊的连接器
+            //if (!参照面法线.HasValue) { return null; }
+            ////朝向控制
+            ////用来纠正偏航
+            //if (RotationCtrlLines.W != 0 || RotationCtrlLines.Z != 0)
+            //    ForwardDirection = Me.WorldMatrix.Forward;
+            //if (_EnabledCuriser && ForwardOrUp && (!NoGravity))
+            //{
+            //    ForwardDirection = ProjectOnPlane(ForwardDirection, Gravity);
+            //    if (ForwardDirection == Vector3.Zero)
+            //        ForwardDirection = ProjectOnPlane(Me.WorldMatrix.Down, Gravity);
+            //}
+            //if (ForwardDirection != Vector3.Zero)
+            //    ForwardDirection = ScaleVectorTimes(Vector3.Normalize(ForwardDirection));
+            //Vector3 朝向;
+            //if (附加朝向.HasValue && 附加朝向.Value != Vector3.Zero)
+            //    朝向 = 附加朝向.Value + RotationCtrlLines.W * Me.WorldMatrix.Right - RotationCtrlLines.Z * Me.WorldMatrix.Up;
+            //else
+            //    朝向 = ForwardDirection + RotationCtrlLines.W * Me.WorldMatrix.Right - RotationCtrlLines.Z * Me.WorldMatrix.Up;
+            ////完成法线和朝向的对齐之后，就可以开始控制陀螺仪工作了
+            ////加入速度阻尼以免转向过快导致无法控制
+            //return (ProcessDampeners() + (new Vector3(
+            //    Dampener(PoseMode && (参照面法线.Value != Vector3.Zero) ? Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Backward) : Calc_Direction_Vector(朝向, Me.WorldMatrix.Down)),
+            //    Dampener(SetupAngle(Calc_Direction_Vector(朝向, Me.WorldMatrix.Right), Calc_Direction_Vector(朝向, Me.WorldMatrix.Forward))),
+            //    (参照面法线.Value != Vector3.Zero) ? Dampener(SetupAngle(Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Left), Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Down))) : 0
+            //    ) * MaxReactions_AngleV));
         }
         private static Vector3 ProjectOnPlane(Vector3 direction, Vector3 planeNormal)
         {
@@ -89,61 +111,12 @@ namespace SuperBlocks
     }
     public partial class VehicleControllerBase
     {
-        protected Vector3? 参考平面决策(Vector3? current_velocity_linear, Vector3 current_gravity)
-        {
-            if (current_gravity == Vector3.Zero)
-                return current_velocity_linear;
-            else if (!current_velocity_linear.HasValue)
-                return current_gravity;
-            else
-                return Vector3.ClampToSphere(current_velocity_linear.Value * LocationSensetive + Utils.Dampener(current_gravity) * SafetyStage, 1f);
-        }
-        protected Vector3 ProcessPose_RPY(Vector3 朝向, Vector3 法向量, bool HoverMode = true)
-        {
-            return new Vector3(
-                Dampener(HoverMode && (法向量 != Vector3.Zero) ? Calc_Direction_Vector(法向量, Me.WorldMatrix.Backward) : Calc_Direction_Vector(朝向, Me.WorldMatrix.Down)),
-                Dampener(SetupAngle(Calc_Direction_Vector(朝向, Me.WorldMatrix.Right), Calc_Direction_Vector(朝向, Me.WorldMatrix.Forward))),
-                (法向量 != Vector3.Zero) ? Dampener(SetupAngle(Calc_Direction_Vector(法向量, Me.WorldMatrix.Left), Calc_Direction_Vector(法向量, Me.WorldMatrix.Down))) : 0
-                ) * MaxReactions_AngleV;
-        }
         protected Vector3 ProcessDampeners()
         {
             var temp = Vector3.TransformNormal(AngularVelocity, Matrix.Transpose(Me.WorldMatrix));
             var a_temp = Vector3.Abs(temp);
             return Vector3.Clamp(a_temp * temp * InitAngularDampener / 4, -InitAngularDampener, InitAngularDampener) * AngularDampeners;
         }
-        private Vector3 朝向处理(float 向前信号, float 向右信号, bool 是否巡航)
-        {
-            if (向右信号 != 0 || 向前信号 != 0)
-                ForwardDirection = Me.WorldMatrix.Forward;
-            是否投射到平面(ref ForwardDirection, 是否巡航);
-            if (附加朝向.HasValue && 附加朝向.Value != Vector3.Zero)
-                return 附加朝向.Value + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up;
-            return ForwardDirection + 向右信号 * Me.WorldMatrix.Right - 向前信号 * Me.WorldMatrix.Up;
-        }
-        private void 是否投射到平面(ref Vector3 朝向, bool 是否巡航)
-        {
-            if (是否巡航 && ForwardOrUp && (!NoGravity))
-            {
-                朝向 = ProjectOnPlane(朝向, Gravity);
-                if (朝向 == Vector3.Zero)
-                    朝向 = ProjectOnPlane(Me.WorldMatrix.Down, Gravity);
-            }
-            if (朝向 != Vector3.Zero)
-                朝向 = ScaleVectorTimes(Vector3.Normalize(朝向));
-        }
-        //protected void Direction(bool EnabledUpdate, bool Project2Gravity)
-        //{
-        //    Vector3 direction = EnabledUpdate ? (Vector3)Me.WorldMatrix.Forward : ForwardDirection;
-        //    if (Project2Gravity && ForwardOrUp && (!NoGravity))
-        //    {
-        //        direction = ProjectOnPlane(Me.WorldMatrix.Forward, Gravity);
-        //        if (direction == Vector3.Zero)
-        //            direction = ProjectOnPlane(Me.WorldMatrix.Down, Gravity);
-        //    }
-        //    if (direction != Vector3.Zero) ForwardDirection = ScaleVectorTimes(Vector3.Normalize(direction));
-        //}
-        protected virtual Vector3 InitAngularDampener { get; } = new Vector3(70, 30, 10);
         private static float SetInRange_AngularDampeners(float data)
         {
             return MathHelper.Clamp(data, 0.1f, 10f);
@@ -160,16 +133,7 @@ namespace SuperBlocks
         protected virtual void PoseCtrl() { }
         protected virtual void ThrustControl() { }
         protected virtual void SensorReading() { }
-        protected virtual Vector3 推进器控制参数 { get; }
-        protected virtual Vector3? 姿态调整参数 { get; }
-        protected virtual bool ForwardOrUp { get; }
-        protected virtual bool Refer2Gravity { get; }
-        protected virtual bool Refer2Velocity { get; }
-        protected virtual bool Need2CtrlSignal { get; }
-        protected virtual bool IngroForwardVelocity { get; }
-        protected virtual bool EnabledAllDirection { get; }
-        protected virtual float MaximumSpeed { get; }
-        protected virtual bool PoseMode { get; }
+
         protected bool 排除的关键关键字(IMyTerminalBlock block)
         {
             foreach (var item in BlackList)
@@ -180,8 +144,7 @@ namespace SuperBlocks
             return true;
         }
         private string[] BlackList { get; } = new string[] { "Hover", "Torpedo", "Torp", "Payload", "Missile", "At_Hybrid_Main_Thruster_Large", "At_Hybrid_Main_Thruster_Small", };
-        protected virtual Vector4 RotationCtrlLines => Vector4.Zero;
-        protected virtual bool DisabledRotation => true;
+
         protected 推进控制器 ThrustControllerSystem { get; private set; }
         protected 姿态控制器 GyroControllerSystem { get; private set; }
         protected bool GyrosIsReady { get { return GyroControllerSystem != null; } }
@@ -194,9 +157,26 @@ namespace SuperBlocks
         private Vector3 ForwardDirection;
         public const float SafetyStageMin = 0f;
         public const float SafetyStageMax = 9f;
-        protected virtual float SafetyStageCurrent { get; set; }
-        protected virtual float _LocationSensetive { get; set; }
-        protected virtual float _MaxReactions_AngleV { get; set; }
+
         protected SignalController MainCtrl { get; } = new SignalController();
+    }
+    public partial class VehicleControllerBase
+    {
+        protected virtual Vector3 推进器控制参数 { get; } = Vector3.Zero;
+        protected virtual Vector3? 姿态调整参数 { get; } = null;
+        protected virtual bool ForwardOrUp { get; set; } = false;
+        protected virtual bool Refer2Gravity { get; } = true;
+        protected virtual bool Refer2Velocity { get; } = false;
+        protected virtual bool Need2CtrlSignal { get; } = false;
+        protected virtual bool IgnoreForwardVelocity { get; } = true;
+        protected virtual bool EnabledAllDirection { get; } = true;
+        protected virtual float MaximumSpeed { get; } = 100f;
+        protected virtual bool PoseMode { get; } = false;
+        protected virtual float SafetyStageCurrent { get; set; } = 1f;
+        protected virtual float _LocationSensetive { get; set; } = 1f;
+        protected virtual float _MaxReactions_AngleV { get; set; } = 1f;
+        protected virtual Vector4 RotationCtrlLines => Vector4.Zero;
+        protected virtual bool DisabledRotation => true;
+        protected virtual Vector3 InitAngularDampener { get; } = new Vector3(70, 30, 10);
     }
 }

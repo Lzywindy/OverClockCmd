@@ -35,7 +35,7 @@ namespace SuperBlocks
         protected override bool Refer2Gravity => true;
         protected override bool Refer2Velocity => false;
         protected override bool Need2CtrlSignal => false;
-        protected override bool IngroForwardVelocity => true;
+        protected override bool IgnoreForwardVelocity => true;
         protected override bool ForwardOrUp => true;
         protected override bool EnabledAllDirection => true;
         protected override bool PoseMode => false;

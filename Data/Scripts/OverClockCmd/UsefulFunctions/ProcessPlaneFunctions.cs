@@ -130,7 +130,7 @@ namespace SuperBlocks
             var current_velocity_angular = Me.CubeGrid.Physics.AngularVelocity;
             var forward_project = Calc_Direction_Vector(direction, Me.WorldMatrix.Forward);
             var Yaw_current_angular_local = Calc_Direction_Vector(direction, Me.WorldMatrix.Right) + (forward_project > -0.75f ? 0 : 1);
-            var Yaw_current_angular_velocity = Calc_Direction_Vector(current_velocity_angular, Me.WorldMatrix.Up, 1f);
+            var Yaw_current_angular_velocity = Calc_Direction_Vector(current_velocity_angular, Me.WorldMatrix.Up);
             var yaw_indicate = Dampener(Yaw_current_angular_local) + Dampener(Yaw_current_angular_velocity);
             return new Vector3(0, yaw_indicate, 0);
         }

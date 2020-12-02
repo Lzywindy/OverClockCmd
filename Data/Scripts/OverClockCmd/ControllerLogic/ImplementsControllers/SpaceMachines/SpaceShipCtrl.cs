@@ -21,8 +21,8 @@ namespace SuperBlocks
         protected override bool Refer2Gravity => !NoGravity;
         protected override bool Refer2Velocity => (ProjectLinnerVelocity_CockpitForward.LengthSquared() >= MaxiumHoverSpeed * MaxiumHoverSpeed) && (NoGravity || ForwardOrUp);
         protected override bool Need2CtrlSignal => !(ForwardOrUp || NoGravity);
-        protected override bool IngroForwardVelocity => ForwardOrUp || NoGravity;
-        protected override bool ForwardOrUp => !HoverMode;
+        protected override bool IgnoreForwardVelocity => ForwardOrUp || NoGravity;
+        protected override bool ForwardOrUp { get; set; }
         protected override bool EnabledAllDirection => true;
         protected override float MaximumSpeed => ForwardOrUp ? MaxiumFlightSpeed : MaxiumHoverSpeed;
         protected override Vector3? 姿态调整参数 => 姿态处理(EnabledCuriser);
@@ -34,8 +34,7 @@ namespace SuperBlocks
         public float MaxiumFlightSpeed { get { return _MaxiumFlightSpeed; } set { _MaxiumFlightSpeed = MathHelper.Clamp(value, 0, float.MaxValue); } }
         public float MaxiumHoverSpeed { get { return _MaxiumHoverSpeed; } set { _MaxiumHoverSpeed = MathHelper.Clamp(value, 5, 100); } }
         public bool EnabledCuriser { get; set; } = false;
-        public bool HoverMode { get { return _HoverMode; } set { _HoverMode = value; if (_HoverMode) { _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * 25f; } else target_speed = LinearVelocity.Length(); } }
-        private bool _HoverMode;
+        public bool HoverMode { get { return !ForwardOrUp; } set { ForwardOrUp = !value; if (!ForwardOrUp) { _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * 25f; } else target_speed = LinearVelocity.Length(); } }
         private float _MaxiumFlightSpeed;
         private float _MaxiumHoverSpeed;
     }

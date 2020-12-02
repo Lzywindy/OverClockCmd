@@ -37,9 +37,9 @@ namespace SuperBlocks
         protected override Action Init4GetAction()
         {
             var WheelsGroup = GridTerminalSystem.GetBlockGroupWithName("Wheels");
-            Restrict(WheelsGroup);
-            bool CanRunning = false;
             Action Wheels = () => { };
+            if (WheelsGroup == null) return Wheels;
+            bool CanRunning = false;            
             {
                 var action_wheels = 加载悬挂总成(WheelsGroup);
                 if (action_wheels != null)
@@ -136,7 +136,7 @@ namespace SuperBlocks
         protected override bool Refer2Gravity => true;
         protected override bool Refer2Velocity => false;
         protected override bool Need2CtrlSignal => false;
-        protected override bool IngroForwardVelocity => true;
+        protected override bool IgnoreForwardVelocity => true;
         protected override bool ForwardOrUp => false;
         protected override bool EnabledAllDirection => true;
         protected override bool PoseMode => false;
