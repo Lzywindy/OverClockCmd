@@ -266,6 +266,8 @@
         <string>AirVent/SmallAirVent_OC</string>
         <string>RemoteControl/PRC_Block_Large</string>
         <string>RemoteControl/PRC_Block_Small</string>
+        <string>CameraBlock/SmallElectroopticRadar</string>
+        <string>CameraBlock/LargeElectroopticRadar</string>
       </ItemIds>
     </Category>
   </CategoryClasses>

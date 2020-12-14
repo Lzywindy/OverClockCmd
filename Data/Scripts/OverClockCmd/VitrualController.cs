@@ -14,16 +14,13 @@ using VRage.ModAPI;
 using VRage.ObjectBuilders;
 using VRage.Utils;
 using VRageRender.Messages;
-
 namespace SuperBlocks
 {
     public partial class VitrualController
     {
         public VitrualController()
         {
-
         }
-
     }
     public partial class VitrualController
     {

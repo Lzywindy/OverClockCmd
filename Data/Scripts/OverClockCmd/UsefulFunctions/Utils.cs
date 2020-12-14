@@ -7,11 +7,16 @@ using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.Game.Entity;
 using VRage;
+using VRage.ModAPI;
+using VRage.Game;
+using Sandbox.Game.Entities;
+using System.Linq;
 
 namespace SuperBlocks
 {
     public static partial class Utils
     {
+        public static Guid MyGuid { get; } = new Guid("5F1A43D3-02D3-C959-2413-5922F4EEB917");
         public static Dictionary<string, string> SolveLine(string configline)
         {
             var temp = configline.Split(new string[] { "{", "}", "," }, StringSplitOptions.RemoveEmptyEntries);
@@ -54,6 +59,7 @@ namespace SuperBlocks
         public static Vector3 Dampener(Vector3 value) { return value * Math.Abs(value.Length()); }
         public static T GetT<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class
         {
+            if (gridTerminalSystem == null) return null;
             List<T> Items = new List<T>();
             gridTerminalSystem.GetBlocksOfType<T>(Items, requst);
             if (Items.Count > 0)
@@ -63,12 +69,14 @@ namespace SuperBlocks
         }
         public static List<T> GetTs<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class
         {
+            if (gridTerminalSystem == null) return null;
             List<T> Items = new List<T>();
             gridTerminalSystem.GetBlocksOfType<T>(Items, requst);
             return Items;
         }
         public static T GetT<T>(IMyBlockGroup blockGroup, Func<T, bool> requst = null) where T : class
         {
+            if (blockGroup == null) return null;
             List<T> Items = new List<T>();
             blockGroup.GetBlocksOfType<T>(Items, requst);
             if (Items.Count > 0)
@@ -78,6 +86,7 @@ namespace SuperBlocks
         }
         public static List<T> GetTs<T>(IMyBlockGroup blockGroup, Func<T, bool> requst = null) where T : class
         {
+            if (blockGroup == null) return null;
             List<T> Items = new List<T>();
             blockGroup.GetBlocksOfType<T>(Items, requst);
             return Items;
@@ -116,26 +125,7 @@ namespace SuperBlocks
         /// <param name="ForwardDirectionOverride">重载朝向控制信号</param>
         /// <param name="PlaneNormalOverride">重载平面控制信号</param>
         /// <returns>陀螺仪控制信号</returns>
-        public static Vector3? ProcessRotation(
-            bool _EnabledCuriser,
-            IMyTerminalBlock Me,
-            Vector4 RotationCtrlLines,
-            ref Vector3 ForwardDirection,
-            Vector3? InitAngularDampener = null,
-            Vector3? AngularDampeners = null,
-            bool ForwardOrUp = false,
-            bool PoseMode = false,
-            float MaximumSpeedLimited = 100f,
-            float MaxReactions_AngleV = 1f,
-            bool Need2CtrlSignal = true,
-            float LocationSensetive = 1f,
-            float SafetyStage = 1f,
-            bool IgnoreForwardVelocity = true,
-            bool Refer2Velocity = true,
-            bool Refer2Gravity = true,
-            bool DisabledRotation = true,
-            Vector3? ForwardDirectionOverride = null,
-            Vector3? PlaneNormalOverride = null)
+        public static Vector3? ProcessRotation(bool _EnabledCuriser, IMyTerminalBlock Me, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, bool ForwardOrUp = false, bool PoseMode = false, float MaximumSpeedLimited = 100f, float MaxReactions_AngleV = 1f, bool Need2CtrlSignal = true, float LocationSensetive = 1f, float SafetyStage = 1f, bool IgnoreForwardVelocity = true, bool Refer2Velocity = true, bool Refer2Gravity = true, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null, Vector3? PlaneNormalOverride = null)
         {
             if (Me == null || DisabledRotation) return null;
             Vector3? current_gravity = GetGravity(Me, Refer2Gravity);
@@ -188,31 +178,6 @@ namespace SuperBlocks
                 (参照面法线.Value != Vector3.Zero) ? Dampener(SetupAngle(Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Left), Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Down))) : 0
                 ) * MaxReactions_AngleV));
         }
-
-        public static Vector3? ProcessRotationPB(
-            Sandbox.ModAPI.Ingame.IMyTerminalBlock Me,
-            Vector4 RotationCtrlLines,
-            ref Vector3 ForwardDirection,
-            Vector3? InitAngularDampener = null,
-            Vector3? AngularDampeners = null,
-            Vector3? ForwardDirectionOverride = null,
-            Vector3? PlaneNormalOverride = null,
-            float MaximumSpeedLimited = 100f,
-            float MaxReactions_AngleV = 1f,
-            float LocationSensetive = 1f,
-            float SafetyStage = 1f,
-            bool _EnabledCuriser = false,
-            bool ForwardOrUp = false,
-            bool PoseMode = false,
-            bool Need2CtrlSignal = true,
-            bool IgnoreForwardVelocity = true,
-            bool Refer2Velocity = true,
-            bool Refer2Gravity = true,
-            bool DisabledRotation = true)
-        {
-            if (Me as IMyTerminalBlock == null) return null;
-            return ProcessRotation(_EnabledCuriser, (Me as IMyTerminalBlock), RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, ForwardOrUp, PoseMode, MaximumSpeedLimited, MaxReactions_AngleV, Need2CtrlSignal, LocationSensetive, SafetyStage, IgnoreForwardVelocity, Refer2Velocity, Refer2Gravity, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride);
-        }
     }
     public static partial class Utils
     {
@@ -232,48 +197,33 @@ namespace SuperBlocks
         /// <param name="CalcCount"></param>
         /// <param name="Delta_Time">时间乘倍</param>
         /// <param name="Delta_Precious"></param>
-        /// <returns>炮口指向</returns>
-        public static Vector3? GunDirection(
-            Vector3D? TargetPosition,
-            Vector3D? SelfPosition,
-            Vector3D? TargetVelocity,
-            Vector3D? SelfVelocity,
-            Vector3D? Gravity,
-            double V_project_length,
-            ref Vector3D? V_project,
-            ref double? t_n,
-            Vector3D CannonDirection,
-            int CalcCount = 4,
-            float Delta_Time = 1,
-            float Delta_Precious = 1)
+        public static void GunDirection(Vector3D? TargetPosition, Vector3D? SelfPosition, Vector3D? TargetVelocity, Vector3D? SelfVelocity, Vector3D? Gravity, double V_project_length, ref Vector3D? V_project_direction, ref double? t_n, Vector3D CannonDirection, int CalcCount = 4, float Delta_Time = 1, float Delta_Precious = 1)
         {
-            if (!TargetPosition.HasValue || !SelfPosition.HasValue) return null;
+            if (!TargetPosition.HasValue || !SelfPosition.HasValue) return;
             var v_dis = TargetPosition.Value - SelfPosition.Value;
-            if (v_dis == Vector3.Zero) return null;
-            if (!TargetVelocity.HasValue) { v_dis.Normalize(); return v_dis; }
+            if (v_dis == Vector3.Zero) return;
+            if (!TargetVelocity.HasValue) { v_dis.Normalize(); V_project_direction = v_dis; return; }
             var v_relative = TargetVelocity.Value - (SelfVelocity ?? Vector3D.Zero);
             Delta_Precious = MathHelper.Clamp(Delta_Precious, 0.01f, 100f); V_project_length = Math.Max(V_project_length, 100f); Delta_Time = MathHelper.Clamp(Delta_Time, 0.9f, 1.1f);
+            var min = v_dis.Length() / Math.Max(V_project_length + Vector3D.Dot(Vector3D.Normalize(v_dis), TargetVelocity.Value), 1f);
             if (Gravity.HasValue && Gravity != Vector3.Zero)
             {
                 var g_l = Gravity.Value.LengthSquared(); var v_l = v_relative.LengthSquared();
                 var b = -2 * v_relative.Dot(Gravity.Value) / g_l; var c = (4 * v_l - 2 * Gravity.Value.Dot(v_dis) - 4 * V_project_length * V_project_length) / g_l;
                 var d = 4 * v_relative.Dot(v_dis) / g_l; var e = 4 * v_l / g_l;
                 int count = 0;
-                var min = v_dis.Length() / V_project_length;
-                if (!t_n.HasValue)
+                if (!V_project_direction.HasValue && CannonDirection != Vector3D.Zero)
+                    V_project_direction = Vector3D.Normalize(CannonDirection);
+                if (!t_n.HasValue || t_n.Value < 0)
                     t_n = Solve_Subfunction(min, b, c, d, e);
-                if (!V_project.HasValue && CannonDirection != Vector3D.Zero)
-                    V_project = Vector3D.Normalize(CannonDirection);
-                while (count < CalcCount && ErrorFunction(TargetVelocity.Value, TargetPosition.Value, SelfVelocity.Value, V_project.Value * V_project_length, SelfPosition.Value, t_n.Value, Gravity) > Delta_Precious)
+                while (count < CalcCount && ErrorFunction(TargetVelocity.Value, TargetPosition.Value, SelfVelocity.Value, V_project_direction.Value * V_project_length, SelfPosition.Value, t_n.Value, Gravity) > Delta_Precious)
                 {
                     t_n = Math.Max(Solve_Subfunction(t_n.Value, b, c, d, e), min);
-                    V_project = Solve_Direction(t_n.Value, v_relative, v_dis, Gravity, Delta_Time, true);
-                    if (!V_project.HasValue && CannonDirection != Vector3D.Zero)
-                        V_project = Vector3D.Normalize(CannonDirection);
+                    V_project_direction = Solve_Direction(t_n.Value, v_relative, v_dis, Gravity, Delta_Time, true);
+                    if (!V_project_direction.HasValue && CannonDirection != Vector3D.Zero)
+                        V_project_direction = Vector3D.Normalize(CannonDirection);
                     count++;
                 }
-                if (t_n <= 0) { t_n = Solve_Subfunction(min, b, c, d, e); return null; }
-                return Solve_Direction(t_n.Value, v_relative, v_dis, Gravity, Delta_Time, false);
             }
             else
             {
@@ -281,12 +231,12 @@ namespace SuperBlocks
                 var b = v_relative.Dot(v_dis);
                 var c = v_dis.LengthSquared();
                 var k = b * b - 4 * a * c;
-                if (k < 0) return null;
+                if (k < 0) { return; }
                 var sqrt_k = (float)Math.Sqrt(k);
-                var t1 = Math.Max((-b - sqrt_k) / (2 * a), 0);
-                var t2 = Math.Max((-b + sqrt_k) / (2 * a), 0);
-                return Solve_Direction(t1 == 0 ? (t2 == 0 ? 0 : t2) : (t2 == 0 ? t1 : Math.Min(t1, t2)), v_relative, v_dis, null, Delta_Time, false);
+                t_n = Math.Max(Math.Max((-b - sqrt_k) / (2 * a), min), Math.Max((-b + sqrt_k) / (2 * a), min));
             }
+            if (t_n == null) return;
+            V_project_direction = Solve_Direction(t_n.Value, v_relative, v_dis, Gravity, Delta_Time, false);
         }
     }
     public static partial class Utils
@@ -368,44 +318,119 @@ namespace SuperBlocks
         }
         public static Vector3D? Solve_Direction(double t, Vector3D v_r, Vector3D dis, Vector3D? g = null, double Delta_Time = 1, bool InSimulate = false)
         {
-            if (t <= 0) return null;
-            if (!InSimulate) t *= Delta_Time;
+            if (t <= 0) return null; if (!InSimulate) t *= Delta_Time;
             var velocity = (dis / t + v_r - (g.HasValue ? (g.Value * t / 2) : Vector3D.Zero));
-            if (velocity == Vector3D.Zero) return null;
-            velocity = Vector3D.Normalize(velocity);
+            if (velocity == Vector3D.Zero) return null; velocity = Vector3D.Normalize(velocity);
             return velocity;
         }
-    }
-
-    public static class PB_Utils_LzywindyApis
-    {
-        public delegate Vector3? ProcessRotationPB_Dlgt(Sandbox.ModAPI.Ingame.IMyTerminalBlock Me, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, Vector3? ForwardDirectionOverride = null, Vector3? PlaneNormalOverride = null, float MaximumSpeedLimited = 100f, float MaxReactions_AngleV = 1f, float LocationSensetive = 1f, float SafetyStage = 1f, bool _EnabledCuriser = false, bool ForwardOrUp = false, bool PoseMode = false, bool Need2CtrlSignal = true, bool IgnoreForwardVelocity = true, bool Refer2Velocity = true, bool Refer2Gravity = true, bool DisabledRotation = true);
-        public delegate Vector3? GunDirection_Dlgt(Vector3D? TargetPosition, Vector3D? SelfPosition, Vector3D? TargetVelocity, Vector3D? SelfVelocity, Vector3D? Gravity, double V_project_length, ref Vector3D? V_project, ref double? t_n, Vector3D CannonDirection, int CalcCount = 4, float Delta_Time = 1, float Delta_Precious = 1);
-        public static Dictionary<string, Delegate> PackApisForPB()
+        public static int 统计网格中通电的方块(IMyCubeGrid cubeGrid)
         {
-            Dictionary<string, Delegate> apis = new Dictionary<string, Delegate>()
+            if (cubeGrid == null) return 0;
+            List<IMySlimBlock> blocks = new List<IMySlimBlock>();
+            cubeGrid.GetBlocks(blocks, (IMySlimBlock block) =>
             {
-                ["GetT_gts"] = new Func<IMyGridTerminalSystem, Func<IMyTerminalBlock, bool>, IMyTerminalBlock>(Utils.GetT),
-                ["GetT_bg"] = new Func<IMyBlockGroup, Func<IMyTerminalBlock, bool>, IMyTerminalBlock>(Utils.GetT),
-                ["GetTs_gts"] = new Func<IMyGridTerminalSystem, Func<IMyTerminalBlock, bool>, List<IMyTerminalBlock>>(Utils.GetTs),
-                ["GetTs_bg"] = new Func<IMyBlockGroup, Func<IMyTerminalBlock, bool>, List<IMyTerminalBlock>>(Utils.GetTs),
-                ["SolveLine"] = new Func<string, Dictionary<string, string>>(Utils.SolveLine),
-                ["GetConfigLines"] = new Func<string, List<Dictionary<string, string>>>(Utils.GetConfigLines),
-                ["GetWorldMatrix"] = new Func<IMyTerminalBlock, Matrix>(Utils.GetWorldMatrix),
-                ["DampenerV3"] = new Func<Vector3, Vector3>(Utils.Dampener),
-                ["Dampener"] = new Func<float, float>(Utils.Dampener),
-                ["ProjectOnPlane"] = new Func<Vector3, Vector3, Vector3>(Utils.ProjectOnPlane),
-                ["Calc_Direction_Vector"] = new Func<Vector3, Vector3, float>(Utils.Calc_Direction_Vector),
-                ["ScaleVectorTimes"] = new Func<Vector3, float, Vector3>(Utils.ScaleVectorTimes),
-                ["ProcessRotation"] = new ProcessRotationPB_Dlgt(Utils.ProcessRotationPB),
-                ["GunDirection"] = new GunDirection_Dlgt(Utils.GunDirection)
-            };
-            return apis;
+                if (block == null) return false;
+                var b_t = block as IMyTerminalBlock;
+                if (b_t == null || !b_t.IsFunctional) return false;
+                var b_f = block as IMyFunctionalBlock;
+                if (b_f == null || !b_f.Enabled) return false;
+                return true;
+            });
+            return blocks.Count;
         }
-        //public static void Test()
-        //{
-        //    var apis = PackApisForPB();
-        //    apis["Calc_Direction_Vector"].in
-        //}
+        public static bool 是否是角色或者陨石(IMyEntity entity)
+        {
+            if (entity == null) return false;
+            if (entity is IMyCharacter || entity is IMyMeteor) return true;
+            return false;
+        }
+        public static bool 是否是体素或者行星(IMyEntity entity)
+        {
+            if (entity == null) return false;
+            if (entity is IMyVoxelBase) return true;
+            return false;
+        }
+        public static bool 是否是导弹(IMyEntity entity)
+        {
+            if (entity == null) return false;
+            if (entity.GetType().ToString() == "Sandbox.Game.Weapons.MyMissile") return true;
+            return false;
+        }
+        public static bool 是否在范围里(IMyEntity Me, IMyEntity Target, double Range)
+        {
+            if (Me == null || Target == null) return false;
+            return (Me.GetPosition() - Target.GetPosition()).Length() <= Range;
+        }
+        public static bool BlockInTurretGroup(IMyBlockGroup group, IMyTerminalBlock Me)
+        {
+            if (group == null) return false;
+            List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+            group.GetBlocks(blocks); if (blocks.Count < 1) return false;
+            if (!blocks.Contains(Me)) return false;
+            if (!blocks.Exists((IMyTerminalBlock block) => block is IMyRemoteControl)) return false;
+            if (!blocks.Exists((IMyTerminalBlock block) => block is IMyUserControllableGun)) return false;
+            if (!blocks.Exists((IMyTerminalBlock block) => (block is IMyMotorStator) && (block.CustomName.Contains("Turret") || block.CustomName.Contains("turret") || block.CustomName.Contains("Gun") || block.CustomName.Contains("gun")))) return false;
+            return true;
+        }
+        public static Sandbox.ModAPI.Ingame.MyDetectedEntityInfo? CreateTarget(IMyEntity Target, IMyTerminalBlock SensorBlock, Vector3D? Position = null)
+        {
+            if (Target == null || SensorBlock == null) return null;
+            return MyDetectedEntityInfoHelper.Create(MyEntities.GetEntityById(Target.EntityId), SensorBlock.OwnerId, Position ?? Target.GetPosition());
+        }
+        public static List<IMyTerminalBlock> GetTheNearlyBlock(IMyCubeGrid TargetGrid, IMyTerminalBlock TrackDevice, Func<IMyTerminalBlock, bool> AcceptBlockFilter = null)
+        {
+            if (TargetGrid == null || TrackDevice == null) return null;
+            List<IMyTerminalBlock> blocks = GetTs(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(TargetGrid), (IMyTerminalBlock _block) => _block.IsFunctional && NotFriendlyBlock(_block, TrackDevice) && (AcceptBlockFilter?.Invoke(_block) ?? true));
+            if (blocks == null || blocks.Count < 1) return null;
+            if (blocks.Count < 2) return blocks;
+            blocks.Sort((IMyTerminalBlock a, IMyTerminalBlock b) => Math.Sign(GetBlockP(b) - GetBlockP(a)));
+            return blocks;
+        }
+        public static void UpdateBlocks(ref List<IMyTerminalBlock> blocks, IMyTerminalBlock TrackDevice, Func<IMyTerminalBlock, bool> AcceptBlockFilter = null)
+        {
+            if (blocks == null || blocks.Count < 1 || TrackDevice == null) { blocks = null; return; }
+            blocks.RemoveAll((IMyTerminalBlock _block) => !_block.IsFunctional || !NotFriendlyBlock(_block, TrackDevice) || _block.Closed || _block.MarkedForClose || (!(AcceptBlockFilter?.Invoke(_block) ?? true)));
+            if (blocks.Count < 1) blocks = null;
+        }
+        public static int GetBlockP(IMyTerminalBlock _block)
+        {
+            if (_block == null) return 8;
+            if (_block is IMyUserControllableGun && _block.IsFunctional) return 0;
+            if (_block is IMyThrust && _block.IsFunctional) return 1;
+            if (_block is IMyGyro && _block.IsFunctional) return 2;
+            if (_block is IMyMotorSuspension && _block.IsFunctional) return 3;
+            if (_block is IMyReactor && _block.IsFunctional) return 4;
+            if (_block is IMyBatteryBlock && _block.IsFunctional) return 5;
+            if (_block is IMyCockpit && _block.IsFunctional) return 6;
+            return 7;
+        }
+        public static bool NotFriendlyBlock(IMyTerminalBlock test, IMyTerminalBlock refer)
+        {
+            if (test == null || refer == null) return true;
+            var relation = refer.GetUserRelationToOwner(test.OwnerId);
+            return (relation != MyRelationsBetweenPlayerAndBlock.FactionShare) && (relation != MyRelationsBetweenPlayerAndBlock.Friends) && (relation != MyRelationsBetweenPlayerAndBlock.Owner);
+        }
+        public static double CalcDistanceBetween(IMyEntity target, IMyEntity me)
+        {
+            return (target.GetPosition() - me.GetPosition()).Length();
+        }
+        public static double CalcSDistanceBetween(IMyEntity target, IMyEntity me)
+        {
+            return (target.GetPosition() - me.GetPosition()).Length();
+        }
+        public static List<IMyTerminalBlock> GetCurrentEntityBlocks(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> Filter = null)
+        {
+            HashSet<IMyCubeGrid> cubeGrids = new HashSet<IMyCubeGrid>();
+            MyAPIGateway.GridGroups.GetGroup(Me.CubeGrid, GridLinkTypeEnum.Logical, cubeGrids);
+            cubeGrids.Add(Me.CubeGrid);
+            HashSet<IMySlimBlock> blocks = new HashSet<IMySlimBlock>();
+            foreach (var cubeGrid in cubeGrids)
+            {
+                List<IMySlimBlock> slimBlocks = new List<IMySlimBlock>();
+                cubeGrid.GetBlocks(slimBlocks, block => (block as IMyTerminalBlock) != null && (Filter?.Invoke(block as IMyTerminalBlock) ?? true));
+                blocks.UnionWith(slimBlocks);
+            }
+            return blocks.ToList().ConvertAll(block => block as IMyTerminalBlock);
+        }
     }
 }

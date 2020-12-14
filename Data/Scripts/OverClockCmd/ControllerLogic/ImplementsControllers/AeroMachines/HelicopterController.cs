@@ -2,7 +2,6 @@
 using Sandbox.ModAPI;
 using System;
 using VRageMath;
-
 namespace SuperBlocks
 {
     public class HelicopterController : FlyingMachineCtrl_Base, IHeilController
@@ -24,7 +23,6 @@ namespace SuperBlocks
             base.Init(refered_block);
             MaxReactions_AngleV = 20f;
         }
-
         protected override Vector3? 姿态调整参数 => 姿态处理(false);
         protected override Vector4 RotationCtrlLines => new Vector4(MainCtrl.MoveIndicator.Z, MainCtrl.MoveIndicator.X, 0, MainCtrl.RotateIndicator.Z);
         protected override bool DisabledRotation => (MainCtrl.NullMainCtrl || NoGravity);

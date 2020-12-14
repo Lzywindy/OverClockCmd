@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using VRage.Game.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using static Utils;
@@ -36,7 +35,6 @@ namespace SuperBlocks
             return ProcessRotation(_EnabledCuriser, Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners,
                 ForwardOrUp, PoseMode, MaximumSpeed, MaxReactions_AngleV, Need2CtrlSignal, LocationSensetive
                 , SafetyStage, IgnoreForwardVelocity, Refer2Gravity, Refer2Gravity, DisabledRotation, 附加朝向, null);
-
             //if (DisabledRotation) return null;
             ////参考平面法线
             ////飞船以该方块的down方向与实际的down方向对齐
@@ -133,7 +131,6 @@ namespace SuperBlocks
         protected virtual void PoseCtrl() { }
         protected virtual void ThrustControl() { }
         protected virtual void SensorReading() { }
-
         protected bool 排除的关键关键字(IMyTerminalBlock block)
         {
             foreach (var item in BlackList)
@@ -144,7 +141,6 @@ namespace SuperBlocks
             return true;
         }
         private string[] BlackList { get; } = new string[] { "Hover", "Torpedo", "Torp", "Payload", "Missile", "At_Hybrid_Main_Thruster_Large", "At_Hybrid_Main_Thruster_Small", };
-
         protected 推进控制器 ThrustControllerSystem { get; private set; }
         protected 姿态控制器 GyroControllerSystem { get; private set; }
         protected bool GyrosIsReady { get { return GyroControllerSystem != null; } }
@@ -157,7 +153,6 @@ namespace SuperBlocks
         private Vector3 ForwardDirection;
         public const float SafetyStageMin = 0f;
         public const float SafetyStageMax = 9f;
-
         protected SignalController MainCtrl { get; } = new SignalController();
     }
     public partial class VehicleControllerBase

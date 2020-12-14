@@ -1,6 +1,5 @@
 ﻿using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     public class SpaceShipCtrl : FlyingMachineCtrl_Base, IHeilController, IPlaneController, IPoseParamAdjust

@@ -6,29 +6,25 @@ using System.Text;
 using System.Threading.Tasks;
 using VRage.Game;
 using VRage.Game.Components;
-
 namespace SuperBlocks.Controller
 {
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_TerminalBlock), false, "BallisticComputer", "SmallBallisticComputer")]
+    //[MyEntityComponentDescriptor(typeof(MyObjectBuilder_TerminalBlock), false, "BallisticComputer", "SmallBallisticComputer")]
     public sealed class BallisticCtrl : ControlBase
     {
         protected override void InitController()
         {
             (Entity as IMyTerminalBlock).CustomDataChanged += BallisticCtrl_CustomDataChanged;
         }
-
         private void BallisticCtrl_CustomDataChanged(IMyTerminalBlock obj)
         {
             var ctrl = Control as BallisticComputer;
             if (ctrl == null) return;
             ctrl.Configs = obj.CustomData;
         }
-
         protected override void InitParameters()
         {
             Control = new BallisticComputer(Entity as IMyTerminalBlock);
         }
-
         private void DeleteMessages()
         {
             try
@@ -56,19 +52,16 @@ namespace SuperBlocks.Controller
         {
             (Entity as IMyTerminalBlock).CustomDataChanged += BallisticCtrl_CustomDataChanged;
         }
-
         private void BallisticCtrl_CustomDataChanged(IMyTerminalBlock obj)
         {
             var ctrl = Control as BallisticComputer;
             if (ctrl == null) return;
             ctrl.Configs = obj.CustomData;
         }
-
         protected override void InitParameters()
         {
             Control = new BallisticComputer(Entity as IMyTerminalBlock);
         }
-
         private void DeleteMessages()
         {
             try

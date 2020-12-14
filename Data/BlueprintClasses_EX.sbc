@@ -303,5 +303,7 @@
     <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="LightQuantumComputer" />
     <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="METransformer" />
     <Entry Class="AdvanceTechnologyItems" BlueprintSubtypeId="RiemannTransformerDevice" />
+    <Entry Class="AdvanceTechnologyDevice" BlueprintSubtypeId="CameraBlock/SmallElectroopticRadar" />
+    <Entry Class="AdvanceTechnologyDevice" BlueprintSubtypeId="CameraBlock/LargeElectroopticRadar" />
   </BlueprintClassEntries>
 </Definitions>

@@ -1,6 +1,5 @@
 using System;
 using VRage.Game.Components;
-using Sandbox.Common.ObjectBuilders;
 using Sandbox.Definitions;
 using VRage.Game;
 using VRage.ObjectBuilders;
@@ -11,9 +10,6 @@ using System.Collections.Generic;
 using Sandbox.Game.EntityComponents;
 using SpaceEngineers.Game.Entities.Blocks;
 using SpaceEngineers.Game.ModAPI;
-using VRageMath;
-using VRage.Game.Entity;
-
 /*  
   Welcome to Modding API. This is second of two sample scripts that you can modify for your needs,
   in this case simple script is prepared that will alter behaviour of sensor block
@@ -24,14 +20,12 @@ namespace TestScript
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_TerminalBlock), false)]
     public class OverClock : MyGameLogicComponent
     {
-
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             thisBlock = Entity as IMyTerminalBlock;
             ObjectBuilder = objectBuilder;
             overClockConsle_Process = new OverClockConsle_Process();
             base.Init(objectBuilder);
-
             thisBlock.CustomNameChanged += ThisBlock_CustomNameChanged;
             thisBlock.CustomDataChanged += ThisBlock_CustomDataChanged;
             NeedsUpdate |= (MyEntityUpdateEnum.EACH_FRAME | MyEntityUpdateEnum.EACH_10TH_FRAME | MyEntityUpdateEnum.EACH_100TH_FRAME);
@@ -56,20 +50,17 @@ namespace TestScript
         public override void UpdateBeforeSimulation()
         {
             base.UpdateBeforeSimulation();
-
             if (IsLoadingData) return;
             if (overClockConsle_Process == null)
                 overClockConsle_Process = new OverClockConsle_Process();
             overClockConsle_Process.CheckConsle_Function(thisBlock.CustomName);
             overClockConsle_Process.CommendLines(thisBlock.CustomData);
             UpdateDevice();
-
         }
         public override void UpdateAfterSimulation100()
         {
             base.UpdateAfterSimulation100();
         }
-
         private bool IsLoadingData = false;
         private IMyTerminalBlock thisBlock;
         private MyObjectBuilder_EntityBase ObjectBuilder;
@@ -110,14 +101,11 @@ namespace TestScript
                 }
             }
         }
-
-
     }
-
     public class OverClockConsle_Process
     {
         private static string[] line_Split = new string[] { "\n", "\r", ";" };
-        private static string[] cmd_Split = new string[] { " ", "\t", "-" };
+        private static string[] cmd_Split = new string[] { " ", "\t", "-", "=" };
         public float Reactor_Multiply { get; private set; } = 1.0f;
         public float Thrust_Multiply { get; private set; } = 1.0f;
         public float Gyro_Multiply { get; private set; } = 1.0f;

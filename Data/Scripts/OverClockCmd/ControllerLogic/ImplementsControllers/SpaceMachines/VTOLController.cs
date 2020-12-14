@@ -1,7 +1,6 @@
 ﻿using Sandbox.ModAPI;
 using System;
 using VRageMath;
-
 namespace SuperBlocks
 {
     public class VTOLController : SpaceShipCtrl, IHeilController, IPlaneController, IWingModeController, IPoseParamAdjust

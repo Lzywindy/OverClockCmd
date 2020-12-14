@@ -1,7 +1,6 @@
 ﻿using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using static Utils;

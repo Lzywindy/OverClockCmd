@@ -2,7 +2,6 @@
 using VRage.ObjectBuilders;
 using VRage.ModAPI;
 using Sandbox.ModAPI;
-
 namespace SuperBlocks.Controller
 {
     /// <summary>

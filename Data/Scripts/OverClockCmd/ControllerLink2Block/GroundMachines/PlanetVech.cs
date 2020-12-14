@@ -1,10 +1,8 @@
 ﻿using Sandbox.ModAPI;
-
 namespace SuperBlocks.Controller
 {
     public class PlanetVech : VehcCtrl
     {
-
         public static float MaximumCruiseSpeed_Getter(IMyTerminalBlock Me)
         {
             var target = Me.GameLogic.GetAs<PlanetVech>();
@@ -34,7 +32,6 @@ namespace SuperBlocks.Controller
             if (target.Control is IPlanetVehicle)
                 (target.Control as IPlanetVehicle).MaximumCruiseSpeed -= 10;
         }
-
         protected override void InitController()
         {
             Control = new PlanetVehicle(Entity as IMyTerminalBlock);

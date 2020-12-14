@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using static Utils;
@@ -17,7 +16,6 @@ namespace SuperBlocks
         protected override bool ForwardOrUp => true;
         protected override bool EnabledAllDirection => (MainCtrl == null) || HandBrake || NoGravity || (!HasWings);
         protected override float MaximumSpeed => MaxiumFlightSpeed;
-
         protected override void SensorReading()
         {
             base.SensorReading();

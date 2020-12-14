@@ -1,7 +1,6 @@
 ﻿using System;
 using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using static Utils;
@@ -11,7 +10,6 @@ namespace SuperBlocks
     /// </summary>
     public static partial class ProcessPlaneFunctions
     {
-
         /// <summary>
         /// 计算参照平面
         /// 操控为：垂直起降的飞机的垂降模式、及直升机

@@ -1,11 +1,8 @@
 ﻿using System;
 using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
-    using static Utils;
-
     public class ControllerManageBase
     {
         public ControllerManageBase(IMyTerminalBlock refered_block)

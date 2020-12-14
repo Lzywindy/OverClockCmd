@@ -2,11 +2,9 @@
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using static Utils;
-
     public class ShipController : PlanetVehicle, ICtrlDevCtrl, IPlanetVehicle, ISeaVehicle
     {
         public ShipController(IMyTerminalBlock refered_block) : base(refered_block) { }

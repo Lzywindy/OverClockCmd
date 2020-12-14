@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-
 namespace SuperBlocks
 {
     using static Utils;
-
     public class ConfigManager
     {
         private int CurrentIndex { get { return currentindex; } set { if (TotalCount == 0) { currentindex = 0; return; } currentindex = value % TotalCount; } }
@@ -61,5 +59,4 @@ namespace SuperBlocks
             return _configs.ToString();
         }
     }
-
 }

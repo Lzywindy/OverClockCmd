@@ -2,23 +2,22 @@
 using Sandbox.ModAPI.Interfaces.Terminal;
 using System.Collections.Generic;
 using System;
-
 namespace SuperBlocks.Controller
 {
-    public class CreateTerminalButton : CreateTerminalAction<bool>
+    public class CreateTerminalButton<TBlockType> : CreateTerminalAction<bool, TBlockType>
     {
         public Action<IMyTerminalBlock> TriggerFunc { get; set; } =(IMyTerminalBlock block)=> { };
-        public CreateTerminalButton(string CtrlID, string Title, Func<ControllerManageBase, bool> Filter) : base(CtrlID, Title, Filter) { }
+        public CreateTerminalButton(string CtrlID, string Title, Func<IMyTerminalBlock, bool> Filter = null) : base(CtrlID, Title, Filter) { }
         public override void CreateController(IMyTerminalBlock block, List<IMyTerminalControl> controls)
         {
             if (DisabledAddControl(block)) { return; }
             ControlsCreated = true;
-            var triggle = MyAPIGateway.TerminalControls.CreateControl<IMyTerminalControlButton, IMyTerminalBlock>(ControlID);
-            triggle.Enabled = IsinEnabledList;
-            triggle.Visible = IsinEnabledList;
+            var triggle = MyAPIGateway.TerminalControls.CreateControl<IMyTerminalControlButton, TBlockType>(ControlID);
+            triggle.Enabled = Filter;
+            triggle.Visible = Filter;
             triggle.Title = CtrlNM;
             triggle.SupportsMultipleBlocks = true;
-            MyAPIGateway.TerminalControls.AddControl<IMyTerminalBlock>(triggle);
+            MyAPIGateway.TerminalControls.AddControl<TBlockType>(triggle);
             controls.Add(triggle);
         }
         public override void CreateAction(IMyTerminalBlock block, List<IMyTerminalAction> actions)
@@ -26,19 +25,19 @@ namespace SuperBlocks.Controller
             if (DisabledAddAction(block)) { return; }
             ActionsCreated = true;
             {
-                var triggle = MyAPIGateway.TerminalControls.CreateAction<IMyTerminalBlock>(ControlID);
+                var triggle = MyAPIGateway.TerminalControls.CreateAction<TBlockType>(ControlID);
                 triggle.Action = TriggerFunc;
-                triggle.Enabled = IsinEnabledList;
+                triggle.Enabled = Filter;
                 triggle.Name = CtrlNM_S;
                 triggle.Icon = @"Textures\GUI\Icons\Actions\Start.dds";
-                MyAPIGateway.TerminalControls.AddAction<IMyTerminalBlock>(triggle);
+                MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
                 actions.Add(triggle);
             }
             {
-                var Property = MyAPIGateway.TerminalControls.CreateProperty<bool, IMyTerminalBlock>($"Value_{ControlID}");
+                var Property = MyAPIGateway.TerminalControls.CreateProperty<bool, TBlockType>($"Value_{ControlID}");
                 Property.Getter = GetterFunc;
                 Property.Setter = SetterFunc;
-                Property.Enabled = IsinEnabledList;
+                Property.Enabled = Filter;
             }
         }
     }

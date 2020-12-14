@@ -1,7 +1,6 @@
 ﻿using VRage.Game.Components;
 using VRage.Game;
 using Sandbox.ModAPI;
-
 namespace SuperBlocks.Controller
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_TerminalBlock), false, "VTOLControl", "SmallVTOLControl")]

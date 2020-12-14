@@ -1,7 +1,6 @@
 ﻿using VRage.Game.Components;
 using VRage.Game;
 using Sandbox.ModAPI;
-
 namespace SuperBlocks.Controller
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_TerminalBlock), false, "ShipControl", "SmallShipControl")]
@@ -15,7 +14,6 @@ namespace SuperBlocks.Controller
                 return (target.Control as ISeaVehicle).IsSubmarine;
             return false;
         }
-
         public static void IsSubmarine_Setter(IMyTerminalBlock Me, bool value)
         {
             var target = Me.GameLogic.GetAs<ShipCtrl>();

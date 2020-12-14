@@ -1,11 +1,9 @@
 ﻿using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks.Controller
 {
     public partial class FlyMachineCtrl : VehcCtrl
     {
-
         protected override void InitController()
         {
             Control = new FlyingMachineCtrl_Base(Entity as IMyTerminalBlock);

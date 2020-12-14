@@ -7,13 +7,13 @@
     <ProjectGuid>{EBDF9B6E-C9B1-496A-93EE-B5CC1CEA7727}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestScript</RootNamespace>
-    <AssemblyName>TestScript</AssemblyName>
+    <RootNamespace>SuperBlocks</RootNamespace>
+    <AssemblyName>SuperBlocks</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -149,6 +149,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicGameLogics\BasicInfoService.cs" />
+    <Compile Include="TurretController\WeaponInfoService.cs" />
+    <Compile Include="TurretController\MyBallisticComputer4ShipDirectWeapon.cs" />
+    <Compile Include="TurretController\WeaponModual\MyTargetPredict.cs" />
+    <Compile Include="TurretController\WeaponModual\MyTargetFilterManager.cs" />
+    <Compile Include="TurretController\WeaponModual\MyTargetManager.cs" />
+    <Compile Include="TurretController\MyTargetPredictDevice.cs" />
+    <Compile Include="TurretController\MyTurretController.cs" />
+    <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateProperty.cs" />
+    <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalFence.cs" />
+    <Compile Include="ControllerLink2Block\BaseClasses\InformationDeviceBase.cs" />
     <Compile Include="ControllerLink2Block\FlyMachines\AeroCtrl.cs" />
     <Compile Include="ControllerLink2Block\BaseClasses\ControlBase.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalAction.cs" />
@@ -164,6 +175,17 @@
     <Compile Include="ControllerLink2Block\WeaponCtrls\BallisticCtrl.cs" />
     <Compile Include="ControllerLogic\CannonTurret\BallisticComputer.cs" />
     <Compile Include="ControllerLogic\CannonTurret\CannonTurret.cs" />
+    <Compile Include="FunctionService\InformationService.cs" />
+    <Compile Include="FunctionService\Jammer.cs" />
+    <Compile Include="FunctionService\LAN_Network.cs" />
+    <Compile Include="FunctionService\WAN_Network.cs" />
+    <Compile Include="BasicGameLogics\MySuperBlockProgram.cs" />
+    <Compile Include="RadarBlockLogic.cs" />
+    <Compile Include="RadarBasicLogic\RadarSystemBasic.cs" />
+    <Compile Include="TargetLocker_CameraBlock.cs" />
+    <Compile Include="TargetLocker_CameraBlock_Server.cs" />
+    <Compile Include="TurretController\WeaponModual\MyTurretRotateManage.cs" />
+    <Compile Include="TurretController\WeaponModual\MyWeaponManager.cs" />
     <Compile Include="UsefulFunctions\ConfigManager.cs" />
     <Compile Include="ControllerLogic\CannonTurret\TargetManager.cs" />
     <Compile Include="ControllerLogic\ControllerBase\FlyingMachineCtrl_Base.cs" />
@@ -188,6 +210,7 @@
     <Compile Include="ControllerLink2Block\FlyMachines\SpaceCtrl.cs" />
     <Compile Include="ControllerLink2Block\GroundMachines\TankCtrl.cs" />
     <Compile Include="PredictionPosition.cs" />
+    <Compile Include="UsefulFunctions\PB_Utils_LzywindyApis.cs" />
     <Compile Include="UsefulFunctions\ProcessPlaneFunctions.cs" />
     <Compile Include="ControllerLogic\ImplementsControllers\LandMachines\TankController.cs" />
     <Compile Include="UsefulFunctions\Utils.cs" />
@@ -196,6 +219,7 @@
     <Compile Include="ControllerLink2Block\BaseClasses\VehcCtrl.cs" />
     <Compile Include="VitrualController.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.  
        Other similar extension points exist, see Microsoft.Common.targets. 

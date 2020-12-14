@@ -1,6 +1,5 @@
 ﻿using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks.Controller
 {
     public partial class VehcCtrl : ControlBase

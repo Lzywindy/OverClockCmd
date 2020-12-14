@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     public sealed class TargetManager

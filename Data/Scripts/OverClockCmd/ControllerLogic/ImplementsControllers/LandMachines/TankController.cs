@@ -2,13 +2,11 @@
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using Sandbox.ModAPI.Interfaces;
     using SpaceEngineers.Game.ModAPI;
     using static Utils;
-
     /// <summary>
     /// 重力圈中的地面载具（坦克）
     /// 可选择悬浮、轮子、转子的驱动方式

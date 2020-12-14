@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     public class SignalController

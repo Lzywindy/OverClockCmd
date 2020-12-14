@@ -1,7 +1,6 @@
 ﻿using System;
 using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     public class PlanetVehicle : VehicleControllerBase, ICtrlDevCtrl, IPlanetVehicle

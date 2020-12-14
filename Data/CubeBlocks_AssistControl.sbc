@@ -541,6 +541,174 @@
 			<PCU>5</PCU>
 			<IsAirTight>false</IsAirTight>
 		</Definition>
+		<!--船体武器弹道计算机-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>BallisticComputer4ShipDirectWeapon</SubtypeId>
+			</Id>
+			<DisplayName>Ship Ballistic Computer</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Ship Ballistic Computer can calculate weapons' aim direction, you only need is toward a programmable block to send some parameters.</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="10" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="3" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>BallisticComputer4ShipDirectWeapon</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallBallisticComputer4ShipDirectWeapon</SubtypeId>
+			</Id>
+			<DisplayName>Ship Ballistic Computer</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Ship Ballistic Computer can calculate weapons' aim direction, you only need is toward a programmable block to send some parameters.</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="10" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="3" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>BallisticComputer4ShipDirectWeapon</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+		</Definition>
+		<!--带火控的半自动炮塔（需要目标指引）-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>TurretCoreSeimAI</SubtypeId>
+			</Id>
+			<DisplayName>Turret Core</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Turret Core can calculate weapons' aim direction and link to rotors to make rotor turret, you only need is toward a programmable block to send some parameters.</Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="10" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="3" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>TurretCoreSeimAI</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallTurretCoreSeimAI</SubtypeId>
+			</Id>
+			<DisplayName>Turret Core</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>Turret Core can calculate weapons' aim direction and link to rotors to make rotor turret, you only need is toward a programmable block to send some parameters.</Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="10" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="3" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>TurretCoreSeimAI</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+		</Definition>
 	</CubeBlocks>
 	<BlockVariantGroups>
 		<BlockVariantGroup>
@@ -561,6 +729,10 @@
 				<Block Type="TerminalBlock" Subtype="SmallAirplaneControl" />
 				<Block Type="TerminalBlock" Subtype="SpaceShipControl" />
 				<Block Type="TerminalBlock" Subtype="SmallSpaceShipControl" />
+				<Block Type="TerminalBlock" Subtype="BallisticComputer4ShipDirectWeapon" />
+				<Block Type="TerminalBlock" Subtype="SmallBallisticComputer4ShipDirectWeapon" />
+				<Block Type="TerminalBlock" Subtype="TurretCoreSeimAI" />
+				<Block Type="TerminalBlock" Subtype="SmallTurretCoreSeimAI" />
 			</Blocks>
 		</BlockVariantGroup>
 	</BlockVariantGroups>
@@ -586,6 +758,10 @@
 				<string>TerminalBlock/SmallAirplaneControl</string>
 				<string>TerminalBlock/SpaceShipControl</string>
 				<string>TerminalBlock/SmallSpaceShipControl</string>
+				<string>TerminalBlock/BallisticComputer4ShipDirectWeapon</string>
+				<string>TerminalBlock/SmallBallisticComputer4ShipDirectWeapon</string>
+				<string>TerminalBlock/TurretCoreSeimAI</string>
+				<string>TerminalBlock/SmallTurretCoreSeimAI</string>
 			</ItemIds>
 		</Category>
 	</CategoryClasses>

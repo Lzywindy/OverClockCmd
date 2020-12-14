@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using VRage;
 using VRage.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     /// <summary>

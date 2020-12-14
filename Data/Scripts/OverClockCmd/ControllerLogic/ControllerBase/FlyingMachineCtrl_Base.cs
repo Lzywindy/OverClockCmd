@@ -1,7 +1,6 @@
 ﻿using Sandbox.ModAPI;
 using System;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using static Utils;
@@ -16,7 +15,6 @@ namespace SuperBlocks
             sealevel = MainCtrl.SeaLevel;
             UpdateTargetSealevel();
         }
-
         public FlyingMachineCtrl_Base(IMyTerminalBlock Me) : base(Me) { }
         protected override void Init(IMyTerminalBlock refered_block)
         {
@@ -42,7 +40,6 @@ namespace SuperBlocks
             ThrustControllerSystem?.SetupMode((!ForwardOrUp), EnabledAllDirection, (!EnabledThrusters), CtrlOrCruise ? MaximumSpeed : target_speed);
             ThrustControllerSystem?.Running(CtrlOrCruise ? Ctrl : Vector3.Forward, diffsealevel, Dampener);
         }
-
         #region 一些私有函数       
         protected override bool DisabledRotation => (!GyrosIsReady || MainCtrl.NullMainCtrl);
         protected override Vector4 RotationCtrlLines => new Vector4(0, 0, MainCtrl.RotateIndicator.X, MainCtrl.RotateIndicator.Y);

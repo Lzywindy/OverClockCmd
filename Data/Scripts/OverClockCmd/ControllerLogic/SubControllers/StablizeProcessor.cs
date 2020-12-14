@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Sandbox.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     using static Utils;
@@ -27,15 +26,6 @@ namespace SuperBlocks
         public Vector3 LinearVelocity { get { return Me.CubeGrid.Physics.LinearVelocity; } }
         public Vector3 AngularVelocity { get { return Me.CubeGrid.Physics.AngularVelocity; } }
         public Vector3 Gravity { get { return Me.CubeGrid.Physics.Gravity; } }
-
-
-
-
-
-
-
-
-
         protected Vector3? 参考平面处理(float 向前信号, float 向右信号, float 最大限速)
         {
             Vector3? current_velocity_linear = null;
@@ -56,7 +46,6 @@ namespace SuperBlocks
                     法向量,
                     PoseMode) * MaxReactions_AngleV);
         }
-
         protected Vector3? 参考平面决策(Vector3? current_velocity_linear, Vector3? current_gravity)
         {
             if (!current_gravity.HasValue)

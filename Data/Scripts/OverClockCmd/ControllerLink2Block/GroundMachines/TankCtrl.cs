@@ -1,7 +1,6 @@
 ﻿using VRage.Game.Components;
 using VRage.Game;
 using Sandbox.ModAPI;
-
 namespace SuperBlocks.Controller
 {
     [MyEntityComponentDescriptor(typeof(MyObjectBuilder_TerminalBlock), false, "TankTrackControl", "SmallTankTrackControl")]
@@ -16,7 +15,6 @@ namespace SuperBlocks.Controller
                 return (target.Control as ILandVehicle).IsTank;
             return false;
         }
-
         public static void IsTank_Setter(IMyTerminalBlock Me, bool value)
         {
             var target = Me.GameLogic.GetAs<TankCtrl>();
@@ -33,7 +31,6 @@ namespace SuperBlocks.Controller
             if (target.Control is ILandVehicle)
                 (target.Control as ILandVehicle).IsTank = !(target.Control as ILandVehicle).IsTank;
         }
-
         protected override void InitController()
         {
             Control = new TankController(Entity as IMyTerminalBlock);

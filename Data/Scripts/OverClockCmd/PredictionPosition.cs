@@ -2,7 +2,6 @@
 using System;
 using VRage.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks
 {
     public partial class PredictionPosition
@@ -130,6 +129,5 @@ namespace SuperBlocks
         private float _精度缩放 = 1f;
         private float _瞄准微调 = 1f;
         private float _弹头速度 = 200f;
-
     }
 }
