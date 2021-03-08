@@ -33,6 +33,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="ProtoBuf.Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>L:\Steam\steamapps\common\SpaceEngineers\Bin64\ProtoBuf.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoBuf.Net.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>L:\Steam\steamapps\common\SpaceEngineers\Bin64\ProtoBuf.Net.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Sandbox.Common">
       <HintPath>L:\Steam\steamapps\common\SpaceEngineers\Bin64\Sandbox.Common.dll</HintPath>
     </Reference>
@@ -150,18 +158,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicGameLogics\BasicInfoService.cs" />
-    <Compile Include="TurretController\WeaponInfoService.cs" />
-    <Compile Include="TurretController\MyBallisticComputer4ShipDirectWeapon.cs" />
+    <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalControlCombobox.cs" />
+    <Compile Include="Controllers\BasicScriptController\MyGridProgram4ISConvert.cs" />
+    <Compile Include="Controllers\UniversalController\UniversalController.AdvanceFucntions.cs" />
+    <Compile Include="Controllers\UniversalController\UniversalController.Variables.cs" />
+    <Compile Include="Controllers\UniversalController\UniversalController.CommonFucntions.cs" />
+    <Compile Include="Controllers\UniversalController\UniversalController.cs" />
+    <Compile Include="Controllers\UniversalController\UniversalController.OuterControlLines.cs" />
+    <Compile Include="Controllers\UniversalController\UniversalController.PrivateSignals.cs" />
+    <Compile Include="Controllers\UniversalController\UniversalControllerService.cs" />
+    <Compile Include="TargetManarge\MyWeaponSystemBinding.cs" />
+    <Compile Include="TargetManarge\TargetsTrackManage.cs" />
+    <Compile Include="BasicGameLogics\Updatings\StepTimer.cs" />
+    <Compile Include="BasicGameLogics\Updatings\IUpdates.cs" />
+    <Compile Include="TargetManarge\Target.cs" />
+    <Compile Include="BasicGameLogics\TargetConfig.cs" />
+    <Compile Include="BasicGameLogics\MyTargetPredictEnt.cs" />
+    <Compile Include="TargetManarge\MyRadarTargets.cs" />
+    <Compile Include="BasicGameLogics\Updatings\UpdateableClass.cs" />
+    <Compile Include="TargetManarge\MyTurretBinding.cs" />
+    <Compile Include="TargetManarge\TurretCtrl.cs" />
+    <Compile Include="TurretController\RadarSystemAPIs.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetPredict.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetFilterManager.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetManager.cs" />
-    <Compile Include="TurretController\MyTargetPredictDevice.cs" />
-    <Compile Include="TurretController\MyTurretController.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateProperty.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalFence.cs" />
-    <Compile Include="ControllerLink2Block\BaseClasses\InformationDeviceBase.cs" />
-    <Compile Include="ControllerLink2Block\FlyMachines\AeroCtrl.cs" />
-    <Compile Include="ControllerLink2Block\BaseClasses\ControlBase.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalAction.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalButton.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalCheckbox.cs" />
@@ -169,55 +191,18 @@
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalSliderBar.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalSwitch.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalTextBox.cs" />
-    <Compile Include="ControllerLink2Block\BaseClasses\CtrlInterface.cs" />
-    <Compile Include="ControllerLink2Block\GroundMachines\PlanetVech.cs" />
-    <Compile Include="ControllerLink2Block\GroundMachines\ShipCtrl.cs" />
-    <Compile Include="ControllerLink2Block\WeaponCtrls\BallisticCtrl.cs" />
-    <Compile Include="ControllerLogic\CannonTurret\BallisticComputer.cs" />
-    <Compile Include="ControllerLogic\CannonTurret\CannonTurret.cs" />
-    <Compile Include="FunctionService\InformationService.cs" />
-    <Compile Include="FunctionService\Jammer.cs" />
-    <Compile Include="FunctionService\LAN_Network.cs" />
-    <Compile Include="FunctionService\WAN_Network.cs" />
-    <Compile Include="BasicGameLogics\MySuperBlockProgram.cs" />
-    <Compile Include="RadarBlockLogic.cs" />
-    <Compile Include="RadarBasicLogic\RadarSystemBasic.cs" />
-    <Compile Include="TargetLocker_CameraBlock.cs" />
-    <Compile Include="TargetLocker_CameraBlock_Server.cs" />
     <Compile Include="TurretController\WeaponModual\MyTurretRotateManage.cs" />
     <Compile Include="TurretController\WeaponModual\MyWeaponManager.cs" />
     <Compile Include="UsefulFunctions\ConfigManager.cs" />
-    <Compile Include="ControllerLogic\CannonTurret\TargetManager.cs" />
-    <Compile Include="ControllerLogic\ControllerBase\FlyingMachineCtrl_Base.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\AeroMachines\AirplaneController.cs" />
-    <Compile Include="ControllerLogic\ControllerBase\ControllerManageBase.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\AeroMachines\HelicopterController.cs" />
-    <Compile Include="ControllerLogic\ControllerInterface\ControllerInterface.cs" />
-    <Compile Include="ControllerLogic\ControllerBase\PlanetVehicle_Base.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\SeaMachines\ShipController.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\SpaceMachines\SpaceShipCtrl.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\SpaceMachines\VTOLController.cs" />
-    <Compile Include="ControllerLogic\SubControllers\GyroControllerSystem.cs" />
-    <Compile Include="ControllerLogic\SubControllers\SignalController.cs" />
-    <Compile Include="ControllerLogic\SubControllers\StablizeProcessor.cs" />
-    <Compile Include="ControllerLogic\SubControllers\ThrustControllerSystem.cs" />
-    <Compile Include="ControllerLink2Block\BaseClasses\FlyMachineCtrl.cs" />
-    <Compile Include="ControllerLink2Block\FlyMachines\HeliCtrl.cs" />
-    <Compile Include="ModAPISample.cs" />
-    <Compile Include="GameBlockLogicOverrideSample.cs" />
     <Compile Include="ParameterClass\ParametersAndConstants.cs" />
-    <Compile Include="FunctionService\ControllerService.cs" />
-    <Compile Include="ControllerLink2Block\FlyMachines\SpaceCtrl.cs" />
-    <Compile Include="ControllerLink2Block\GroundMachines\TankCtrl.cs" />
-    <Compile Include="PredictionPosition.cs" />
-    <Compile Include="UsefulFunctions\PB_Utils_LzywindyApis.cs" />
-    <Compile Include="UsefulFunctions\ProcessPlaneFunctions.cs" />
-    <Compile Include="ControllerLogic\ImplementsControllers\LandMachines\TankController.cs" />
+    <Compile Include="UsefulFunctions\UsefulDefinitions.cs" />
     <Compile Include="UsefulFunctions\Utils.cs" />
-    <Compile Include="ControllerLogic\ControllerBase\VehicleController_Base.cs" />
-    <Compile Include="ControllerLink2Block\FlyMachines\VTOLCtrl.cs" />
-    <Compile Include="ControllerLink2Block\BaseClasses\VehcCtrl.cs" />
-    <Compile Include="VitrualController.cs" />
+    <Compile Include="UsefulFunctions\MyConfigs.cs" />
+    <Compile Include="UsefulFunctions\Utils.PoseProcessFuncs.cs" />
+    <Compile Include="WeaponThread\script\Slave.cs" />
+    <Compile Include="WeaponThread\script\WeaponCompile.cs" />
+    <Compile Include="WeaponThread\script\WeaponCoreApi.cs" />
+    <Compile Include="WeaponThread\script\WeaponStructure.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

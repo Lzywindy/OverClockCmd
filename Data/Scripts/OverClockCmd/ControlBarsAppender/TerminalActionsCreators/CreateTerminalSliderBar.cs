@@ -16,7 +16,10 @@ namespace SuperBlocks.Controller
             triggle.Getter = GetterFunc;
             triggle.Setter = SetterFunc;
             triggle.Writer = WriterFunc;
-            triggle.SetLimits(Min, Max);
+            if (Max > 1e5f)
+                triggle.SetLogLimits(Min, Max);
+            else
+                triggle.SetLimits(Min, Max);
             triggle.Enabled = Filter;
             triggle.Visible = Filter;
             triggle.Title = CtrlNM;
@@ -28,22 +31,12 @@ namespace SuperBlocks.Controller
         {
             if (DisabledAddAction(block)) { return; }
             ActionsCreated = true;
-            property = new CreateProperty<float, TBlockType>(ControlID, Filter, GetterFunc, SetterFunc);
             {
                 var triggle = MyAPIGateway.TerminalControls.CreateAction<TBlockType>($"{ControlID} Increase");
                 triggle.Action = IncreaseFunc;
                 triggle.Enabled = Filter;
                 triggle.Name = CtrlNM_S;
                 triggle.Icon = @"Textures\GUI\Icons\Actions\Increase.dds";
-                MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
-                actions.Add(triggle);
-            }
-            {
-                var triggle = MyAPIGateway.TerminalControls.CreateAction<TBlockType>($"{ControlID} Decrease");
-                triggle.Action = DecreaseFunc;
-                triggle.Enabled = Filter;
-                triggle.Name = CtrlNM_S;
-                triggle.Icon = @"Textures\GUI\Icons\Actions\Decrease.dds";
                 MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
                 actions.Add(triggle);
             }

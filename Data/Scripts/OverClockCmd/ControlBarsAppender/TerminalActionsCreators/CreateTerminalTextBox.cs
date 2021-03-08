@@ -22,11 +22,6 @@ namespace SuperBlocks.Controller
             MyAPIGateway.TerminalControls.AddControl<TBlockType>(triggle);
             controls.Add(triggle);
         }
-        public override void CreateAction(IMyTerminalBlock block, List<IMyTerminalAction> actions)
-        {
-            if (DisabledAddAction(block)) { return; }
-            ActionsCreated = true;
-            property = new CreateProperty<StringBuilder, TBlockType>(ControlID, Filter, GetterFunc, SetterFunc);
-        }
     }
+
 }

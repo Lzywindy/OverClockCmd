@@ -1,52 +1,9 @@
 ﻿using System;
-using VRage.Game.ModAPI;
 using VRageMath;
-using VRage;
 namespace SuperBlocks.Controller
 {
-    public struct MyTargetPredict
+    public static class MyTargetPredict
     {
-        public MyTargetPredict(float _Delta_Precious, float _Delta_Time, int _CalcCount, float _V_project_length, float _Cannon_Offset)
-        {
-            this._Delta_Precious = _Delta_Precious;
-            this._Delta_Time = _Delta_Time;
-            this._CalcCount = _CalcCount;
-            this._V_project_length = _V_project_length;
-            this._Cannon_Offset = _Cannon_Offset;
-            Ignore_Self_Velocity = false;
-            Ignore_Gravity = false;
-            IsDirectWeapon = false;
-        }
-        public void Running(MyTuple<Vector3D?, Vector3D?> TargetInfo, IMyCubeGrid CurrentGrid, Vector3D? FirePosition, Vector3D? Current_CannonDirection, ref Vector3D? V_project, ref double? t_n)
-        {
-            Vector3D? TargetPosition = TargetInfo.Item1;
-            Vector3D? TargetVelocity = IsDirectWeapon ? TargetInfo.Item2 : null;
-            Vector3D? SelfVelocity = Ignore_Self_Velocity ? null : CurrentGrid?.Physics?.LinearVelocity;
-            Vector3D? Gravity = Ignore_Gravity ? null : CurrentGrid?.Physics?.Gravity;
-            if (Current_CannonDirection == null) return;
-            GunDirection(TargetPosition, FirePosition, TargetVelocity, SelfVelocity, Gravity, V_project_length, ref V_project, ref t_n, Current_CannonDirection.Value, CalcCount, Delta_Time, Delta_Precious);
-        }
-        public void Set_Ignore_Self_Velocity(bool _Ignore_Self_Velocity) { Ignore_Self_Velocity = _Ignore_Self_Velocity; }
-        public void Set_Ignore_Gravity(bool _Ignore_Gravity) { Ignore_Gravity = _Ignore_Gravity; }
-        public void Set_IsDirectWeapon(bool _IsDirectWeapon) { IsDirectWeapon = _IsDirectWeapon; }
-        public void Set_CalcCount(int _CalcCount) { CalcCount = _CalcCount; }
-        public void Set_V_project_length(float _V_project_length) { V_project_length = _V_project_length; }
-        public void Set_Delta_Precious(float _Delta_Precious) { Delta_Precious = _Delta_Precious; }
-        public void Set_Delta_Time(float _Delta_Time) { Delta_Time = _Delta_Time; }
-        public void Set_Cannon_Offset(float _Cannon_Offset) { Cannon_Offset = _Cannon_Offset; }
-        public bool Ignore_Self_Velocity { get; private set; }
-        public bool Ignore_Gravity { get; private set; }
-        public bool IsDirectWeapon { get; private set; }
-        public int CalcCount { get { return _CalcCount; } private set { _CalcCount = Math.Max(value, 1); } }
-        public float V_project_length { get { return Math.Max(_V_project_length, 25f); } private set { _V_project_length = Math.Max(value, 25f); } }
-        public float Delta_Precious { get { return _Delta_Precious; } private set { _Delta_Precious = Math.Abs(value); } }
-        public float Delta_Time { get { return _Delta_Time; } private set { _Delta_Time = MathHelper.Clamp(value, 0.9f, 1.1f); } }
-        public float Cannon_Offset { get { return _Cannon_Offset; } private set { _Cannon_Offset = MathHelper.Clamp(value, -50f, 50f); } }
-        private float _Delta_Precious;
-        private float _Delta_Time;
-        private int _CalcCount;
-        private float _V_project_length;
-        private float _Cannon_Offset;
         public static void GunDirection(Vector3D? TargetPosition, Vector3D? SelfPosition, Vector3D? TargetVelocity, Vector3D? SelfVelocity, Vector3D? Gravity, double V_project_length, ref Vector3D? V_project_direction, ref double? t_n, Vector3D CannonDirection, int CalcCount = 4, float Delta_Time = 1, float Delta_Precious = 1)
         {
             if (!TargetPosition.HasValue || !SelfPosition.HasValue) return;

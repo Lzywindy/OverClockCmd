@@ -16,6 +16,7 @@ namespace SuperBlocks.Controller
             triggle.Enabled = Filter;
             triggle.Visible = Filter;
             triggle.Title = CtrlNM;
+            triggle.Action = TriggerFunc;
             triggle.SupportsMultipleBlocks = true;
             MyAPIGateway.TerminalControls.AddControl<TBlockType>(triggle);
             controls.Add(triggle);
@@ -32,12 +33,6 @@ namespace SuperBlocks.Controller
                 triggle.Icon = @"Textures\GUI\Icons\Actions\Start.dds";
                 MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
                 actions.Add(triggle);
-            }
-            {
-                var Property = MyAPIGateway.TerminalControls.CreateProperty<bool, TBlockType>($"Value_{ControlID}");
-                Property.Getter = GetterFunc;
-                Property.Setter = SetterFunc;
-                Property.Enabled = Filter;
             }
         }
     }

@@ -1,6 +1,4 @@
 ﻿using Sandbox.ModAPI;
-using System.Collections.Generic;
-using System.Linq;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 namespace SuperBlocks.Controller
@@ -54,22 +52,20 @@ namespace SuperBlocks.Controller
                 AimAtMeteros = value.Contains("Meteros");
             }
         }
-        public void SetIgnoredEntityList(HashSet<IMyCubeGrid> CubeGrids)
-        {
-            if (CubeGrids == null || CubeGrids.Count < 1) { EntityIds = null; return; }
-            EntityIds = new HashSet<long>(CubeGrids.ToList().ConvertAll(CubeGrid => CubeGrid.EntityId));
-        }
         public bool EntityFilter(IMyEntity ent)
         {
             if (ent == null) return false;
+            if (ent is IMyFloatingObject || ent is IMyVoxelBase) return false;
             if ((ent is IMyCharacter) && (!AimAtCharactors)) return false;
             if (Utils.是否是导弹(ent) && (!AimAtMissiles)) return false;
             if ((ent is IMyMeteor) && (!AimAtMeteros)) return false;
-            return (!(EntityIds?.Contains(ent.EntityId) ?? false));
+            if ((ent is IMyCubeGrid) && (Utils.统计网格中通电的方块(ent as IMyCubeGrid) < 4)) return false;
+            return true;
         }
         public bool BlockFilter(IMyTerminalBlock block)
         {
             if (block == null) return false;
+            if (!block.IsFunctional) return false;
             if (AimAtAllFunctionalBlocks) return true;
             if ((block is IMyLargeTurretBase) && (!AimAtTurret)) return false;
             if ((block is IMySmallGatlingGun || block is IMySmallMissileLauncher || block is IMySmallMissileLauncherReload) && (!AimAtGuns)) return false;
@@ -81,7 +77,6 @@ namespace SuperBlocks.Controller
             if ((block is IMyBatteryBlock) && (!AimAtBatteries)) return false;
             return true;
         }
-        public HashSet<long> EntityIds { get;private set; }
         private bool AimAtTurret { get; set; }
         private bool AimAtGuns { get; set; }
         private bool AimAtThrusts { get; set; }

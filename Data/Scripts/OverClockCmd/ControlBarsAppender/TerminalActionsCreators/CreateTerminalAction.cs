@@ -26,7 +26,6 @@ namespace SuperBlocks.Controller
         protected bool DisabledAddControl(IMyTerminalBlock block) { return (ControlsCreated || (!Filter(block))); }
         protected bool DisabledAddAction(IMyTerminalBlock block) { return (ActionsCreated || (!Filter(block))); }
         protected string Title { get; private set; }
-        protected CreateProperty<ValueType, TBlockType> property { get; set; }
         public Func<IMyTerminalBlock, bool> Filter { get; private set; }
     }
 }

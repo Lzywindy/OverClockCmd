@@ -38,7 +38,6 @@ namespace SuperBlocks.Controller
                 MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
                 actions.Add(triggle);
             }
-            property = new CreateProperty<bool, TBlockType>(ControlID, Filter, GetterFunc, SetterFunc);
         }
     }
 }

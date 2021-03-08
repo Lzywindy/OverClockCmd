@@ -2,18 +2,26 @@
 using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRageMath;
-using System.Text;
-using VRage.Game.Components;
 using VRage.Game.ModAPI;
 using VRage.Game.Entity;
-using VRage;
 using VRage.ModAPI;
 using VRage.Game;
 using Sandbox.Game.Entities;
 using System.Linq;
-
 namespace SuperBlocks
 {
+    public static partial class Utils
+    {
+        public static bool IsNull(Vector3? Value) => Value == null || Value.Value == Vector3.Zero;
+        public static bool IsNull(Vector3D? Value) => Value == null || Value.Value == Vector3D.Zero;
+        public static bool IsNullCollection<T>(ICollection<T> Value) => Value == null || Value.Count < 1;
+        public static bool IsNull<T>(T Value) where T : class => Value == null;
+        public static T GetT<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class { List<T> Items = GetTs<T>(gridTerminalSystem, requst); if (IsNullCollection(Items)) return null; else return Items.First(); }
+        public static List<T> GetTs<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class { if (gridTerminalSystem == null) return null; List<T> Items = new List<T>(); gridTerminalSystem.GetBlocksOfType<T>(Items, requst); return Items; }
+        public static Matrix GetWorldMatrix(IMyTerminalBlock ShipController) { Matrix me_matrix; ShipController.Orientation.GetMatrix(out me_matrix); return me_matrix; }
+        public static bool ExceptKeywords(IMyTerminalBlock block) { foreach (var item in BlackList_ShipController) { if (block.BlockDefinition.SubtypeId.Contains(item)) return false; } return true; }
+        private static readonly string[] BlackList_ShipController = new string[] { "Hover", "Torpedo", "Torp", "Payload", "Missile", "At_Hybrid_Main_Thruster_Large", "At_Hybrid_Main_Thruster_Small", };
+    }
     public static partial class Utils
     {
         public static Guid MyGuid { get; } = new Guid("5F1A43D3-02D3-C959-2413-5922F4EEB917");
@@ -45,40 +53,18 @@ namespace SuperBlocks
             }
             return configpaires;
         }
-        public static Matrix GetWorldMatrix(IMyTerminalBlock Me)
+        public static IMyTerminalBlock GetBlock(IMyGridTerminalSystem gridTerminalSystem, long EntIds = 0)
         {
-            Matrix me_matrix;
-            Me.Orientation.GetMatrix(out me_matrix);
-            return me_matrix;
+            return gridTerminalSystem?.GetBlockWithId(EntIds) as IMyTerminalBlock;
         }
-        public static Vector3 ProjectOnPlane(Vector3 direction, Vector3 planeNormal)
-        {
-            return Vector3.ProjectOnPlane(ref direction, ref planeNormal);
-        }
-        public static float Dampener(float value) { return value * Math.Abs(value); }
-        public static Vector3 Dampener(Vector3 value) { return value * Math.Abs(value.Length()); }
-        public static T GetT<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class
+        public static List<IMyTerminalBlock> GetBlocks(IMyGridTerminalSystem gridTerminalSystem, List<long> EntIds = null)
         {
             if (gridTerminalSystem == null) return null;
-            List<T> Items = new List<T>();
-            gridTerminalSystem.GetBlocksOfType<T>(Items, requst);
-            if (Items.Count > 0)
-                return Items[0];
-            else
-                return null;
-        }
-        public static List<T> GetTs<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class
-        {
-            if (gridTerminalSystem == null) return null;
-            List<T> Items = new List<T>();
-            gridTerminalSystem.GetBlocksOfType<T>(Items, requst);
-            return Items;
+            return EntIds?.ConvertAll(id => gridTerminalSystem.GetBlockWithId(id) as IMyTerminalBlock);
         }
         public static T GetT<T>(IMyBlockGroup blockGroup, Func<T, bool> requst = null) where T : class
         {
-            if (blockGroup == null) return null;
-            List<T> Items = new List<T>();
-            blockGroup.GetBlocksOfType<T>(Items, requst);
+            List<T> Items = GetTs(blockGroup, requst);
             if (Items.Count > 0)
                 return Items[0];
             else
@@ -90,93 +76,6 @@ namespace SuperBlocks
             List<T> Items = new List<T>();
             blockGroup.GetBlocksOfType<T>(Items, requst);
             return Items;
-        }
-        public static float Calc_Direction_Vector(Vector3 vector, Vector3 direction)
-        {
-            return Vector3.Normalize(direction).Dot(vector);
-        }
-        public static Vector3 ScaleVectorTimes(Vector3 vector, float Times = 10f)
-        {
-            return vector * Times;
-        }
-    }
-    public static partial class Utils
-    {
-        /// <summary>
-        /// 处理姿态函数
-        /// </summary>
-        /// <param name="_EnabledCuriser">允许巡航</param>
-        /// <param name="Me">控制采样的方块</param>
-        /// <param name="RotationCtrlLines">旋转信号控制</param>
-        /// <param name="ForwardDirection">方向向量</param>
-        /// <param name="InitAngularDampener">角速度阻尼乘倍值</param>
-        /// <param name="AngularDampeners">角速度阻尼</param>
-        /// <param name="ForwardOrUp">巡航还是平飞模式</param>
-        /// <param name="PoseMode">采用朝向-平面模式还是法向量-平面模式</param>
-        /// <param name="MaximumSpeedLimited">最大速度限制（直升机模式）</param>
-        /// <param name="MaxReactions_AngleV">最大旋转角速度</param>
-        /// <param name="Need2CtrlSignal">参考平面接受控制信号</param>
-        /// <param name="LocationSensetive">位置敏感度</param>
-        /// <param name="SafetyStage">安全角度等级</param>
-        /// <param name="IgnoreForwardVelocity">忽略向前的速度</param>
-        /// <param name="Refer2Velocity">依赖速度</param>
-        /// <param name="Refer2Gravity">依赖重力</param>
-        /// <param name="DisabledRotation">是否禁止旋转</param>
-        /// <param name="ForwardDirectionOverride">重载朝向控制信号</param>
-        /// <param name="PlaneNormalOverride">重载平面控制信号</param>
-        /// <returns>陀螺仪控制信号</returns>
-        public static Vector3? ProcessRotation(bool _EnabledCuriser, IMyTerminalBlock Me, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, bool ForwardOrUp = false, bool PoseMode = false, float MaximumSpeedLimited = 100f, float MaxReactions_AngleV = 1f, bool Need2CtrlSignal = true, float LocationSensetive = 1f, float SafetyStage = 1f, bool IgnoreForwardVelocity = true, bool Refer2Velocity = true, bool Refer2Gravity = true, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null, Vector3? PlaneNormalOverride = null)
-        {
-            if (Me == null || DisabledRotation) return null;
-            Vector3? current_gravity = GetGravity(Me, Refer2Gravity);
-            //参考平面法线
-            //飞船以该方块的down方向与实际的down方向对齐
-            Vector3? 参照面法线;
-            if (PlaneNormalOverride.HasValue && PlaneNormalOverride.Value != Vector3.Zero)
-            {
-                参照面法线 = PlaneNormalOverride;
-            }
-            else
-            {
-                Vector3? current_velocity_linear = Refer2Velocity ? ((Vector3?)(ProjectLinnerVelocity_CockpitForward(Me, Refer2Velocity, IgnoreForwardVelocity)
-                  - ((Need2CtrlSignal ? (Vector3.ClampToSphere((-Me.WorldMatrix.Forward * RotationCtrlLines.X + Me.WorldMatrix.Right * RotationCtrlLines.Y), 1) * MaximumSpeedLimited) : Vector3.Zero)))) : null;
-                if (!current_gravity.HasValue)
-                    参照面法线 = current_velocity_linear;
-                else if (!current_velocity_linear.HasValue)
-                    参照面法线 = current_gravity;
-                else
-                    参照面法线 = Vector3.ClampToSphere(current_velocity_linear.Value * LocationSensetive + Dampener(current_gravity.Value) * SafetyStage, 1f);
-            }
-            //如果参考面法线为空，则让飞船恢复飞控控制之前的控制方式
-            if (!参照面法线.HasValue) { return null; }
-            //朝向控制
-            //用来纠正偏航
-            Vector3 朝向;
-            if (ForwardDirectionOverride.HasValue && ForwardDirectionOverride.Value != Vector3.Zero)
-            {
-                朝向 = ForwardDirectionOverride.Value + RotationCtrlLines.W * Me.WorldMatrix.Right - RotationCtrlLines.Z * Me.WorldMatrix.Up;
-            }
-            else
-            {
-                if (RotationCtrlLines.W != 0 || RotationCtrlLines.Z != 0)
-                    ForwardDirection = Me.WorldMatrix.Forward;
-                if (_EnabledCuriser && ForwardOrUp && (current_gravity != null))
-                {
-                    ForwardDirection = ProjectOnPlane(ForwardDirection, current_gravity.Value);
-                    if (ForwardDirection == Vector3.Zero)
-                        ForwardDirection = ProjectOnPlane(Me.WorldMatrix.Down, current_gravity.Value);
-                }
-                if (ForwardDirection != Vector3.Zero)
-                    ForwardDirection = ScaleVectorTimes(Vector3.Normalize(ForwardDirection));
-                朝向 = ForwardDirection + RotationCtrlLines.W * Me.WorldMatrix.Right - RotationCtrlLines.Z * Me.WorldMatrix.Up;
-            }
-            //完成法线和朝向的对齐之后，就可以开始控制陀螺仪工作了
-            //加入角速度速度阻尼以免转向过快导致无法控制
-            return (ProcessDampeners(Me, InitAngularDampener, AngularDampeners) + (new Vector3(
-                Dampener(PoseMode && (参照面法线.Value != Vector3.Zero) ? Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Backward) : Calc_Direction_Vector(朝向, Me.WorldMatrix.Down)),
-                Dampener(SetupAngle(Calc_Direction_Vector(朝向, Me.WorldMatrix.Right), Calc_Direction_Vector(朝向, Me.WorldMatrix.Forward))),
-                (参照面法线.Value != Vector3.Zero) ? Dampener(SetupAngle(Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Left), Calc_Direction_Vector(参照面法线.Value, Me.WorldMatrix.Down))) : 0
-                ) * MaxReactions_AngleV));
         }
     }
     public static partial class Utils
@@ -287,18 +186,12 @@ namespace SuperBlocks
             if (TerminalBlock == null || TerminalBlock.CubeGrid == null || TerminalBlock.CubeGrid.Physics == null || (!EnableToGet) || TerminalBlock.CubeGrid.Physics.Gravity == Vector3.Zero) return null;
             return TerminalBlock.CubeGrid.Physics.Gravity;
         }
-        public static float SetupAngle(float current_angular_local, float current_angular_add)
-        {
-            if (Math.Abs(current_angular_local) < 0.005f && current_angular_add < 0f)
-                return current_angular_add;
-            return current_angular_local;
-        }
         public static Vector3 ProjectLinnerVelocity_CockpitForward(IMyTerminalBlock TerminalBlock, bool EnableToGet = true, bool IgnoreForwardVelocity = false)
         {
             if (TerminalBlock == null) return Vector3.Zero;
             var LinearVelocity = GetLinearVelocity(TerminalBlock, EnableToGet) ?? Vector3.Zero;
             if (IgnoreForwardVelocity)
-                return ProjectOnPlane(LinearVelocity, TerminalBlock.WorldMatrix.Forward);
+                return PoseProcessFuncs.ProjectOnPlane(LinearVelocity, TerminalBlock.WorldMatrix.Forward);
             else
                 return LinearVelocity;
         }
@@ -431,6 +324,153 @@ namespace SuperBlocks
                 blocks.UnionWith(slimBlocks);
             }
             return blocks.ToList().ConvertAll(block => block as IMyTerminalBlock);
+        }
+        public static void RotorSetDefault<T>(T Motor, float Max_Speed = 30) where T : Sandbox.ModAPI.Ingame.IMyMotorStator
+        {
+            if (Motor == null || Motor.TopGrid == null) return;
+            Motor.TargetVelocityRad = -MathHelper.Clamp(MathHelper.WrapAngle(Motor.Angle), -Max_Speed, Max_Speed);
+        }
+        public static void RotorsSetDefault<T>(List<T> Motors, float Max_Speed = 30) where T : Sandbox.ModAPI.Ingame.IMyMotorStator
+        {
+            if (Motors == null || Motors.Count < 1) return;
+            foreach (var Motor in Motors) { RotorSetDefault(Motor, Max_Speed); }
+        }
+        public static bool DisabledTerminalBlock<T>(T Block) where T : Sandbox.ModAPI.Ingame.IMyTerminalBlock
+        {
+            return (Block == null || !Block.IsFunctional);
+        }
+        public static bool DisabledTerminalBlocks<T>(ICollection<T> Blocks) where T : Sandbox.ModAPI.Ingame.IMyTerminalBlock
+        {
+            return (Blocks == null || Blocks.Count < 1 || Blocks.All(m => DisabledTerminalBlock(m)));
+        }
+        public static bool DisabledMotorRotor<T>(T Motor) where T : Sandbox.ModAPI.Ingame.IMyMotorStator
+        {
+            return (Motor == null || Motor.TopGrid == null || !Motor.IsFunctional);
+        }
+        public static bool DisabledMotorRotors<T>(ICollection<T> Motors) where T : Sandbox.ModAPI.Ingame.IMyMotorStator
+        {
+            return (Motors == null || Motors.Count < 1 || Motors.All(m => DisabledMotorRotor(m)));
+        }
+        public static bool IsNullCollection<T>(IEnumerable<T> Value)
+        {
+            return Value == null || Value.Count() < 1;
+        }
+        public static int CycleInteger(int value, int lower, int upper)
+        {
+            return (value >= upper) ? lower : (value < lower) ? (upper - 1) : value;
+        }
+        public static void RemoveNullBlocks(List<IMyTerminalBlock> Blocks)
+        {
+            if (IsNullCollection(Blocks)) return;
+            if (Blocks.Count > 0)
+                Blocks.RemoveAll(block => block == null || block.Closed || block.MarkedForClose);
+        }
+        public static void RemoveNullConfigs<T>(List<IMyTerminalBlock> Blocks, Dictionary<long, T> BlockConfigs)
+        {
+            if (IsNullCollection(Blocks)) return;
+            Blocks.RemoveAll(block => block == null || block.Closed || block.MarkedForClose);
+            if (IsNullCollection(Blocks)) { BlockConfigs.Clear(); return; }
+            var totalids = new HashSet<long>(BlockConfigs.Keys);
+            totalids.ExceptWith(Blocks.ConvertAll(block => block.EntityId));
+            foreach (var totalid in totalids) BlockConfigs.Remove(totalid);
+        }
+        public static void AddConfigs<T>(IMyTerminalBlock Me, Dictionary<long, T> BlockConfigs, T Config)
+        {
+            if (IsNull(Me) || IsNullCollection(BlockConfigs)) return;
+            if (!BlockConfigs.ContainsKey(Me.EntityId))
+                BlockConfigs.Add(Me.EntityId, Config);
+        }
+        public static void RemoveConfig<T>(IMyTerminalBlock Me, Dictionary<long, T> BlockConfigs)
+        {
+            if (IsNull(Me) || IsNullCollection(BlockConfigs)) return;
+            if (BlockConfigs.ContainsKey(Me.EntityId))
+                BlockConfigs.Remove(Me.EntityId);
+        }
+        public static int GetIndex<T>(List<T> entities, T entity, bool Inc, bool Invert) where T : IMyEntity
+        {
+            if (IsNullCollection(entities)) return -1;
+            if (entity == null) return Invert ? entities.Count - 1 : 0;
+            var index = entities.IndexOf(entity);
+            if (index < 0) return -1;
+            return CycleInteger(index + ((!Inc) ? 0 : Invert ? -1 : 1), 0, entities.Count);
+        }
+        public static bool NullEntity<T>(T Ent) where T : IMyEntity
+        {
+            return Ent == null || Ent.Closed || Ent.MarkedForClose;
+        }
+        public static void CycleEntity<T>(int mode, List<T> Collection, ref int index)
+        {
+            if (IsNullCollection(Collection)) return;
+            switch (mode)
+            {
+                case 1: index = 0; return;
+                case 2: index = Collection.Count - 1; return;
+                case 3: index = CycleInteger(index + 1, 0, Collection.Count); return;
+                case 4: index = CycleInteger(index - 1, 0, Collection.Count); return;
+                default: index = CycleInteger(index, 0, Collection.Count); return;
+            }
+        }
+        public static bool NonTargetBlock(IMyTerminalBlock block)
+        {
+            return block == null || !block.IsFunctional || block.Closed || block.MarkedForClose;
+        }
+        public static List<T> GetBlocksFromGrid<T>(IMyCubeGrid Grid, Func<IMySlimBlock, bool> Filter = null) where T : class
+        {
+            if (Grid == null) return null;
+            List<IMySlimBlock> blocks = new List<IMySlimBlock>();
+            Grid.GetBlocks(blocks, Filter);
+            return blocks.ConvertAll(b => b as T);
+        }
+        public static List<IMyModelDummy> GetDummies(IMyEntity entity, string DummiesNMTag)
+        {
+            Dictionary<string, IMyModelDummy> muzzle_projectiles = new Dictionary<string, IMyModelDummy>();
+            List<IMyModelDummy> muzzle_projectiles_l = new List<IMyModelDummy>();
+            entity?.Model?.GetDummies(muzzle_projectiles);
+            if (IsNullCollection(muzzle_projectiles)) return muzzle_projectiles_l;
+            var keys = muzzle_projectiles.Keys.Where(k => k.Contains(DummiesNMTag));
+            if (IsNullCollection(keys)) return muzzle_projectiles_l;
+            foreach (var key in keys) { muzzle_projectiles_l.Add(muzzle_projectiles[key]); }
+            return muzzle_projectiles_l;
+        }
+    }
+    public static partial class Utils
+    {
+        public static class MyPlanetInfoAPI
+        {
+            public static MyPlanet GetNearestPlanet(Vector3D MyPosition) { return MyGamePruningStructure.GetClosestPlanet(MyPosition); }
+            public static Vector3D? GetNearestPlanetPosition(Vector3D MyPosition) { return MyGamePruningStructure.GetClosestPlanet(MyPosition)?.PositionComp?.GetPosition(); }
+            public static double? GetSealevel(Vector3D MyPosition)
+            {
+                var planet = MyGamePruningStructure.GetClosestPlanet(MyPosition);
+                if (planet == null || GetCurrentGravity(MyPosition) == Vector3.Zero) return null;
+                return (MyPosition - planet.PositionComp.GetPosition()).Length() - planet.AverageRadius;
+            }
+            public static double? GetSurfaceHight(Vector3D MyPosition)
+            {
+                var planet = MyGamePruningStructure.GetClosestPlanet(MyPosition);
+                if (planet == null || GetCurrentGravity(MyPosition) == Vector3.Zero) return null;
+                var position = planet.GetClosestSurfacePointGlobal(ref MyPosition);
+                return Vector3D.Distance(position, MyPosition);
+            }
+            public static Vector3 GetCurrentGravity(Vector3D Position) { float mult; return MyAPIGateway.Physics.CalculateNaturalGravityAt(Position, out mult); }
+            public static Vector3 GetCurrentGravity(Vector3D Position, out float mult) { return MyAPIGateway.Physics.CalculateNaturalGravityAt(Position, out mult); }
+            public struct NearestPlanetInfo
+            {
+                public float PlanetRadius { get; private set; }
+                public float AtmoAtt { get; private set; }
+                public MyPlanet Planet { get; private set; }
+                public static NearestPlanetInfo? CtreateNearestPlanetInfo(Vector3D MyPosition)
+                {
+                    var planet = MyGamePruningStructure.GetClosestPlanet(MyPosition);
+                    if (planet == null) return null;
+                    return new NearestPlanetInfo()
+                    {
+                        Planet = planet,
+                        PlanetRadius = planet.AverageRadius,
+                        AtmoAtt = planet.AtmosphereAltitude
+                    };
+                }
+            }
         }
     }
 }
