@@ -7,6 +7,7 @@ using VRage;
 using VRageMath;
 using System.Linq;
 using VRage.Game.Components;
+
 namespace SuperBlocks.Controller
 {
     public sealed class Target : UpdateableClass, IComparable<Target>, IEquatable<Target>, IComparer<Target>, IEqualityComparer<Target>
