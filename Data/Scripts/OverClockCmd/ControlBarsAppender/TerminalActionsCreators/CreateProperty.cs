@@ -35,5 +35,14 @@ namespace SuperBlocks.Controller
             Property.Visible = Filter;
             MyAPIGateway.TerminalControls.AddControl<TBlock>(Property);
         }
+        public static void CreateProperty_PB_IN<ValueType, TBlock>(string CtrlID, Func<IMyTerminalBlock, bool> Filter, Func<IMyTerminalBlock, ValueType> GetterFunc, Action<IMyTerminalBlock, ValueType> SetterFunc)
+        {
+            var Property = MyAPIGateway.TerminalControls.CreateProperty<ValueType, IMyTerminalBlock>(CtrlID);
+            Property.Getter = GetterFunc;
+            Property.Setter = SetterFunc;
+            Property.Enabled = Filter;
+            Property.Visible = Filter;
+            MyAPIGateway.TerminalControls.AddControl<TBlock>(Property);
+        }
     }
 }

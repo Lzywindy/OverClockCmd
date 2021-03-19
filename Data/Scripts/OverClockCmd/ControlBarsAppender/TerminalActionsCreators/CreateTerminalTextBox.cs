@@ -23,5 +23,4 @@ namespace SuperBlocks.Controller
             controls.Add(triggle);
         }
     }
-
 }

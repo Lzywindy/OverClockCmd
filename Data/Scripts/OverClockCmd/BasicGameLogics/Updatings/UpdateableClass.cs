@@ -19,10 +19,11 @@ namespace SuperBlocks.Controller
                 UpdateFunctions(CtrlBlock);
             }
             //catch (Exception) { }
-            catch (Exception e)
+            catch (Exception)
             {
-                MyAPIGateway.Utilities.ShowNotification($"{e.StackTrace}");
-                MyAPIGateway.Utilities.ShowNotification($"{e.Message}");
+                //MyAPIGateway.Utilities.ShowNotification($"{e.Source}");
+                //MyAPIGateway.Utilities.ShowNotification($"{e.StackTrace}");
+                //MyAPIGateway.Utilities.ShowNotification($"{e.Message}");
             }
             updatecounts--;
         }

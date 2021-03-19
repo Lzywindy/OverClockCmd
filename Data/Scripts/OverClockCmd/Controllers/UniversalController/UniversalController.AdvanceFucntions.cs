@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text;
 using VRage.Utils;
 using VRageMath;
-
 namespace SuperBlocks.Controller
 {
     using static Utils;
@@ -21,14 +20,14 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return (long)script.Role;
         }
         public static void RoleSetter(IMyTerminalBlock Me, long value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Role = (ControllerRole)Enum.ToObject(typeof(ControllerRole), value);
         }
         private static List<VRage.ModAPI.MyTerminalControlComboBoxItem> 角色列表实体_UC { get; } = new List<VRage.ModAPI.MyTerminalControlComboBoxItem>()
@@ -50,7 +49,7 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             value.Clear();
             value.Append($"x{MathHelper.RoundOn2(script.AngularDampeners_Roll)}");
         }
@@ -58,35 +57,35 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return script.AngularDampeners_Roll;
         }
         public static void AngularDampener_R_Setter(IMyTerminalBlock Me, float value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Roll = value;
         }
         public static void AngularDampener_R_Inc(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Roll++;
         }
         public static void AngularDampener_R_Dec(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Roll--;
         }
         public static void AngularDampener_P_Writter(IMyTerminalBlock Me, StringBuilder value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             value.Clear();
             value.Append($"x{MathHelper.RoundOn2(script.AngularDampeners_Pitch)}");
         }
@@ -94,35 +93,35 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return script.AngularDampeners_Pitch;
         }
         public static void AngularDampener_P_Setter(IMyTerminalBlock Me, float value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Pitch = value;
         }
         public static void AngularDampener_P_Inc(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Pitch++;
         }
         public static void AngularDampener_P_Dec(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Pitch--;
         }
         public static void AngularDampener_Y_Writter(IMyTerminalBlock Me, StringBuilder value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             value.Clear();
             value.Append($"x{MathHelper.RoundOn2(script.AngularDampeners_Yaw)}");
         }
@@ -130,28 +129,28 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return script.AngularDampeners_Yaw;
         }
         public static void AngularDampener_Y_Setter(IMyTerminalBlock Me, float value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Yaw = value;
         }
         public static void AngularDampener_Y_Inc(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Yaw++;
         }
         public static void AngularDampener_Y_Dec(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.AngularDampeners_Yaw--;
         }
         #endregion
@@ -160,7 +159,7 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             value.Clear();
             value.Append($"{script.MaxiumSpeedShow()}");
         }
@@ -168,28 +167,28 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return script.MaximumSpeed;
         }
         public static void MaxiumSpeed_Setter(IMyTerminalBlock Me, float value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.MaximumSpeed = value;
         }
         public static void MaxiumSpeed_Inc(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.MaximumSpeed++;
         }
         public static void MaxiumSpeed_Dec(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.MaximumSpeed--;
         }
         private string MaxiumSpeedShow()
@@ -224,7 +223,7 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             value.Clear();
             value.Append($"{script.MaxReactions_AngleV} deg/s");
         }
@@ -232,35 +231,35 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return script.MaxReactions_AngleV;
         }
         public static void MaxReactions_AngleV_Setter(IMyTerminalBlock Me, float value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.MaxReactions_AngleV = value;
         }
         public static void MaxReactions_AngleV_Inc(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.MaxReactions_AngleV++;
         }
         public static void MaxReactions_AngleV_Dec(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.MaxReactions_AngleV--;
         }
         public static void SafetyStage_Writter(IMyTerminalBlock Me, StringBuilder value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             value.Clear();
             value.Append($"{script.SafetyStage}");
         }
@@ -268,35 +267,35 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return script.SafetyStage;
         }
         public static void SafetyStage_Setter(IMyTerminalBlock Me, float value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.SafetyStage = value;
         }
         public static void SafetyStage_Inc(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.SafetyStage++;
         }
         public static void SafetyStage_Dec(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.SafetyStage--;
         }
         public static void LocationSensetive_Writter(IMyTerminalBlock Me, StringBuilder value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             value.Clear();
             value.Append($"{script.LocationSensetive}");
         }
@@ -304,28 +303,28 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return 0;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return 0;
+            if (Common.IsNull(script)) return 0;
             return script.LocationSensetive;
         }
         public static void LocationSensetive_Setter(IMyTerminalBlock Me, float value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.LocationSensetive = value;
         }
         public static void LocationSensetive_Inc(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.LocationSensetive++;
         }
         public static void LocationSensetive_Dec(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.LocationSensetive--;
         }
         #endregion
@@ -334,28 +333,28 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.ForwardDirectionOverride = Vector;
         }
         public static Vector3D? Override_ForwardDirection_Getter(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return null;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return null;
+            if (Common.IsNull(script)) return null;
             return script.ForwardDirectionOverride;
         }
         public static void Override_PlaneNormal_Setter(IMyTerminalBlock Me, Vector3D? Vector)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.PlaneNormalOverride = Vector;
         }
         public static Vector3D? Override_PlaneNormal_Getter(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return null;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return null;
+            if (Common.IsNull(script)) return null;
             return script.PlaneNormalOverride;
         }
         #endregion

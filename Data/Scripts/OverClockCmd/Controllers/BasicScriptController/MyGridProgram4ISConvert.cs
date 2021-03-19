@@ -34,14 +34,13 @@ namespace SuperBlocks.Controller
             base.UpdateBeforeSimulation();
             try
             {
-
                 if (!(UpdateFrequency == Sandbox.ModAPI.Ingame.UpdateFrequency.None || (!EnabledRunning)))
                 {
                     if (UpdateFrequency.HasFlag(Sandbox.ModAPI.Ingame.UpdateFrequency.Update1))
                         Main("", Sandbox.ModAPI.Ingame.UpdateType.Update1);
                 }
-                ThisBlock.RefreshCustomInfo();
-                ShowText.Clear();
+                //if (MyAPIGateway.Gui.GetCurrentScreen == VRage.Game.ModAPI.MyTerminalPageEnum.ControlPanel)
+                //    ThisBlock.RefreshCustomInfo();
             }
             catch (Exception) { EnabledRunning = false; }
         }

@@ -1,7 +1,6 @@
 ﻿using Sandbox.ModAPI;
 using System;
 using VRageMath;
-
 namespace SuperBlocks.Controller
 {
     using static Utils;
@@ -19,13 +18,13 @@ namespace SuperBlocks.Controller
                 if (HandBrake) return Vector3.Zero;
                 switch (Role)
                 {
-                    case ControllerRole.Aeroplane: return (Controller?.MoveIndicator ?? Vector3.Zero) * Vector3.Backward;
-                    case ControllerRole.Helicopter: return (Controller?.MoveIndicator ?? Vector3.Zero) * Vector3.Up;
-                    case ControllerRole.VTOL: return (Controller?.MoveIndicator ?? Vector3.Zero) * (HandBrake ? Vector3.Zero : EnabledAllDirection ? Vector3.One : ForwardOrUp ? Vector3.Backward : Vector3.Up);
-                    case ControllerRole.SpaceShip: return (Controller?.MoveIndicator ?? Vector3.Zero);
-                    case ControllerRole.SeaShip: return new Vector3(0, 0, (Controller?.MoveIndicator.Z ?? 0));
-                    case ControllerRole.Submarine: return new Vector3(0, (Controller?.MoveIndicator.Y ?? 0), (Controller?.MoveIndicator.Z ?? 0));
-                    case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: return Vector3.Backward * (Controller?.MoveIndicator ?? Vector3.Zero);
+                    case ControllerRole.Aeroplane: return MoveIndication * Vector3.Backward;
+                    case ControllerRole.Helicopter: return MoveIndication * Vector3.Up;
+                    case ControllerRole.VTOL: return MoveIndication * (HandBrake ? Vector3.Zero : EnabledAllDirection ? Vector3.One : ForwardOrUp ? Vector3.Backward : Vector3.Up);
+                    case ControllerRole.SpaceShip: return MoveIndication;
+                    case ControllerRole.SeaShip: return MoveIndication * Vector3.Backward;
+                    case ControllerRole.Submarine: return new Vector3(0, MoveIndication.Y, MoveIndication.Z);
+                    case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: return Vector3.Backward * MoveIndication;
                     default: return Vector3.Zero;
                 }
             }
@@ -37,16 +36,39 @@ namespace SuperBlocks.Controller
                 if (HandBrake) return Vector4.Zero;
                 switch (Role)
                 {
-                    case ControllerRole.Aeroplane: case ControllerRole.SpaceShip: return new Vector4(0, 0, Controller?.RotationIndicator.X ?? 0, Controller?.RotationIndicator.Y ?? 0);
-                    case ControllerRole.Helicopter: return new Vector4(Controller?.MoveIndicator.Z ?? 0, Controller?.MoveIndicator.X ?? 0, 0, Controller?.RollIndicator ?? 0);
-                    case ControllerRole.VTOL: return (HasWings && (!ForwardOrUp) && (Gravity != Vector3.Zero)) ? (new Vector4(Controller?.MoveIndicator.Z ?? 0, Controller?.MoveIndicator.X ?? 0, 0, Controller?.RollIndicator ?? 0)) : new Vector4(0, 0, Controller?.RotationIndicator.X ?? 0, Controller?.RotationIndicator.Y ?? 0);
-                    case ControllerRole.SeaShip: case ControllerRole.Submarine: case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: return new Vector4(0, 0, 0, Controller?.MoveIndicator.X ?? 0);
+                    case ControllerRole.Aeroplane: case ControllerRole.SpaceShip: return new Vector4(0, 0, RotationIndication.X,RotationIndication.Y);
+                    case ControllerRole.Helicopter: return new Vector4(MoveIndication.Z, MoveIndication.X, 0, RotationIndication.Z);
+                    case ControllerRole.VTOL: return (HasWings && (!ForwardOrUp) && (Gravity != Vector3.Zero)) ? (new Vector4(MoveIndication.Z, MoveIndication.X, 0, RotationIndication.Z)) : new Vector4(0, 0, RotationIndication.X, RotationIndication.Y);
+                    case ControllerRole.SeaShip: case ControllerRole.Submarine: case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: return new Vector4(0, 0, 0, MoveIndication.X);
                     default: return Vector4.Zero;
                 }
             }
         }
-        private bool KeepLevel { get { switch (Role) { case ControllerRole.Helicopter: return (Controller?.MoveIndicator.Y ?? 0) == 0; case ControllerRole.VTOL: case ControllerRole.SpaceShip: return (!ForwardOrUp) && (Controller?.MoveIndicator.Y ?? 0) == 0; default: return false; } } }
-        private bool IgnoreLevel { get { switch (Role) { case ControllerRole.Aeroplane: return true; case ControllerRole.Helicopter: return Gravity == Vector3.Zero; case ControllerRole.VTOL: case ControllerRole.SpaceShip: return ForwardOrUp || Gravity == Vector3.Zero; default: return false; } } }
+        private bool KeepLevel
+        {
+            get
+            {
+                switch (Role)
+                {
+                    case ControllerRole.Helicopter: return MoveIndication.Y == 0;
+                    case ControllerRole.VTOL: case ControllerRole.SpaceShip: return (!ForwardOrUp) && MoveIndication.Y == 0;
+                    default: return false;
+                }
+            }
+        }
+        private bool IgnoreLevel
+        {
+            get
+            {
+                switch (Role)
+                {
+                    case ControllerRole.Aeroplane: return true;
+                    case ControllerRole.Helicopter: return Gravity == Vector3.Zero;
+                    case ControllerRole.VTOL: case ControllerRole.SpaceShip: return ForwardOrUp || Gravity == Vector3.Zero;
+                    default: return false;
+                }
+            }
+        }
         private bool DisabledRotation
         {
             get
@@ -123,8 +145,10 @@ namespace SuperBlocks.Controller
         private Vector3 LinearVelocity => Me.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero;
         private Vector3D Forward => Me.WorldMatrix.Forward;
         private Vector3 ProjectLinnerVelocity_CockpitForward { get { return PoseProcessFuncs.ProjectOnPlane(LinearVelocity, Forward); } }
-        private bool Dampener => Controller?.DampenersOverride ?? true;
-        private bool HandBrake => Controller?.HandBrake ?? true;
+        private bool Dampener => Override_Dampener ?? Controller?.DampenersOverride ?? true;
+        private bool HandBrake => Override_HandBrake ?? Controller?.HandBrake ?? true;
+        private Vector3 MoveIndication => Override_MoveIndication ?? Controller?.MoveIndicator ?? Vector3.Zero;
+        private Vector3 RotationIndication => Override_RotationIndication ?? new Vector3(Controller?.RotationIndicator ?? Vector2.Zero, Controller?.RollIndicator ?? 0);
         private bool PoseMode { get { switch (Role) { case ControllerRole.Helicopter: return true; case ControllerRole.VTOL: return HasWings ? (!ForwardOrUp) : (_EnabledCuriser && (Gravity != Vector3.Zero)); case ControllerRole.SpaceShip: return _EnabledCuriser && (Gravity != Vector3.Zero); default: return false; } } }
         private bool IgnoreForwardVelocity { get { switch (Role) { case ControllerRole.Helicopter: return false; case ControllerRole.VTOL: return ForwardOrUp || Gravity == Vector3.Zero; default: return true; } } }
         private bool Need2CtrlSignal { get { switch (Role) { case ControllerRole.Helicopter: return true; case ControllerRole.VTOL: return !(ForwardOrUp || Gravity == Vector3.Zero); default: return false; } } }

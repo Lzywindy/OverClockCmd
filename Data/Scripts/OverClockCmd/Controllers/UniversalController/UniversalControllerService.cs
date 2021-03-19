@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using VRage.Game.Components;
 using VRage.ModAPI;
 using VRageMath;
-
 namespace SuperBlocks.Controller
 {
     [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
@@ -37,7 +36,7 @@ namespace SuperBlocks.Controller
                 var TopmostEnt = Block?.GetTopMostParent();
                 if (TopmostEnt == null) return false;
                 if (!Register.ContainsKey(TopmostEnt)) { Register.Add(TopmostEnt, Block); return true; }
-                if (Utils.NullEntity(Register[TopmostEnt])) Register.Remove(TopmostEnt);
+                if (Utils.Common.NullEntity(Register[TopmostEnt])) Register.Remove(TopmostEnt);
                 if (!Register.ContainsKey(TopmostEnt)) { Register.Add(TopmostEnt, Block); return true; }
                 return Register[TopmostEnt] == Block;
             }
@@ -50,7 +49,7 @@ namespace SuperBlocks.Controller
                 var TopmostEnt = Block?.GetTopMostParent();
                 if (TopmostEnt == null) return "";
                 if (!Register.ContainsKey(TopmostEnt)) { Register.Add(TopmostEnt, Block); return Block.CustomData; }
-                if (Utils.NullEntity(Register[TopmostEnt])) Register.Remove(TopmostEnt);
+                if (Utils.Common.NullEntity(Register[TopmostEnt])) Register.Remove(TopmostEnt);
                 if (!Register.ContainsKey(TopmostEnt)) { Register.Add(TopmostEnt, Block); return Block.CustomData; }
                 return Register[TopmostEnt].CustomData;
             }
@@ -166,7 +165,7 @@ namespace SuperBlocks.Controller
             {
                 try
                 {
-                    if (Utils.NullEntity(KV.Value)) return;
+                    if (Utils.Common.NullEntity(KV.Value)) return;
                     UniversalController.SaveDatas(KV.Value);
                 }
                 catch (Exception) { }

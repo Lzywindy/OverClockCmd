@@ -62,9 +62,10 @@ namespace SuperBlocks
             _str.Clear();
             foreach (var ConfigBlock in ConfigTree)
             {
-                _str.Append($"[{ConfigBlock.Key}]\n\r");
+                _str.AppendLine($"[{ConfigBlock.Key}]");
                 foreach (var ConfigItem in ConfigBlock.Value)
-                    _str.Append($"{ConfigItem.Key}={ConfigItem.Value}\n\r");
+                    _str.AppendLine($"{ConfigItem.Key}={ConfigItem.Value}");
+                _str.AppendLine();
             }
             return _str.ToString();
         }

@@ -1,7 +1,6 @@
 ﻿using Sandbox.ModAPI;
 using System.Collections.Generic;
 using VRageMath;
-
 namespace SuperBlocks.Controller
 {
     using static Utils;
@@ -35,5 +34,4 @@ namespace SuperBlocks.Controller
         public ControllerRole Role { get { return _Role; } set { _Role = value; } }
         #endregion
     }
-
 }

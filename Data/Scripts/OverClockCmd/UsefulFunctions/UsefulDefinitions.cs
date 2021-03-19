@@ -2,158 +2,18 @@
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using VRage;
 using VRageMath;
-
 namespace SuperBlocks
 {
-    public struct MyWeaponConfig
+    public struct EventVariable<T> : IEquatable<T>
     {
-        volatile public bool IsDirect;
-        volatile public bool Ignore_speed_self;
-        volatile public float Delta_t;
-        volatile public float Delta_precious;
-        volatile public int Calc_t;
-        volatile public float Offset;
-        public void GetDataFromConfig(Dictionary<string, string> Config)
-        {
-            if (Config == null) { ResetValues(); return; }
-            foreach (var configitem in Config)
-            {
-                switch (configitem.Key)
-                {
-                    case "direct": IsDirect = MyConfigs.ParseBool(configitem.Value); break;
-                    case "ignore_speed_self": Ignore_speed_self = MyConfigs.ParseBool(configitem.Value); break;
-                    case "delta_t": Delta_t = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "delta_precious": Delta_precious = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "calc_t": Calc_t = Math.Abs(MyConfigs.ParseInt(configitem.Value)); break;
-                    case "offset": Offset = MyConfigs.ParseFloat(configitem.Value); break;
-                    default: break;
-                }
-            }
-        }
-        public void ResetValues(Dictionary<string, string> Config = null)
-        {
-            IsDirect = true;
-            Ignore_speed_self = true;
-            Delta_t = 0;
-            Delta_precious = 0;
-            Calc_t = 0;
-            Offset = 0;
-            if (Utils.IsNullCollection(Config)) return;
-            foreach (var configitem in Config)
-            {
-                switch (configitem.Key)
-                {
-                    case "direct": IsDirect = MyConfigs.ParseBool(configitem.Value); break;
-                    case "ignore_speed_self": Ignore_speed_self = MyConfigs.ParseBool(configitem.Value); break;
-                    case "delta_t": Delta_t = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "delta_precious": Delta_precious = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "calc_t": Calc_t = MyConfigs.ParseInt(configitem.Value); break;
-                    case "offset": Offset = MyConfigs.ParseFloat(configitem.Value); break;
-                    default: break;
-                }
-            }
-        }
-    }
-    public struct MyAmmoConfig
-    {
-        volatile public float Speed;
-        volatile public float Acc;
-        volatile public float Gravity_mult;
-        volatile public float Trajectory;
-        public void GetDataFromConfig(Dictionary<string, string> Config)
-        {
-            if (Config == null) { ResetValues(); return; }
-            foreach (var configitem in Config)
-            {
-                switch (configitem.Key)
-                {
-                    case "speed": Speed = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "acc": Acc = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "gravity_mult": Gravity_mult = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "trajectory": Trajectory = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    default: break;
-                }
-            }
-        }
-        public void ResetValues(Dictionary<string, string> Config = null)
-        {
-            Speed = 3e8f;
-            Acc = 0;
-            Gravity_mult = 0;
-            Trajectory = 10000;
-            if (Utils.IsNullCollection(Config)) return;
-            foreach (var configitem in Config)
-            {
-                switch (configitem.Key)
-                {
-                    case "speed": Speed = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "acc": Acc = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "gravity_mult": Gravity_mult = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "trajectory": Trajectory = MyConfigs.ParseFloat(configitem.Value); break;
-                    default: break;
-                }
-            }
-        }
-    }
-    public struct MyWeaponAmmoConfig
-    {
-        public MyWeaponConfig weaponConfig;
-        public MyAmmoConfig ammoConfig;
-        public void GetDataFromConfig(Dictionary<string, Dictionary<string, string>> ConfigTree, string weaponNM, string ammoNM)
-        {
-            if (ConfigTree == null || weaponNM == null || ammoNM == null || weaponNM == "" || ammoNM == "") { weaponConfig.ResetValues(); ammoConfig.ResetValues(); return; }
-            if (ConfigTree.ContainsKey(weaponNM)) weaponConfig.GetDataFromConfig(ConfigTree[weaponNM]);
-            else weaponConfig.ResetValues(ConfigTree["Default"]);
-            if (ConfigTree.ContainsKey(ammoNM)) ammoConfig.GetDataFromConfig(ConfigTree[ammoNM]);
-            else ammoConfig.ResetValues(ConfigTree["Default"]);
-        }
-        public void GetDataDefault(Dictionary<string, Dictionary<string, string>> ConfigTree)
-        {
-            if (Utils.IsNullCollection(ConfigTree) || !ConfigTree.ContainsKey("Default")) { weaponConfig.ResetValues(); ammoConfig.ResetValues(); return; }
-            weaponConfig.ResetValues(ConfigTree["Default"]);
-            ammoConfig.ResetValues(ConfigTree["Default"]);
-        }
-    }
-    public struct MyTurretConfig
-    {
-        volatile public float max_az;
-        volatile public float max_ev;
-        volatile public float mult;
-        volatile public float range;
-        public string turretNM;
-        public string weaponNM;
-        public const string azNM = "Az";
-        public const string evNM = "Ev";
-        public string TurretAzNM => $"{turretNM}{azNM}";
-        public string TurretEzNM => $"{turretNM}{evNM}";
-        public void GetDataFromConfig(Dictionary<string, Dictionary<string, string>> ConfigTree, string ConfigID)
-        {
-            if (ConfigTree == null || ConfigID == null || ConfigID == "" || !ConfigTree.ContainsKey(ConfigID)) { ResetValues(); return; }
-            foreach (var configitem in ConfigTree[ConfigID])
-            {
-                switch (configitem.Key)
-                {
-                    case "max_az": max_az = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "max_ev": max_ev = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "mult": mult = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "range": range = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "turretNM": turretNM = configitem.Value; break;
-                    case "weaponNM": turretNM = configitem.Value; break;
-                    default: break;
-                }
-            }
-        }
-        public void ResetValues()
-        {
-            max_az = 1;
-            max_ev = 1;
-            mult = 3;
-            range = 1000;
-            turretNM = "Turret";
-        }
+        public T Value { get { return data; } set { if (data.Equals(value)) return; data = value; DoVariableChanged?.Invoke(); } }
+        private T data;
+        public Action DoVariableChanged;
+        public bool Equals(T other) { return Value.Equals(other); }
     }
     public static partial class Utils
     {
@@ -163,13 +23,13 @@ namespace SuperBlocks
             public void UpdateBlocks(IMyGridTerminalSystem GridTerminalSystem, IMyTerminalBlock Me)
             {
                 this.Me = null;
-                if (IsNull(Me) || IsNull(GridTerminalSystem)) return;
-                Motors_Hover = GetTs(GridTerminalSystem, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
+                if (Common.IsNull(Me) || Common.IsNull(GridTerminalSystem)) return;
+                Motors_Hover = Common.GetTs(GridTerminalSystem, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
                 var Group = GridTerminalSystem.GetBlockGroupWithName(WheelsGroupNM);
-                SWheels = GetTs<IMyMotorSuspension>(Group);
-                MWheels = GetTs<IMyMotorStator>(Group);
+                SWheels = Common.GetTs<IMyMotorSuspension>(Group);
+                MWheels = Common.GetTs<IMyMotorStator>(Group);
                 this.Me = Me;
-                if (IsNullCollection(Motors_Hover)) HoverDevices = false;
+                if (Common.IsNullCollection(Motors_Hover)) HoverDevices = false;
                 else { HoverDevices = true; return; }
                 if (NullWheels) return;
                 Wheels = Init4GetAction(GridTerminalSystem);
@@ -192,9 +52,9 @@ namespace SuperBlocks
             public float MaximumSpeed { get; set; } = 20f;
             public float ForwardIndicator { get; set; }
             public float TurnIndicator { get; set; }
-            public bool NullWheels => IsNull(Me) || (NullSWheel && NullMWheel);
-            public bool NullSWheel => IsNullCollection(SWheels);
-            public bool NullMWheel => IsNullCollection(MWheels);
+            public bool NullWheels => Common.IsNull(Me) || (NullSWheel && NullMWheel);
+            public bool NullSWheel => Common.IsNullCollection(SWheels);
+            public bool NullMWheel => Common.IsNullCollection(MWheels);
             public bool HoverDevices { get; private set; } = false;
             private Vector3 LinearVelocity => Me?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero;
             private Action Init4GetAction(IMyGridTerminalSystem GridTerminalSystem)
@@ -220,15 +80,15 @@ namespace SuperBlocks
             private Action LoadIndicateLights(IMyGridTerminalSystem GridTerminalSystem)
             {
                 Action UtilsCtrl = () => { };
-                var brakelights = GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM));
+                var brakelights = Common.GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM));
                 foreach (var item in brakelights) { UtilsCtrl += () => item.Enabled = ForwardIndicator == 0; }
-                var backlights = GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM));
+                var backlights = Common.GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM));
                 foreach (var item in backlights) { UtilsCtrl += () => item.Enabled = ForwardIndicator > 0; }
                 return UtilsCtrl;
             }
             private Action LoadSuspends()
             {
-                if (IsNull(Me) || IsNullCollection(SWheels)) return null;
+                if (Common.IsNull(Me) || Common.IsNullCollection(SWheels)) return null;
                 Action Wheels = () => { };
                 foreach (var Motor in SWheels)
                 {
@@ -250,7 +110,7 @@ namespace SuperBlocks
             private Action LoadMotorWheels()
             {
                 Action Wheels = () => { };
-                if (IsNull(Me) || IsNullCollection(MWheels)) return Wheels;
+                if (Common.IsNull(Me) || Common.IsNullCollection(MWheels)) return Wheels;
                 foreach (var Motor in MWheels)
                 {
                     Wheels += () =>
@@ -277,10 +137,10 @@ namespace SuperBlocks
             public MyThrusterController() { }
             public void UpdateBlocks(IMyGridTerminalSystem GridTerminalSystem, IMyTerminalBlock Me)
             {
-                if (IsNull(Me) || IsNull(GridTerminalSystem)) return;
+                if (Common.IsNull(Me) || Common.IsNull(GridTerminalSystem)) return;
                 this.Me = Me;
-                thrusts = GetTs(GridTerminalSystem, (IMyThrust thrust) => ExceptKeywords(thrust) && thrust.CubeGrid == this.Me.CubeGrid);
-                if (IsNullCollection(thrusts)) return;
+                thrusts = Common.GetTs(GridTerminalSystem, (IMyThrust thrust) => Common.ExceptKeywords(thrust) && thrust.CubeGrid == this.Me.CubeGrid);
+                if (Common.IsNullCollection(thrusts)) return;
                 _MiniValue = MiniValueC;
                 StatisticU = (ref float force) => { }; StatisticD = (ref float force) => { }; StatisticL = (ref float force) => { };
                 StatisticR = (ref float force) => { }; StatisticF = (ref float force) => { }; StatisticB = (ref float force) => { };
@@ -425,7 +285,7 @@ namespace SuperBlocks
                 ApplyPercentageF(Percentage[(int)Base6Directions.Direction.Forward]);
                 ApplyPercentageB(Percentage[(int)Base6Directions.Direction.Backward]);
             }
-            private bool NullThrust { get { return IsNullCollection(thrusts); } }
+            private bool NullThrust { get { return Common.IsNullCollection(thrusts); } }
             private Vector3 LinearVelocity => Me?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero;
             private Vector3 Gravity { get { if (Me == null) return Vector3.Zero; return MyPlanetInfoAPI.GetCurrentGravity(Me.GetPosition()); } }
             private float ShipMass => Me?.CubeGrid?.Physics?.Mass ?? 1;
@@ -462,24 +322,24 @@ namespace SuperBlocks
             public MyGyrosController() { }
             public void UpdateBlocks(IMyGridTerminalSystem GridTerminalSystem, IMyTerminalBlock Me)
             {
-                if (IsNull(Me) || IsNull(GridTerminalSystem)) return;
+                if (Common.IsNull(Me) || Common.IsNull(GridTerminalSystem)) return;
                 this.Me = Me;
-                gyros = GetTs(GridTerminalSystem, (IMyGyro gyro) => ExceptKeywords(gyro) && gyro.CubeGrid == Me.CubeGrid);
-                if (IsNullCollection(gyros)) return;
+                gyros = Common.GetTs(GridTerminalSystem, (IMyGyro gyro) => Common.ExceptKeywords(gyro) && gyro.CubeGrid == Me.CubeGrid);
+                if (Common.IsNullCollection(gyros)) return;
             }
             public void GyrosOverride(Vector3? RotationIndicate)
             {
-                if (IsNullCollection(gyros)) return;
+                if (Common.IsNullCollection(gyros)) return;
                 foreach (var gyro in gyros)
                 {
                     gyro.GyroOverride = RotationIndicate.HasValue && (Me != null);
                     if (Me == null) gyro.Roll = gyro.Yaw = gyro.Pitch = 0;
                 }
                 if (!RotationIndicate.HasValue) return;
-                Matrix matrix_Main = GetWorldMatrix(Me);
+                Matrix matrix_Main = Common.GetWorldMatrix(Me);
                 foreach (var gyro in gyros)
                 {
-                    var result = Vector3.TransformNormal(RotationIndicate.Value * PowerScale3Axis, matrix_Main * Matrix.Transpose(GetWorldMatrix(gyro)));
+                    var result = Vector3.TransformNormal(RotationIndicate.Value * PowerScale3Axis, matrix_Main * Matrix.Transpose(Common.GetWorldMatrix(gyro)));
                     gyro.Roll = result.Z; gyro.Yaw = result.Y; gyro.Pitch = result.X;
                 }
             }
@@ -503,7 +363,7 @@ namespace SuperBlocks
             }
             public void SetOverclocked(float mult = 1)
             {
-                if (IsNullCollection(gyros)) return;
+                if (Common.IsNullCollection(gyros)) return;
                 foreach (var gyro in gyros)
                 {
                     gyro.PowerConsumptionMultiplier = mult;
@@ -516,7 +376,7 @@ namespace SuperBlocks
         public class MyAutoCloseDoorController
         {
             private List<MyAutoCloseDoorTimer> Timers { get; } = new List<MyAutoCloseDoorTimer>();
-            public void UpdateBlocks(IMyGridTerminalSystem GridTerminalSystem) { var doors_group = GridTerminalSystem.GetBlockGroupWithName(ACDoorsGroupNM); if (doors_group == null) return; var doors = GetTs<IMyDoor>(doors_group); foreach (var door in doors) { Timers.Add(new MyAutoCloseDoorTimer(door)); } }
+            public void UpdateBlocks(IMyGridTerminalSystem GridTerminalSystem) { var doors_group = GridTerminalSystem.GetBlockGroupWithName(ACDoorsGroupNM); if (doors_group == null) return; var doors = Common.GetTs<IMyDoor>(doors_group); foreach (var door in doors) { Timers.Add(new MyAutoCloseDoorTimer(door)); } }
             public void Running(IMyGridTerminalSystem GridTerminalSystem) { try { if (Timers.Count == 0) UpdateBlocks(GridTerminalSystem); else { foreach (var Timer in Timers) { Timer.Running(); } } } catch (Exception) { Timers.Clear(); } }
         }
         public class MyAutoCloseDoorTimer
@@ -570,7 +430,7 @@ namespace SuperBlocks
         public Direction6Values(float[] Values)
         {
             Forward = Backward = Left = Right = Up = Down = 0;
-            if (Utils.IsNullCollection(Values)) return;
+            if (Utils.Common.IsNullCollection(Values)) return;
             for (int index = 0; index < Values.Length; index++)
             {
                 switch (index)

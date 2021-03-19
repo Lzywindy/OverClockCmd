@@ -1,5 +1,4 @@
 ﻿using Sandbox.ModAPI;
-
 namespace SuperBlocks.Controller
 {
     using static Utils;
@@ -14,49 +13,49 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Trigger("LoadConfig");
         }
         public static void SaveConfigs(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Trigger("SaveConfig");
         }
         public static void TriggleHasWings(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Trigger("HasWings");
         }
         public static void TriggleHoverMode(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Trigger("HoverMode");
         }
         public static void TriggleEnabledCuriser(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Trigger("EnabledCuriser");
         }
         public static void TriggleEnabledThrusters(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Trigger("EnabledThrusters");
         }
         public static void TriggleEnabledGyros(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.Trigger("EnabledGyros");
         }
         #endregion
@@ -65,35 +64,35 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.HasWings = Value;
         }
         public static void SetHoverMode(IMyTerminalBlock Me, bool Value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.HoverMode = Value;
         }
         public static void SetEnabledCuriser(IMyTerminalBlock Me, bool Value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.EnabledCuriser = Value;
         }
         public static void SetEnabledThrusters(IMyTerminalBlock Me, bool Value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.EnabledThrusters = Value;
         }
         public static void SetEnabledGyros(IMyTerminalBlock Me, bool Value)
         {
             if (Me == null || Me.GameLogic == null) return;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return;
+            if (Common.IsNull(script)) return;
             script.EnabledGyros = Value;
         }
         #endregion
@@ -102,38 +101,37 @@ namespace SuperBlocks.Controller
         {
             if (Me == null || Me.GameLogic == null) return false;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return false;
+            if (Common.IsNull(script)) return false;
             return script.HasWings;
         }
         public static bool GetHoverMode(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return false;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return false;
+            if (Common.IsNull(script)) return false;
             return script.HoverMode;
         }
         public static bool GetEnabledCuriser(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return false;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return false;
+            if (Common.IsNull(script)) return false;
             return script.EnabledCuriser;
         }
         public static bool GetEnabledThrusters(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return false;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return false;
+            if (Common.IsNull(script)) return false;
             return script.EnabledThrusters;
         }
         public static bool GetEnabledGyros(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return false;
             var script = Me.GameLogic.GetAs<UniversalController>();
-            if (IsNull(script)) return false;
+            if (Common.IsNull(script)) return false;
             return script.EnabledGyros;
         }
         #endregion
     }
-   
 }

@@ -167,20 +167,23 @@
     <Compile Include="Controllers\UniversalController\UniversalController.OuterControlLines.cs" />
     <Compile Include="Controllers\UniversalController\UniversalController.PrivateSignals.cs" />
     <Compile Include="Controllers\UniversalController\UniversalControllerService.cs" />
+    <Compile Include="Controllers\WeaponController\CommonFunctions\WeaponConfigDefines.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\MyWeaponAndTurretApi.cs" />
+    <Compile Include="SupportApis\Shield\ShieldApi.cs" />
+    <Compile Include="SupportApis\Water\Water.cs" />
+    <Compile Include="SupportApis\Water\WaterModAPI.cs" />
     <Compile Include="TargetManarge\MyWeaponSystemBinding.cs" />
-    <Compile Include="TargetManarge\TargetsTrackManage.cs" />
+    <Compile Include="TargetManarge\MyWeaponSystemManage.cs" />
     <Compile Include="BasicGameLogics\Updatings\StepTimer.cs" />
     <Compile Include="BasicGameLogics\Updatings\IUpdates.cs" />
-    <Compile Include="TargetManarge\Target.cs" />
-    <Compile Include="BasicGameLogics\TargetConfig.cs" />
-    <Compile Include="BasicGameLogics\MyTargetPredictEnt.cs" />
+    <Compile Include="TargetManarge\MyTargetDetected.cs" />
+    <Compile Include="Controllers\WeaponController\CommonFunctions\MyTargetPredict.cs" />
     <Compile Include="TargetManarge\MyRadarTargets.cs" />
     <Compile Include="BasicGameLogics\Updatings\UpdateableClass.cs" />
-    <Compile Include="TargetManarge\MyTurretBinding.cs" />
-    <Compile Include="TargetManarge\TurretCtrl.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\MyTurretBinding.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\MyTurretController.cs" />
     <Compile Include="TargetManarge\MyWeaponInfo.cs" />
     <Compile Include="TurretController\RadarSystemAPIs.cs" />
-    <Compile Include="TurretController\WeaponModual\MyTargetPredict.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetFilterManager.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetManager.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateProperty.cs" />
@@ -192,7 +195,6 @@
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalSliderBar.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalSwitch.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalTextBox.cs" />
-    <Compile Include="TurretController\WeaponModual\MyTurretRotateManage.cs" />
     <Compile Include="TurretController\WeaponModual\MyWeaponManager.cs" />
     <Compile Include="UsefulFunctions\ConfigManager.cs" />
     <Compile Include="ParameterClass\ParametersAndConstants.cs" />
@@ -200,12 +202,16 @@
     <Compile Include="UsefulFunctions\Utils.cs" />
     <Compile Include="UsefulFunctions\MyConfigs.cs" />
     <Compile Include="UsefulFunctions\Utils.PoseProcessFuncs.cs" />
-    <Compile Include="WeaponThread\script\Slave.cs" />
-    <Compile Include="WeaponThread\script\WeaponCompile.cs" />
-    <Compile Include="WeaponThread\script\WeaponCoreApi.cs" />
-    <Compile Include="WeaponThread\script\WeaponStructure.cs" />
+    <Compile Include="SupportApis\WeaponThread\script\Slave.cs" />
+    <Compile Include="SupportApis\WeaponThread\script\WeaponCompile.cs" />
+    <Compile Include="SupportApis\WeaponThread\script\WeaponCoreApi.cs" />
+    <Compile Include="SupportApis\WeaponThread\script\WeaponStructure.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Controllers\Radar\" />
+    <Folder Include="Controllers\WeaponController\FixedWeaponController\" />
+    <Folder Include="Controllers\WeaponController\WatcherController\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.  
        Other similar extension points exist, see Microsoft.Common.targets. 

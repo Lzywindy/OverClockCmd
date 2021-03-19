@@ -24,5 +24,4 @@ namespace SuperBlocks.Controller
         }
         public Action<List<VRage.ModAPI.MyTerminalControlComboBoxItem>> ComboBoxContent { get; set; }
     }
-
 }

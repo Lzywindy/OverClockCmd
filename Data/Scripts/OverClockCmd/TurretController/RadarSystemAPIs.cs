@@ -35,7 +35,7 @@ namespace SuperBlocks.Controller
                 EntitiesInRadar.Add(ent.EntityId, new MyTuple<Vector3D, float, Color>(ent.GetPosition(), 1, Color.Gold));
                 return;
             }
-            if (Utils.是否是导弹(ent))
+            if (Utils.MyTargetEnsureAPI.是否是导弹(ent))
             {
                 EntitiesInRadar.Add(ent.EntityId, new MyTuple<Vector3D, float, Color>(ent.GetPosition(), 0, Color.White));
                 return;
@@ -92,9 +92,9 @@ namespace SuperBlocks.Controller
         public static bool EntityFilter(IMyEntity ent, SIngame.IMyTerminalBlock Me, MyTuple<MyTuple<bool, bool, bool, bool>, MyTuple<bool, bool>, MyTuple<bool, bool, bool, bool, int>> EntFilter)
         {
             if (Me == null) return false; var IMe = (Me as IMyTerminalBlock);
-            if (IMe == null || ent == null || Utils.是否是体素或者行星(ent)) return false;
+            if (IMe == null || ent == null || Utils.MyTargetEnsureAPI.是否是体素或者行星(ent)) return false;
             if (ent is IMyMeteor && EntFilter.Item1.Item1 && EntitySubFilter_EnabledTarget(ent, Me, 45)) return true;
-            if (Utils.是否是导弹(ent) && EntFilter.Item1.Item2 && EntitySubFilter_EnabledTarget(ent, Me, 60)) return true;
+            if (Utils.MyTargetEnsureAPI.是否是导弹(ent) && EntFilter.Item1.Item2 && EntitySubFilter_EnabledTarget(ent, Me, 60)) return true;
             if (ent is IMyCharacter && EntFilter.Item1.Item3)
             {
                 var ch = ent as IMyCharacter; if (ch == null) return false;
@@ -106,7 +106,7 @@ namespace SuperBlocks.Controller
             if (ent is IMyCubeGrid && EntFilter.Item1.Item4)
             {
                 var grid = ent as IMyCubeGrid;
-                if (EntFilter.Item3.Item4 || Utils.统计网格中通电的方块(grid) < EntFilter.Item3.Item5) return false;
+                if (EntFilter.Item3.Item4 || Utils.MyTargetEnsureAPI.统计网格中通电的方块(grid) < EntFilter.Item3.Item5) return false;
                 var Fact_State = TargetGridState(grid, IMe);
                 var HasEnmTarget = Fact_State.Item1 && EntFilter.Item2.Item1;
                 var HasNeuTarget = Fact_State.Item2 && EntFilter.Item2.Item2;

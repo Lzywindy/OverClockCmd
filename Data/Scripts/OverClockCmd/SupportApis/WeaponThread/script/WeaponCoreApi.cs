@@ -264,7 +264,7 @@ namespace WeaponCore.Api
         public float GetOptimalDps(IMyEntity entity) => _getOptimalDps?.Invoke(entity) ?? 0f;
 
         public string GetActiveAmmo(IMyTerminalBlock weapon, int weaponId) =>
-            _getActiveAmmo?.Invoke(weapon, weaponId) ?? "";
+            _getActiveAmmo?.Invoke(weapon, weaponId) ?? null;
 
         public void SetActiveAmmo(IMyTerminalBlock weapon, int weaponId, string ammoType) =>
             _setActiveAmmo?.Invoke(weapon, weaponId, ammoType);
