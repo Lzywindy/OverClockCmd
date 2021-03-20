@@ -58,7 +58,7 @@ namespace SuperBlocks.Controller
             var time = min_time;
             var max_time = MaxiumTime(0, Parameters.Speed, Parameters.Acc, Parameters.Trajectory) * 1.5f;
             var V_project_length = AverangeSpeed(0, Parameters.Speed, Parameters.Acc, (min_time + max_time) / 2);
-            //SelfGravity = SelfGravity * (float)(Math.Max(d_length / 1000 - 2, 0) * 4e-2f + 1);
+            SelfGravity *= (float)Function(d_length);
             if (min_time >= max_time) { VpD = null; Tn = null; return; }
             var a_r = TargetLinearAcc - SelfGravity;
             var a = a_r.LengthSquared() * 0.25;

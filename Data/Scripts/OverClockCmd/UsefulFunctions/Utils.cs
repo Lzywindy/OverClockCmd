@@ -296,6 +296,24 @@ namespace SuperBlocks
                 if (Common.IsNullCollection(Motors)) return;
                 foreach (var Motor in Motors) { RotorSetDefault(Motor, Max_Speed); }
             }
+            public static float RotorRunning<T>(T Motor, float value) where T : Sandbox.ModAPI.Ingame.IMyMotorStator
+            {
+                var upper = Motor.UpperLimitRad;
+                var lower = Motor.LowerLimitRad;
+                if (value > 0)
+                {
+                    if (upper >= float.MaxValue) return value;
+                    if (Motor.Angle >= upper) return 0;
+                    return value;
+                }
+                else if (value < 0)
+                {
+                    if (lower <= float.MinValue) return value;
+                    if (Motor.Angle <= lower) return 0;
+                    return value;
+                }
+                return 0;
+            }
         }
     }
 }

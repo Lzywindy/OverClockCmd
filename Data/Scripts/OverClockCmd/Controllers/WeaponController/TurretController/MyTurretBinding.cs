@@ -70,10 +70,10 @@ namespace SuperBlocks.Controller
             {
                 var data = MyWeaponAndTurretApi.Get_ArmOfForce_Point(Gun_Rotor_Group);
                 TurretRotor_Torque += MyWeaponAndTurretApi.GetTorque(motorAz, data, Direction, Config.mult);
-                Gun_Rotor_Group.Key.TargetVelocityRad = MyWeaponAndTurretApi.RotorDampener(MyWeaponAndTurretApi.GetTorque(Gun_Rotor_Group.Key, data, Direction, Config.mult), Gun_Rotor_Group.Key.TargetVelocityRad, Config.max_ev);
+                Gun_Rotor_Group.Key.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(Gun_Rotor_Group.Key, MyWeaponAndTurretApi.RotorDampener(MyWeaponAndTurretApi.GetTorque(Gun_Rotor_Group.Key, data, Direction, Config.mult), Gun_Rotor_Group.Key.TargetVelocityRad, Config.max_ev));
             }
             TurretRotor_Torque /= motorEvs_WTs.Count;
-            motorAz.TargetVelocityRad = MyWeaponAndTurretApi.RotorDampener(TurretRotor_Torque, motorAz.TargetVelocityRad, Config.max_az);
+            motorAz.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(motorAz, MyWeaponAndTurretApi.RotorDampener(TurretRotor_Torque, motorAz.TargetVelocityRad, Config.max_az));
         }
         public void RunningManual(Vector2? Rotation)
         {
