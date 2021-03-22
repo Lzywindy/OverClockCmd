@@ -14,14 +14,23 @@ namespace SuperBlocks.Controller
         internal static void SetIMyTerminalBlock(IMyTerminalBlock block, bool Enabled) { if (block is IMyFunctionalBlock) (block as IMyFunctionalBlock).Enabled = Enabled; }
         internal static bool GetIMyTerminalBlock(IMyTerminalBlock block) => (block as IMyFunctionalBlock)?.Enabled ?? true;
         internal static float GetMaxVector3D(Vector3D value) => (float)Math.Max(Math.Max(value.X, value.Y), value.Z);
+
+        internal static bool CanFire(IMyTerminalBlock Weapon)
+        {
+            return (BasicInfoService.WcApi.HasCoreWeapon(Weapon) && BasicInfoService.WcApi.IsWeaponReadyToFire(Weapon, GetWeaponID(Weapon))) || (!BasicInfoService.WcApi.HasCoreWeapon(Weapon));
+        }
         internal static void FireWeapon(IMyTerminalBlock Weapon, bool Enabled)
         {
             try
             {
                 if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
+                {
                     BasicInfoService.WcApi.ToggleWeaponFire(Weapon, Enabled, true, GetWeaponID(Weapon));
+                }
                 else
+                {
                     (Weapon as IMyUserControllableGun)?.SetValue("Shoot", Enabled);
+                }
             }
             catch (Exception) { }
         }
@@ -30,7 +39,9 @@ namespace SuperBlocks.Controller
             try
             {
                 if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
+                {
                     BasicInfoService.WcApi.FireWeaponOnce(Weapon, true, GetWeaponID(Weapon));
+                }
                 else
                 {
                     (Weapon as IMyUserControllableGun).GetActionWithName("ShootOnce")?.Apply(Weapon);
@@ -97,13 +108,13 @@ namespace SuperBlocks.Controller
             if (_AmmoDefinition == null) return null;
             return new MyWeaponParametersConfig()
             {
-                IsDirect = _AmmoDefinition.Beams.Enable,
+                IsDirect = false,
                 Ignore_speed_self = false,
-                Delta_t = 1.0003f,
+                Delta_t = 1.2f,
                 Delta_precious = 0.005f,
-                Calc_t = 3,
-                Offset = GetMaxVector3D(block.WorldAABB.Max - block.WorldAABB.Min),
-                TimeFixed = 2,
+                Calc_t = 12,
+                Offset = GetMaxVector3D(block.LocalAABB.Max - block.LocalAABB.Min),
+                TimeFixed = 5,
                 Speed = _AmmoDefinition.Trajectory.DesiredSpeed,
                 Acc = _AmmoDefinition.Trajectory.AccelPerSec,
                 Trajectory = _AmmoDefinition.Trajectory.MaxTrajectory,

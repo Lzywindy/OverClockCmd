@@ -155,6 +155,7 @@ namespace SuperBlocks.Controller
         {
             if (Utils.Common.IsNullCollection(WeaponsToFire)) return;
             if (!CanFire) return;
+            if (!MyWeaponAndTurretApi.CanFire(WeaponsToFire.Peek())) return;
             if (count > 0) { count--; return; }
             MyWeaponAndTurretApi.FireWeaponOnce(WeaponsToFire.Dequeue());
             count = Config?.firegap ?? 0;
@@ -201,14 +202,24 @@ namespace SuperBlocks.Controller
             if (Utils.Common.IsNullCollection(CurrentWeapons)) return;
             if (BasicInfoService.WcApi.HasCoreWeapon(CurrentWeapons.First()))
             {
-                WeaponName = MyWeaponAndTurretApi.GetWeaponNM(CurrentWeapons.First());
-                AmmoName = MyWeaponAndTurretApi.GetCurrentAmmo(CurrentWeapons)?.First().Value ?? "DefaultAmmo";
+                MyWeaponParametersConfig default_value = default(MyWeaponParametersConfig);
+                Config?.GetConfig(WeaponName, AmmoName, out default_value);
+                var wp_block = CurrentWeapons.First();
+                WeaponName = MyWeaponAndTurretApi.GetWeaponNM(wp_block);
+                AmmoName = BasicInfoService.WcApi.GetActiveAmmo(wp_block, MyWeaponAndTurretApi.GetWeaponID(wp_block)) ?? "DefaultAmmo";
                 foreach (var wp in CurrentWeapons) BasicInfoService.WcApi.SetActiveAmmo(wp, MyWeaponAndTurretApi.GetWeaponID(wp), AmmoName);
                 if (TargetPredict.WeaponName != WeaponName || TargetPredict.AmmoName != AmmoName)
                 {
                     var value = MyWeaponAndTurretApi.GetWeaponCoreDefinition(CurrentWeapons.First(), WeaponName, AmmoName);
                     if (value == null) TargetPredict.SetWeaponAmmoConfigInfo(Config, WeaponName, AmmoName);
-                    else TargetPredict.SetWeaponAmmoConfigInfo(value.Value);
+                    else
+                    {
+                        default_value.Acc = value.Value.Acc;
+                        default_value.Gravity_mult *= value.Value.Gravity_mult;
+                        default_value.Speed = value.Value.Speed;
+                        default_value.Trajectory = value.Value.Trajectory;
+                        TargetPredict.SetWeaponAmmoConfigInfo(default_value);
+                    }
                 }
             }
             else
@@ -404,13 +415,15 @@ namespace SuperBlocks.Controller
         public Vector3D? Direction => TargetPredict.Direction;
         public void SetTarget(IMyTerminalBlock block, MyTargetDetected TargetDetected)
         {
-            if (TargetDetected != null && TargetDetected.Entity != null && TargetDetected.Entity?.EntityId != TargetPredict.TargetLocked?.Entity?.EntityId && Vector3D.Distance(TargetDetected.Position.Value, block.GetPosition()) < Config.range)
+            var position = TargetDetected?.GetEntityPosition(block);
+            if (position != null && TargetDetected.Entity?.EntityId != TargetPredict.TargetLocked?.Entity?.EntityId && Vector3D.Distance(position.Value, block.GetPosition()) < Config.range)
                 TargetPredict.TargetLocked = TargetDetected;
         }
         public void SetTarget(IMyTerminalBlock block, IMyEntity TargetDetected, bool AllTerminalBlocks = false)
         {
             var target = new MyTargetDetected(TargetDetected, block, AllTerminalBlocks);
-            if (target != null && target.Entity != null && target.Entity?.EntityId != TargetPredict.TargetLocked?.Entity?.EntityId && Vector3D.Distance(target.Position.Value, block.GetPosition()) < Config.range)
+            var position = target?.GetEntityPosition(block);
+            if (position != null && target.Entity?.EntityId != TargetPredict.TargetLocked?.Entity?.EntityId && Vector3D.Distance(position.Value, block.GetPosition()) < Config.range)
                 TargetPredict.TargetLocked = target;
         }
         #region PrivateSignal

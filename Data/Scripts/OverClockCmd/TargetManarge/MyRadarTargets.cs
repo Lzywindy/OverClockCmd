@@ -5,6 +5,8 @@ using VRage.ModAPI;
 using VRage.Game.ModAPI;
 using VRageMath;
 using System.Linq;
+using System.Collections.Concurrent;
+
 namespace SuperBlocks.Controller
 {
     /// <summary>
@@ -31,18 +33,15 @@ namespace SuperBlocks.Controller
             else if (TargetsList.Count == 1) return TargetsList.FirstElement();
             else return null;
         }
-        public MyTargetDetected 得的最近向我靠近最快的目标(IMyTerminalBlock RequstBlock, Func<IMyEntity, bool> Filter = null, Func<IMyEntity, double> FilterPriority = null)
+        public MyTargetDetected 得的最近向我靠近最快的目标(IMyTerminalBlock RequstBlock, double MaxRange = 1000)
         {
             if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList) || Range < 10) return null;
-            var ent_tgs = TargetsList.Where(tg => Filter?.Invoke(tg.Entity) ?? true)?.ToList();
+            var ent_tgs = TargetsList.Where(tg => tg.GetDistance(RequstBlock) < MaxRange)?.ToList();
             if (Utils.Common.IsNullCollection(ent_tgs)) return null;
-            if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)(tg.Priority(RequstBlock) - (FilterPriority?.Invoke(tg?.Entity) ?? 0)));
+            if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)(tg.Priority(RequstBlock)));
             else if (TargetsList.Count == 1) return TargetsList.FirstElement();
             else return null;
         }
-        #endregion
-        #region 外部可调用属性
-        public MyTargetDetected 当前目标 { get; private set; }
         #endregion
         #region 更新函数       
         protected override void UpdateFunctions(IMyTerminalBlock CtrlBlock)
@@ -53,7 +52,7 @@ namespace SuperBlocks.Controller
                 foreach (var item in TargetsList) { item.Update(CtrlBlock); }
                 //MyAPIGateway.Utilities.ShowNotification($"Update21:{true}");
             }
-            if (updatecounts % 11 == 0)
+            if (updatecounts % 9 == 0)
             {
                 BoundingSphereD bounding = new BoundingSphereD(CtrlBlock.GetPosition(), Range);
                 DetectedEntities.Clear();
@@ -61,17 +60,12 @@ namespace SuperBlocks.Controller
                 if (Utils.Common.IsNullCollection(entities)) return;
                 DetectedEntities.UnionWith(entities);
                 List<IMyEntity> 敌人 = entities.Where(t => 可能敌对的目标(t, CtrlBlock))?.ToList();
-                if (Utils.Common.IsNullCollection(敌人)) { 当前目标 = null; return; }
+                if (Utils.Common.IsNullCollection(敌人)) return;
                 Enemies.RemoveWhere(Utils.Common.NullEntity);
                 Enemies.UnionWith(敌人);
-                if (Utils.Common.IsNullCollection(Enemies)) { 当前目标 = null; return; }
+                if (Utils.Common.IsNullCollection(Enemies)) return;
                 TargetsList.UnionWith(Enemies.ToList().ConvertAll(t => new MyTargetDetected(t, CtrlBlock)));
-                if (TargetsList.Count > 1) 当前目标 = TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(CtrlBlock));
-                else if (TargetsList.Count == 1) 当前目标 = TargetsList.FirstElement();
-                else 当前目标 = null;
-                //MyAPIGateway.Utilities.ShowNotification($"Update11:{true}");
             }
-            if (updatecounts % 4 == 0) 当前目标?.Update(CtrlBlock);
         }
         #endregion
         #region 私有函数
@@ -123,6 +117,7 @@ namespace SuperBlocks.Controller
         }
         private bool TargetInRange(MyTargetDetected target, IMyTerminalBlock DetectorProcess)
         {
+            //ConcurrentBag<IMyEntity> Entities = new ConcurrentBag<IMyEntity>();
             if (target == null || target.InvalidTarget || Range < 10 || !DetectorProcess.IsFunctional) return false;
             return (target.Entity.GetPosition() - DetectorProcess.GetPosition()).Length() <= Range;
         }

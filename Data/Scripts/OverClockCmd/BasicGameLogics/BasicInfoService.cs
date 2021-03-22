@@ -23,8 +23,9 @@ namespace SuperBlocks.Controller
                 Init();
                 return;
             }
-            UpdateWeaponCoreApis();
-            MyWeaponSystemManage.Update();
+            try { UpdateWeaponCoreApis(); } catch (Exception) { }
+            try { MyWeaponSystemManage.Update(); } catch (Exception) { }
+
         }
         public void Init()
         {

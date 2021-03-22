@@ -23,7 +23,7 @@ namespace SuperBlocks.Controller
                 if (count == 0) { RemoveNulls(); }
                 MyAPIGateway.Parallel.ForEach(BlockBindings_WeaponSystem, bound => { if (bound.Key.IsFunctional && (bound.Key is IMyFunctionalBlock) && (bound.Key as IMyFunctionalBlock).Enabled) bound.Value.Update(bound.Key); });
             }
-            catch (Exception) { /*MyAPIGateway.Utilities.ShowNotification(e.Message);*/ }
+            catch (Exception) { 初始化完成 = false; BlockBindings_WeaponSystem.Clear(); /*MyAPIGateway.Utilities.ShowNotification(e.Message);*/ }
         }
         static int count = 0;
         const int count_max = 100;

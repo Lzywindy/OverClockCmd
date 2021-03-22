@@ -80,8 +80,6 @@ namespace SuperBlocks
                     default: break;
                 }
             }
-            if (AmmoNMs.ContainsKey("DefaultAmmo")) return;
-            AmmoNMs.Add("DefaultAmmo", new MyAmmoConfig(null));
         }
         public void Clear() { TimeFixed = 1; IsDirect = true; Ignore_speed_self = false; Delta_t = 0; Delta_precious = 0; Calc_t = 0; Offset = 0; AmmoNMs.Clear(); AmmoNMs.Add("DefaultAmmo", new MyAmmoConfig(null)); }
         public void GetConfig(string AmmoName, out MyWeaponParametersConfig Parameters)
@@ -135,8 +133,6 @@ namespace SuperBlocks
                     default: break;
                 }
             }
-            if (TurretWeaponConfigs.ContainsKey("DefaultWeapon")) return;
-            TurretWeaponConfigs.Add("DefaultWeapon", new MyWeaponConfig(null, MyWeaponConfig.EnergyWeaponID));
         }
         public void GetConfig(string WeaponName, string AmmoName, out MyWeaponParametersConfig Parameters)
         {

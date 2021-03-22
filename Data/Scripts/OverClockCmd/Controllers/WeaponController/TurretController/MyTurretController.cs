@@ -21,7 +21,7 @@ namespace SuperBlocks.Controller
             Turrets.Clear();
             foreach (var az_motor in azs)
             {
-                Turrets.TryAdd(az_motor, new MyTurretBinding());
+                Turrets.AddOrUpdate(az_motor, new MyTurretBinding(), (key, value) => new MyTurretBinding());
                 Turrets[az_motor].Init(az_motor, ref Configs);
             }
         }
@@ -50,12 +50,13 @@ namespace SuperBlocks.Controller
             {
                 Turret.Value.Config = Configs;
                 if (RadarTargets == null || !TurretEnabled) { Turret.Value.TargetPredict.TargetLocked = null; Turret.Value.RunningDefault(); return; }
-                var range = Configs?.range ?? 1000;
-                var target = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(CtrlBlock.CubeGrid), Turret.Key, true) : RadarTargets.得的最近向我靠近最快的目标(Turret.Key);
+                var range = Configs?.range ?? 3000;
+                var target = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(CtrlBlock.CubeGrid), Turret.Key, true) : RadarTargets.得的最近向我靠近最快的目标(Turret.Key, range);
                 try
                 {
-                    if (target != null && target.Entity != null && target.Entity?.EntityId != Turret.Value.TargetPredict.TargetLocked?.Entity?.EntityId 
-                    && Vector3D.Distance(target.Position.Value, Turret.Key.GetPosition()) < range)
+                    var position = target?.GetEntityPosition(CtrlBlock);
+                    if (position != null && target.Entity?.EntityId != Turret.Value.TargetPredict.TargetLocked?.Entity?.EntityId
+                    && Vector3D.Distance(position.Value, Turret.Key.GetPosition()) < range)
                         Turret.Value.TargetPredict.TargetLocked = target;
                 }
                 catch (Exception) { }

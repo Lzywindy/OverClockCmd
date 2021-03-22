@@ -12,7 +12,8 @@ namespace SuperBlocks.Controller
             Property.Setter = SetterFunc;
             Property.Enabled = Filter;
             Property.Visible = Filter;
-            MyAPIGateway.TerminalControls.AddControl<TBlockType>(Property);
+            try { MyAPIGateway.TerminalControls.RemoveControl<IMyTerminalBlock>(Property); } catch (Exception) { }
+            try { MyAPIGateway.TerminalControls.AddControl<IMyTerminalBlock>(Property); } catch (Exception) { }
         }
     }
     public static class CreateProperty
@@ -24,7 +25,8 @@ namespace SuperBlocks.Controller
             Property.Setter = SetterFunc;
             Property.Enabled = Filter;
             Property.Visible = Filter;
-            MyAPIGateway.TerminalControls.AddControl<TBlock>(Property);
+            try { MyAPIGateway.TerminalControls.RemoveControl<TBlock>(Property); } catch (Exception) { }
+            try { MyAPIGateway.TerminalControls.AddControl<TBlock>(Property); } catch (Exception) { }
         }
         public static void CreateProperty_PB_CN<ValueType, TBlock>(string CtrlID, Func<IMyTerminalBlock, bool> Filter, Func<IMyTerminalBlock, ValueType> GetterFunc, Action<IMyTerminalBlock, ValueType> SetterFunc)
         {
@@ -33,7 +35,8 @@ namespace SuperBlocks.Controller
             Property.Setter = SetterFunc;
             Property.Enabled = Filter;
             Property.Visible = Filter;
-            MyAPIGateway.TerminalControls.AddControl<TBlock>(Property);
+            try { MyAPIGateway.TerminalControls.RemoveControl<TBlock>(Property); } catch (Exception) { }
+            try { MyAPIGateway.TerminalControls.AddControl<TBlock>(Property); } catch (Exception) { }
         }
         public static void CreateProperty_PB_IN<ValueType, TBlock>(string CtrlID, Func<IMyTerminalBlock, bool> Filter, Func<IMyTerminalBlock, ValueType> GetterFunc, Action<IMyTerminalBlock, ValueType> SetterFunc)
         {
@@ -42,7 +45,8 @@ namespace SuperBlocks.Controller
             Property.Setter = SetterFunc;
             Property.Enabled = Filter;
             Property.Visible = Filter;
-            MyAPIGateway.TerminalControls.AddControl<TBlock>(Property);
+            try { MyAPIGateway.TerminalControls.RemoveControl<TBlock>(Property); } catch (Exception) { }
+            try { MyAPIGateway.TerminalControls.AddControl<TBlock>(Property); } catch (Exception) { }
         }
     }
 }
