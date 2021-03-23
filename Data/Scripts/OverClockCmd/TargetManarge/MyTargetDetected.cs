@@ -38,10 +38,10 @@ namespace SuperBlocks.Controller
             var vector = Entity.GetPosition() - Detector.GetPosition();
             var direction = vector.LengthSquared() == 0 ? Vector3D.Normalize(vector) : Vector3D.Zero;
             if (Entity?.Physics == null) return vector.LengthSquared();
-            var tend = (vector + (Entity.Physics.LinearVelocity * MyEngineConstants.PHYSICS_STEP_SIZE_IN_SECONDS + 0.5f * Entity.Physics.LinearAcceleration * MyEngineConstants.PHYSICS_STEP_SIZE_IN_SECONDS * MyEngineConstants.PHYSICS_STEP_SIZE_IN_SECONDS) * 40).Dot(direction);
+            var tend = vector.LengthSquared(); /*(vector + (Entity.Physics.LinearVelocity * MyEngineConstants.PHYSICS_STEP_SIZE_IN_SECONDS + 0.5f * Entity.Physics.LinearAcceleration * MyEngineConstants.PHYSICS_STEP_SIZE_IN_SECONDS * MyEngineConstants.PHYSICS_STEP_SIZE_IN_SECONDS) * 40).Dot(direction);*/
             if (!IsGrid) return tend;
             if (Blocks.Count < 1) return float.MaxValue;
-            return tend - Blocks.Count * 20;
+            return tend /*- Blocks.Count * 20*/;
         }
         public bool GetTarget_PV(IMyTerminalBlock Detector, out Vector3D Position, out Vector3 Velocity, out Vector3 Acc)
         {

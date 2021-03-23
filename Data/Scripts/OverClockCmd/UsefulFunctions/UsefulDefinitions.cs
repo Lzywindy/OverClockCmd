@@ -94,15 +94,19 @@ namespace SuperBlocks
                 {
                     Wheels += () =>
                     {
-                        bool EnTrO = (TrackVehicle || (LinearVelocity.LengthSquared() < 120f));
                         var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Motor.WorldMatrix.Up));
-                        var PropulsionOverride = EnTrO ? DiffTurns(sign) : ForwardIndicator;
-                        Motor.Steering = !TrackVehicle;
+                        bool EnTrO = (TrackVehicle || (LinearVelocity.LengthSquared() < 4f));
+                        float PropulsionOverride = (EnTrO ? DiffTurns(sign) : 0) + (ForwardIndicator * sign);
+                        Motor.Brake = PropulsionOverride == 0;
+                        Motor.InvertSteer = false;
                         Motor.SetValue<float>(Motor.GetProperty(MotorOverrideId).Id, Math.Sign(PropulsionOverride));
                         Motor.Power = Math.Abs(PropulsionOverride);
+                        Motor.Steering = !TrackVehicle;
                         Motor.Friction = MathHelper.Clamp((TurnIndicator != 0) ? (TrackVehicle ? (TurnFaction / Vector3.DistanceSquared(Motor.GetPosition(), Me.CubeGrid.GetPosition())) : Friction) : Friction, 0, Friction);
-                        Motor.Brake = PropulsionOverride == 0;
-                        Motor.InvertSteer = Motor.Steering && EnTrO && (TurnIndicator != 0) && (sign < 0);
+                        if (Motor.Steering && EnTrO && TurnIndicator != 0)
+                            Motor.SetValue<float>(Motor.GetProperty(SteerOverrideId).Id, Math.Sign(Me.WorldMatrix.Left.Dot(Motor.WorldMatrix.Up)) * (Motor.CustomName.Contains("Rear") ? -1 : 1));
+                        else
+                            Motor.SetValue<float>(Motor.GetProperty(SteerOverrideId).Id, 0);
                     };
                 }
                 return Wheels;
@@ -403,6 +407,7 @@ namespace SuperBlocks
         public const string BrakeNM = @"Brake";
         public const string BackwardNM = @"Backward";
         public const string MotorOverrideId = @"Propulsion override";
+        public const string SteerOverrideId = @"Steer override";
         public const string VehicleControllerConfigID = @"VehicleController";
         public const string OverclockedID = @"Overclocked";
         #endregion

@@ -87,8 +87,6 @@ namespace SuperBlocks.Controller
             bool EnabledGyros_Inner = EnabledGyros;
             if (Role == ControllerRole.HoverVehicle || Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle || Role == ControllerRole.SeaShip || Role == ControllerRole.Submarine)
             {
-                //var TurnIndicator = MoveIndication.X; var AngularVelocity = (Controller?.GetShipVelocities().AngularVelocity ?? Vector3D.Zero); EnabledGyros_Inner = EnabledGyros_Inner && ((TurnIndicator != 0 || Vector3.Round(Vector3.TransformNormal(AngularVelocity, Matrix.Transpose(Common.GetWorldMatrix(Me))) * (new Vector3(0.01f, 1, 0.01f)), 2) != Vector3.Zero)); Rotation = Vector3.Up * 180000F * TurnIndicator + PoseProcessFuncs.ProcessDampeners(Controller, InitAngularDampener, AngularDampeners);
-
                 Rotation = PoseProcessFuncs.ProcessRotation_GroundVehicle(Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, MaxReactions_AngleV, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride) ?? RotationIndication;
             }
             else

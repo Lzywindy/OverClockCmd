@@ -76,9 +76,5 @@ namespace SuperBlocks.Controller
         #region ConstValues
         private const string FixedWeaponID = "FixedWeapon";
         #endregion
-        #region PublicFunctions
-        public long GetTarget(IMyTerminalBlock CtrlBlock) => RadarTargets.得的最近向我靠近最快的目标(CtrlBlock)?.Entity?.EntityId ?? -1;
-        public Vector3D? GetPredictInfo(IMyTerminalBlock CtrlBlock) => TargetPredictEnt.Direction;
-        #endregion
     }
 }

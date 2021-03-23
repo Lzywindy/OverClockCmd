@@ -57,9 +57,9 @@ namespace SuperBlocks.Controller
             if (ent == null) return false;
             if (ent is IMyFloatingObject || ent is IMyVoxelBase) return false;
             if ((ent is IMyCharacter) && (!AimAtCharactors)) return false;
-            if (Utils.MyTargetEnsureAPI.是否是导弹(ent) && (!AimAtMissiles)) return false;
+            if (Utils.MyTargetEnsureAPI.IsMissile(ent) && (!AimAtMissiles)) return false;
             if ((ent is IMyMeteor) && (!AimAtMeteros)) return false;
-            if ((ent is IMyCubeGrid) && (Utils.MyTargetEnsureAPI.统计网格中通电的方块(ent as IMyCubeGrid) < 4)) return false;
+            if ((ent is IMyCubeGrid) && (Utils.MyTargetEnsureAPI.StatisticPoweredBlocks(ent as IMyCubeGrid) < 4)) return false;
             return true;
         }
         public bool BlockFilter(IMyTerminalBlock block)

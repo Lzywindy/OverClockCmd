@@ -26,13 +26,6 @@ namespace SuperBlocks.Controller
             if (Utils.Common.NullEntity(DetectorProcess)) return;
             Range = distance * 1.5;
         }
-        public MyTargetDetected 得的最近向我靠近最快的目标(IMyTerminalBlock RequstBlock)
-        {
-            if (Utils.Common.IsNull(RequstBlock) || Utils.Common.IsNullCollection(TargetsList) || Range < 10) return null;
-            if (TargetsList.Count > 1) return TargetsList.ToList().MinBy(tg => (float)tg.Priority(RequstBlock));
-            else if (TargetsList.Count == 1) return TargetsList.FirstElement();
-            else return null;
-        }
         public MyTargetDetected 得的最近向我靠近最快的目标(IMyTerminalBlock RequstBlock, double MaxRange = 1000)
         {
             if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList) || Range < 10) return null;
@@ -50,7 +43,6 @@ namespace SuperBlocks.Controller
             {
                 TargetsList.RemoveWhere(t => t.InvalidTarget || t.TargetSafety());
                 foreach (var item in TargetsList) { item.Update(CtrlBlock); }
-                //MyAPIGateway.Utilities.ShowNotification($"Update21:{true}");
             }
             if (updatecounts % 9 == 0)
             {
@@ -59,67 +51,13 @@ namespace SuperBlocks.Controller
                 List<IMyEntity> entities = MyAPIGateway.Entities.GetTopMostEntitiesInSphere(ref bounding);
                 if (Utils.Common.IsNullCollection(entities)) return;
                 DetectedEntities.UnionWith(entities);
-                List<IMyEntity> 敌人 = entities.Where(t => 可能敌对的目标(t, CtrlBlock))?.ToList();
+                List<IMyEntity> 敌人 = entities.Where(t => Utils.MyTargetEnsureAPI.IsEnemy(t, CtrlBlock))?.ToList();
                 if (Utils.Common.IsNullCollection(敌人)) return;
                 Enemies.RemoveWhere(Utils.Common.NullEntity);
                 Enemies.UnionWith(敌人);
                 if (Utils.Common.IsNullCollection(Enemies)) return;
                 TargetsList.UnionWith(Enemies.ToList().ConvertAll(t => new MyTargetDetected(t, CtrlBlock)));
             }
-        }
-        #endregion
-        #region 私有函数
-        private bool 可能敌对的目标(IMyEntity target, IMyTerminalBlock DetectorProcess)
-        {
-            if (Utils.Common.NullEntity(target)) return false;
-            return 目标敌对(target, DetectorProcess);
-        }
-        private bool 目标敌对(IMyEntity Ent, IMyTerminalBlock DetectorProcess)
-        {
-            if (Ent == null || DetectorProcess == null) return false;
-            if (Ent is IMyMeteor || Utils.MyTargetEnsureAPI.是否是导弹(Ent)) return 目标朝我靠近(Ent, DetectorProcess);
-            if (Ent is IMyCubeGrid)
-            {
-                var grid = Ent as IMyCubeGrid;
-                if (grid == null) return false;
-                bool HasHostileBlock = false;
-                foreach (var item in grid.BigOwners)
-                {
-                    switch (DetectorProcess.GetUserRelationToOwner(item))
-                    {
-                        case VRage.Game.MyRelationsBetweenPlayerAndBlock.Enemies:
-                            HasHostileBlock = HasHostileBlock || true;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return HasHostileBlock && 网络通电(grid, DetectorProcess);
-            }
-            return false;
-        }
-        private bool 网络通电(IMyCubeGrid Grid, IMyTerminalBlock DetectorProcess)
-        {
-            var blocks = Utils.Common.GetTs<IMyFunctionalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Grid), 供能方块);
-            return (blocks?.Any(b => b.Enabled && b.IsFunctional) ?? false);
-        }
-        private bool 供能方块(IMyFunctionalBlock block)
-        {
-            if (block is IMyBatteryBlock || block is IMyReactor) return true;
-            var str = block.GetType().ToString();
-            if (str.Contains("HydrogenEngine") || str.Contains("WindTurbine") || str.Contains("SolarPanel")) return true;
-            return false;
-        }
-        private bool 目标朝我靠近(IMyEntity Ent, IMyTerminalBlock DetectorProcess)
-        {
-            if (Ent?.Physics == null) return false;
-            return Vector3D.Dot(Vector3D.Normalize((DetectorProcess.GetPosition() - Ent.GetPosition())), Ent.Physics.LinearVelocity) > 0.865;
-        }
-        private bool TargetInRange(MyTargetDetected target, IMyTerminalBlock DetectorProcess)
-        {
-            //ConcurrentBag<IMyEntity> Entities = new ConcurrentBag<IMyEntity>();
-            if (target == null || target.InvalidTarget || Range < 10 || !DetectorProcess.IsFunctional) return false;
-            return (target.Entity.GetPosition() - DetectorProcess.GetPosition()).Length() <= Range;
         }
         #endregion
         #region 私有变量

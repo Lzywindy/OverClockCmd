@@ -21,7 +21,7 @@ namespace SuperBlocks
             public static bool IsNull<T>(T Value) where T : class => Value == null;
             public static bool NullEntity<T>(T Ent) where T : IMyEntity => Ent == null || Ent.Closed || Ent.MarkedForClose;
             public static T GetT<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class { List<T> Items = GetTs<T>(gridTerminalSystem, requst); if (IsNullCollection(Items)) return null; else return Items.First(); }
-            public static List<T> GetTs<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class { if (gridTerminalSystem == null) return null; List<T> Items = new List<T>(); gridTerminalSystem.GetBlocksOfType<T>(Items, requst); return Items; }
+            public static List<T> GetTs<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class { List<T> Items = new List<T>(); if (gridTerminalSystem == null) return Items; gridTerminalSystem.GetBlocksOfType<T>(Items, requst); return Items; }
             public static T GetT<T>(IMyTerminalBlock block, Func<T, bool> requst = null) where T : class { List<T> Items = GetTs<T>(block, requst); if (IsNullCollection(Items)) return null; else return Items.First(); }
             public static List<T> GetTs<T>(IMyTerminalBlock block, Func<T, bool> requst = null) where T : class { if (block == null || block.CubeGrid == null) return null; List<T> Items = new List<T>(); MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid)?.GetBlocksOfType<T>(Items, requst); return Items; }
             public static IMyTerminalBlock GetBlock(IMyGridTerminalSystem gridTerminalSystem, long EntIds = 0) => gridTerminalSystem?.GetBlockWithId(EntIds) as IMyTerminalBlock;
@@ -210,15 +210,27 @@ namespace SuperBlocks
                 if (Targets.Count == 1) { return Targets.First(); }
                 return Targets.MinBy((target) => (float)Vector3D.Distance(target.GetPosition(), Detector.GetPosition()));
             }
-            public static bool CouldBeEnemy(IMyEntity target, Sandbox.ModAPI.Ingame.IMyTerminalBlock DetectorProcess)
+            private static bool IsPowerProvideBlock(IMyFunctionalBlock block) => (block is IMyBatteryBlock || block is IMyReactor || block.GetType().ToString().Contains("HydrogenEngine") || block.GetType().ToString().Contains("WindTurbine") || block.GetType().ToString().Contains("SolarPanel"));
+            public static int StatisticPoweredBlocks(IMyCubeGrid cubeGrid)
+            {
+                if (cubeGrid == null) return 0;
+                List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
+                MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(cubeGrid)?.GetBlocksOfType(blocks, (IMyTerminalBlock block) => { if (block == null || !block.IsFunctional) return false; var b_f = block as IMyFunctionalBlock; if (b_f == null || !b_f.Enabled) return false; return true; });
+                return blocks.Count;
+            }
+            public static bool IsMeteor(IMyEntity entity) => entity is IMyMeteor;
+            public static bool IsVoxel(IMyEntity entity) => entity is IMyVoxelBase;
+            public static bool IsMissile(IMyEntity entity) => (entity?.GetType()?.ToString() ?? "") == "Sandbox.Game.Weapons.MyMissile";
+            public static bool IsInRange(IMyEntity Me, IMyEntity Target, double Range) { if (Me == null || Target == null) return false; return (Me.GetPosition() - Target.GetPosition()).Length() <= Range; }
+            public static bool CouldBeEnemy(IMyEntity target, IMyTerminalBlock DetectorProcess)
             {
                 if (Common.NullEntity(target)) return false;
-                return 目标敌对(target, DetectorProcess);
+                return IsEnemy(target, DetectorProcess);
             }
-            private static bool 目标敌对(IMyEntity Ent, Sandbox.ModAPI.Ingame.IMyTerminalBlock DetectorProcess)
+            public static bool IsEnemy(IMyEntity Ent, IMyTerminalBlock DetectorProcess)
             {
                 if (Ent == null || DetectorProcess == null) return false;
-                if (Ent is IMyMeteor || 是否是导弹(Ent)) return 目标朝我靠近(Ent, DetectorProcess);
+                if (Ent is IMyMeteor || IsMissile(Ent)) return ClosingToMe(Ent, DetectorProcess);
                 if (Ent is IMyCubeGrid)
                 {
                     var grid = Ent as IMyCubeGrid;
@@ -235,49 +247,15 @@ namespace SuperBlocks
                                 break;
                         }
                     }
-                    return HasHostileBlock && 网络通电(grid);
+                    return HasHostileBlock && PoweredGrid(grid);
                 }
                 return false;
             }
-            private static bool 网络通电(IMyCubeGrid Grid)
-            {
-                var blocks = Common.GetTs<IMyFunctionalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Grid), 供能方块);
-                return (blocks?.Any(b => b.Enabled && b.IsFunctional) ?? false);
-            }
-            private static bool 供能方块(IMyFunctionalBlock block)
-            {
-                if (block is IMyBatteryBlock || block is IMyReactor) return true;
-                var str = block.GetType().ToString();
-                if (str.Contains("HydrogenEngine") || str.Contains("WindTurbine") || str.Contains("SolarPanel")) return true;
-                return false;
-            }
-            private static bool 目标朝我靠近(IMyEntity Ent, Sandbox.ModAPI.Ingame.IMyTerminalBlock DetectorProcess)
+            public static bool PoweredGrid(IMyCubeGrid Grid) => (Common.GetTs<IMyFunctionalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Grid), IsPowerProvideBlock)?.Any(b => b.Enabled && b.IsFunctional) ?? false);
+            public static bool ClosingToMe(IMyEntity Ent, IMyTerminalBlock DetectorProcess)
             {
                 if (Ent?.Physics == null) return false;
                 return Vector3D.Dot(Vector3D.Normalize((DetectorProcess.GetPosition() - Ent.GetPosition())), Ent.Physics.LinearVelocity) > 0.865;
-            }
-            public static int 统计网格中通电的方块(IMyCubeGrid cubeGrid)
-            {
-                if (cubeGrid == null) return 0;
-                List<IMySlimBlock> blocks = new List<IMySlimBlock>();
-                cubeGrid.GetBlocks(blocks, (IMySlimBlock block) =>
-                {
-                    if (block == null) return false;
-                    var b_t = block as IMyTerminalBlock;
-                    if (b_t == null || !b_t.IsFunctional) return false;
-                    var b_f = block as IMyFunctionalBlock;
-                    if (b_f == null || !b_f.Enabled) return false;
-                    return true;
-                });
-                return blocks.Count;
-            }
-            public static bool 是否是陨石(IMyEntity entity) => entity is IMyMeteor;
-            public static bool 是否是体素或者行星(IMyEntity entity) => entity is IMyVoxelBase;
-            public static bool 是否是导弹(IMyEntity entity) => (entity?.GetType()?.ToString() ?? "") == "Sandbox.Game.Weapons.MyMissile";
-            public static bool 是否在范围里(IMyEntity Me, IMyEntity Target, double Range)
-            {
-                if (Me == null || Target == null) return false;
-                return (Me.GetPosition() - Target.GetPosition()).Length() <= Range;
             }
         }
         public static class MyRotorAPI

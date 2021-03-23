@@ -183,7 +183,6 @@
     <Compile Include="Controllers\WeaponController\TurretController\MyTurretBinding.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\MyTurretController.cs" />
     <Compile Include="TargetManarge\MyWeaponInfo.cs" />
-    <Compile Include="TurretController\RadarSystemAPIs.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetFilterManager.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetManager.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateProperty.cs" />
