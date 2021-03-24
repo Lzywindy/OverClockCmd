@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using ProtoBuf;
+﻿using ProtoBuf;
 using Sandbox.ModAPI;
+using System;
+using System.Collections.Generic;
 using VRage;
 using VRage.Game;
 using VRage.ModAPI;
@@ -56,7 +56,7 @@ namespace WeaponCore.Api
         private Func<IMyTerminalBlock, int, Matrix> _getWeaponElevationMatrix;
         private Func<IMyTerminalBlock, IMyEntity, bool, bool, bool> _isTargetValid;
         private Func<IMyTerminalBlock, int, MyTuple<Vector3D, Vector3D>> _getWeaponScope;
-        private Func<IMyEntity, MyTuple<bool,bool>> _isInRange;
+        private Func<IMyEntity, MyTuple<bool, bool>> _isInRange;
         private const long Channel = 67549756549;
         private bool _getWeaponDefinitions;
         private bool _isRegistered;
@@ -279,7 +279,7 @@ namespace WeaponCore.Api
             _getProjectileState?.Invoke(projectileId) ?? new MyTuple<Vector3D, Vector3D, float, float, long, string>();
 
         public float GetConstructEffectiveDps(IMyEntity entity) => _getConstructEffectiveDps?.Invoke(entity) ?? 0f;
-        
+
         public long GetPlayerController(IMyTerminalBlock weapon) => _getPlayerController?.Invoke(weapon) ?? -1;
 
         public Matrix GetWeaponAzimuthMatrix(IMyTerminalBlock weapon, int weaponId) =>

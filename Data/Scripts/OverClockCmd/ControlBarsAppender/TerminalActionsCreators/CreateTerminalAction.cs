@@ -1,9 +1,9 @@
 ﻿using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
-using VRage.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using System;
+using VRage.Utils;
 namespace SuperBlocks.Controller
 {
     public class CreateTerminalAction<ValueType, TBlockType>

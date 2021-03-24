@@ -1,14 +1,11 @@
-﻿using System;
-using Sandbox.ModAPI;
+﻿using Sandbox.ModAPI;
+using System;
 using System.Collections.Generic;
-using VRage.ModAPI;
-using VRage.Game.ModAPI;
-using VRage;
-using VRageMath;
 using System.Linq;
 using VRage.Game.Components;
-using VRage.Game;
-using System.Collections.Concurrent;
+using VRage.Game.ModAPI;
+using VRage.ModAPI;
+using VRageMath;
 
 namespace SuperBlocks.Controller
 {
@@ -66,7 +63,7 @@ namespace SuperBlocks.Controller
             if (Detector == null || InvalidTarget) return null;
             if (!IsGrid) return Entity?.GetPosition();
             if (Blocks.Count < 1) return null;
-            if (Vector3D.Distance(Entity.GetPosition(), Detector.GetPosition()) > 2000)
+            if (Vector3D.Distance(Entity.GetPosition(), Detector.GetPosition()) > 3000)
                 return new Vector3D(Blocks.Average(b => b.GetPosition().X), Blocks.Average(b => b.GetPosition().Y), Blocks.Average(b => b.GetPosition().Z));
             else
                 return Blocks.MinBy(b => (float)(b.GetPosition() - Detector.GetPosition()).LengthSquared())?.GetPosition();

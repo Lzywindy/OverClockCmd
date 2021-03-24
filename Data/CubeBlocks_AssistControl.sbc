@@ -87,6 +87,92 @@
 			<PCU>5</PCU>
 			<IsAirTight>false</IsAirTight>
 		</Definition>
+		<!--炮塔控制器-->
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>TurretController</SubtypeId>
+			</Id>
+			<DisplayName>Universal Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>This controller is an Turret controller, which can control a group of Rotor Turrets. </Description>
+			<CubeSize>Large</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="0.3" EndY="0.7" />
+				<MountPoint Side="Left" StartX="0.3" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="0.7" EndY="1" />
+				<MountPoint Side="Right" StartX="0.7" StartY="0" EndX="1" EndY="0.7" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="0.7" />
+			</MountPoints>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Large\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>TurretController</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<DestroyEffectOffset>
+				<X>0</X>
+				<Y>0</Y>
+				<Z>1.1</Z>
+			</DestroyEffectOffset>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
+		<Definition>
+			<Id>
+				<TypeId>TerminalBlock</TypeId>
+				<SubtypeId>SmallTurretController</SubtypeId>
+			</Id>
+			<DisplayName>Turret Controller</DisplayName>
+			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
+			<Description>This controller is an Turret controller, which can control a group of Rotor Turrets. </Description>
+			<CubeSize>Small</CubeSize>
+			<BlockTopology>TriangleMesh</BlockTopology>
+			<Size x="1" y="1" z="1" />
+			<ModelOffset x="0" y="0" z="0" />
+			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
+			<Components>
+				<Component Subtype="SteelPlate" Count="1" />
+				<Component Subtype="Construction" Count="1" />
+				<Component Subtype="Computer" Count="1" />
+			</Components>
+			<CriticalComponent Subtype="Construction" Index="0" />
+			<MountPoints>
+				<MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" Default="true" />
+				<MountPoint Side="Back" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Front" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Left" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Right" StartX="0" StartY="0" EndX="1" EndY="1" />
+				<MountPoint Side="Top" StartX="0" StartY="0" EndX="1" EndY="1" />
+			</MountPoints>
+			<BuildProgressModels>
+				<Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\RemoteControlConstruction_1.mwm" />
+				<Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\RemoteControlConstruction_2.mwm" />
+			</BuildProgressModels>
+			<BlockPairName>TurretController</BlockPairName>
+			<MirroringZ>Y</MirroringZ>
+			<MirroringY>Z</MirroringY>
+			<EdgeType>Light</EdgeType>
+			<BuildTimeSeconds>6</BuildTimeSeconds>
+			<PCU>5</PCU>
+			<IsAirTight>false</IsAirTight>
+		</Definition>
 	</CubeBlocks>
 	<BlockVariantGroups>
 		<BlockVariantGroup>
@@ -97,6 +183,8 @@
 			<Blocks>				
 				<Block Type="TerminalBlock" Subtype="UniversalController" />
 				<Block Type="TerminalBlock" Subtype="SmallUniversalController" />
+				<Block Type="TerminalBlock" Subtype="TurretController" />
+				<Block Type="TerminalBlock" Subtype="SmallTurretController" />
 			</Blocks>
 		</BlockVariantGroup>
 	</BlockVariantGroups>
@@ -112,6 +200,8 @@
 			<ItemIds>
 				<string>TerminalBlock/UniversalController</string>
 				<string>TerminalBlock/SmallUniversalController</string>
+				<string>TerminalBlock/TurretController</string>
+				<string>TerminalBlock/SmallTurretController</string>
 			</ItemIds>
 		</Category>
 	</CategoryClasses>

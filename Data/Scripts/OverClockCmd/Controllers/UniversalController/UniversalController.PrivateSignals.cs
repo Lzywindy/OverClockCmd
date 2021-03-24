@@ -36,7 +36,7 @@ namespace SuperBlocks.Controller
                 if (HandBrake) return Vector4.Zero;
                 switch (Role)
                 {
-                    case ControllerRole.Aeroplane: case ControllerRole.SpaceShip: return new Vector4(0, 0, RotationIndication.X,RotationIndication.Y);
+                    case ControllerRole.Aeroplane: case ControllerRole.SpaceShip: return new Vector4(0, 0, RotationIndication.X, RotationIndication.Y);
                     case ControllerRole.Helicopter: return new Vector4(MoveIndication.Z, MoveIndication.X, 0, RotationIndication.Z);
                     case ControllerRole.VTOL: return (HasWings && (!ForwardOrUp) && (Gravity != Vector3.Zero)) ? (new Vector4(MoveIndication.Z, MoveIndication.X, 0, RotationIndication.Z)) : new Vector4(0, 0, RotationIndication.X, RotationIndication.Y);
                     case ControllerRole.SeaShip: case ControllerRole.Submarine: case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: return new Vector4(0, 0, 0, MoveIndication.X);

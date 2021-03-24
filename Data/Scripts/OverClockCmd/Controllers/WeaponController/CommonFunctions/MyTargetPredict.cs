@@ -1,25 +1,13 @@
-﻿using System;
-using Sandbox.ModAPI;
+﻿using Sandbox.ModAPI;
+using System;
 using System.Collections.Generic;
-using VRage;
-using VRageMath;
 using System.Linq;
 using VRage.Game;
+using VRageMath;
 namespace SuperBlocks.Controller
 {
     public sealed class MyTargetPredict
     {
-        #region 私有服务函数         
-        private static Vector3D GetWeaponDirection(ICollection<IMyTerminalBlock> Weapons)
-        {
-            if (Utils.Common.IsNullCollection(Weapons)) { return Vector3D.Zero; }
-            Vector3 vector = Vector3.Zero;
-            foreach (var weapon in Weapons)
-                vector += weapon.WorldMatrix.Forward;
-            if (vector == Vector3.Zero) return Vector3D.Zero;
-            else { vector.Normalize(); return vector; }
-        }
-        #endregion
         public MyTargetPredict() : base() { }
         public void Init() { ResetResult(); }
         public bool CanFireWeapon(ICollection<IMyTerminalBlock> Weapons)
@@ -27,32 +15,19 @@ namespace SuperBlocks.Controller
             if (Direction == null || Utils.Common.IsNullCollection(Weapons)) return false;
             return Weapons.All(B => B.WorldMatrix.Forward.Dot(Direction.Value) > 0.99999);
         }
-        public void SetWeaponAmmoConfigInfo(MyTurretConfig Config, string WeaponName, string AmmoName)
-        {
-            if (Config == null) return;
-            Config.GetConfig(WeaponName, AmmoName, out Parameters);
-            this.WeaponName = WeaponName;
-            this.AmmoName = AmmoName;
-        }
-        public void SetWeaponAmmoConfigInfo(MyWeaponParametersConfig Parameters)
-        {
-            this.Parameters = Parameters;
-        }
-        public string WeaponName { get; private set; }
-        public string AmmoName { get; private set; }
         public MyTargetDetected TargetLocked { get; set; }
         public Vector3D? Direction => VpD;
         public void ResetResult() { VpD = null; Tn = null; }
         #region 私有函数
-        public void CalculateDirection(IMyTerminalBlock Me, ICollection<IMyTerminalBlock> Weapons)
+        public void CalculateDirection(IMyTerminalBlock Me, ICollection<IMyTerminalBlock> Weapons, ref MyWeaponParametersConfig Parameters)
         {
             Vector3D SelfPosition; Vector3D CannonDirection; Vector3 SelfVelocity; Vector3 SelfGravity; Vector3D TargetPosition; Vector3 TargetVelocity; Vector3 TargetLinearAcc;
-            if (!GetParameters(Me, Weapons, out SelfPosition, out CannonDirection, out SelfVelocity, out SelfGravity, out TargetPosition, out TargetVelocity, out TargetLinearAcc)) { VpD = null; Tn = null; return; }
+            if (!GetParameters(Me, Weapons, ref Parameters, out SelfPosition, out CannonDirection, out SelfVelocity, out SelfGravity, out TargetPosition, out TargetVelocity, out TargetLinearAcc)) { VpD = null; Tn = null; return; }
             var time_fixed = (Parameters.TimeFixed * TimeGap);
             var dis_v = (TargetPosition - SelfPosition) + (TargetVelocity - SelfVelocity + 0.5f * TargetLinearAcc * time_fixed) * time_fixed;
             var d_length = (float)dis_v.Length();
             var d_vector = ((d_length <= 0) ? Vector3.Zero : Vector3.Normalize(dis_v));
-            if (Parameters.IsDirect) { if (d_length <= 10 || d_length > Parameters.Trajectory) { VpD = null; Tn = null; return; } else { VpD = d_vector; Tn = null; return; } }
+            if (Parameters.IsDirect) { if (d_length <= 0 || d_length > Parameters.Trajectory) { VpD = null; Tn = null; return; } else { VpD = d_vector; Tn = null; return; } }
             var v_r = TargetVelocity - SelfVelocity;
             //SelfGravity *= (float)Function(d_length, Parameters.Delta_t);
             var V_project_length = AverangeSpeed(0, Parameters.Speed, Parameters.Acc, Tn);
@@ -79,7 +54,7 @@ namespace SuperBlocks.Controller
             }
             Tn = Tn_inner;
             //if (Tn_inner > max_time) { VpD = null; Tn = null; return; }
-            VpD = GetNormalize(HeightAddOn(Solve_Direction_Result(Tn_inner, v_r, dis_v, SelfGravity), SelfGravity, d_length, V_project_length, Parameters.Delta_t));
+            VpD = GetNormalize(Solve_Direction_Result(Tn_inner, v_r, dis_v, SelfGravity));
         }
         private static Vector3D? HeightAddOn(Vector3D? VpD, Vector3D g, float d, float v, float rate)
         {
@@ -127,7 +102,7 @@ namespace SuperBlocks.Controller
             Vector3 Vector_SF = (SelfVelocity + VpD * V_p_length + (SelfGravity * 0.5f * (float)t)) * t;
             return MyMath.CosineDistance(ref Vector_GT, ref Vector_SF);
         }
-        private MyWeaponParametersConfig Parameters;
+
         private Vector3D? VpD;
         private double? Tn;
         #endregion
@@ -162,7 +137,7 @@ namespace SuperBlocks.Controller
         /// <param name="TargetVelocity">目标速度</param>
         /// <param name="TargetLinearAcc">目标加速度</param>
         /// <returns>返回是否可以进行计算</returns>
-        private bool GetParameters(IMyTerminalBlock Me, ICollection<IMyTerminalBlock> Weapons, out Vector3D SelfPosition, out Vector3D SelfDirection, out Vector3 SelfVelocity, out Vector3 SelfGravity, out Vector3D TargetPosition, out Vector3 TargetVelocity, out Vector3 TargetLinearAcc)
+        private bool GetParameters(IMyTerminalBlock Me, ICollection<IMyTerminalBlock> Weapons, ref MyWeaponParametersConfig Parameters, out Vector3D SelfPosition, out Vector3D SelfDirection, out Vector3 SelfVelocity, out Vector3 SelfGravity, out Vector3D TargetPosition, out Vector3 TargetVelocity, out Vector3 TargetLinearAcc)
         {
             SelfPosition = Vector3D.Zero; SelfDirection = Vector3D.Zero; SelfVelocity = Vector3.Zero; SelfGravity = Vector3.Zero; TargetPosition = Vector3D.Zero; TargetVelocity = Vector3.Zero; TargetLinearAcc = Vector3.Zero;
             if (Utils.Common.IsNullCollection(Weapons) || Utils.Common.IsNull(Me)) { return false; }
@@ -172,65 +147,12 @@ namespace SuperBlocks.Controller
             else { vector.Normalize(); SelfDirection = vector; }
             position /= Weapons.Count(); SelfPosition = position;
             SelfVelocity = Parameters.Ignore_speed_self ? Vector3.Zero : (Me?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero);
-            SelfGravity = (Me.CubeGrid?.Physics?.Gravity ?? Vector3.Zero) * Parameters.Gravity_mult;
+            SelfGravity = Utils.MyPlanetInfoAPI.GetCurrentGravity(Me.GetPosition()) * Parameters.Gravity_mult;
             bool Enabled = TargetLocked?.GetTarget_PV(Me, out TargetPosition, out TargetVelocity, out TargetLinearAcc) ?? false;
             if (!Enabled) return false;
             return true;
         }
         #endregion
-        public static MyTuple<Vector3D?, double?>? CalculateDirection(IMyTerminalBlock Me, ICollection<IMyTerminalBlock> Weapons, long TargetID, float GravityMult, float InitialSpeed, float DesiredSpeed, float Acc, float Trajectory, MyTuple<Vector3D?, double?>? CalculateResult)
-        {
-            Vector3D SelfPosition; Vector3D CannonDirection; Vector3 SelfVelocity; Vector3 SelfGravity; Vector3D TargetPosition; Vector3 TargetVelocity; Vector3 TargetLinearAcc;
-            if (!GetParameters(Me, Weapons, TargetID, GravityMult, out SelfPosition, out CannonDirection, out SelfVelocity, out SelfGravity, out TargetPosition, out TargetVelocity, out TargetLinearAcc)) return null;
-            var time_fixed = (2 * TimeGap);
-            var v_dis = (TargetPosition - SelfPosition) + (TargetVelocity - SelfVelocity + 0.5f * TargetLinearAcc * time_fixed) * time_fixed;
-            if (DesiredSpeed == -1) { var d_length = v_dis.Length(); if (d_length <= 10 || d_length > Trajectory) return null; else return new MyTuple<Vector3D?, double?>(v_dis, null); }
-            SelfGravity *= (float)Function(v_dis.Length(), 0.001);
-            var v_relative = TargetVelocity - SelfVelocity;
-            double V_project_length = AverangeSpeed(InitialSpeed, DesiredSpeed, Acc, CalculateResult?.Item2);
-            var min_time = MaxiumTime(InitialSpeed, DesiredSpeed, Acc, (float)v_dis.Length()) * 0.7f;
-            var time = min_time;
-            var max_time = MaxiumTime(InitialSpeed, DesiredSpeed, Acc, Trajectory);
-            if (min_time >= max_time) return null;
-            var ar = TargetLinearAcc - SelfGravity;
-            var a = ar.LengthSquared() * 0.25;
-            var b = (-v_relative.Dot(ar) * 0.5);
-            var c_start = v_relative.LengthSquared() - (ar).Dot(v_dis) * 0.5;
-            var c = (c_start - V_project_length * V_project_length);
-            var d = v_relative.Dot(v_dis);
-            var e = v_dis.LengthSquared();
-            int count = 0;
-            var Tn_inner = CalculateResult?.Item2 ?? Solve_Subfunction(time, a, b, c, d, e, min_time, max_time, time);
-            var VpD_inner = CalculateResult?.Item1 ?? (Solve_Direction(Tn_inner, v_relative, v_dis, SelfGravity) ?? CannonDirection);
-            while (count < 10 && ErrorFunction(TargetPosition, TargetVelocity, SelfPosition, SelfGravity, SelfVelocity, VpD_inner, V_project_length, Tn_inner) > 0.00015f)
-            {
-                Tn_inner = Solve_Subfunction(Tn_inner, a, b, c, d, e, min_time, max_time, time);
-                V_project_length = AverangeSpeed(InitialSpeed, DesiredSpeed, Acc, Tn_inner);
-                VpD_inner = Solve_Direction(Tn_inner, v_relative, v_dis, SelfGravity) ?? CannonDirection;
-                c = (c_start - V_project_length * V_project_length);
-                count++;
-            }
-            CalculateResult = new MyTuple<Vector3D?, double?>(Solve_Direction(Tn_inner, v_relative, v_dis, SelfGravity), Tn_inner);
-            return CalculateResult;
-        }
-        private static bool GetParameters(IMyTerminalBlock Me, ICollection<IMyTerminalBlock> Weapons, long TargetID, float GravityMult, out Vector3D SelfPosition, out Vector3D SelfDirection, out Vector3 SelfVelocity, out Vector3 SelfGravity, out Vector3D TargetPosition, out Vector3 TargetVelocity, out Vector3 TargetLinearAcc)
-        {
-            SelfPosition = Vector3D.Zero; SelfDirection = Vector3D.Zero; SelfVelocity = Vector3D.Zero; SelfGravity = Vector3D.Zero; TargetPosition = Vector3D.Zero; TargetVelocity = Vector3D.Zero; TargetLinearAcc = Vector3D.Zero;
-            var target = MyAPIGateway.Entities.GetEntityById(TargetID);
-            if (Utils.Common.IsNullCollection(Weapons) || Utils.Common.IsNull(Me) || Utils.Common.IsNull(target)) { return false; }
-            Vector3 vector = Vector3.Zero; Vector3 position = Vector3.Zero;
-            MyTargetDetected TargetLocked = new MyTargetDetected(target, Me, true);
-            foreach (var weapon in Weapons) { vector += weapon.WorldMatrix.Forward; position += GetWeaponOffset(weapon); }
-            if (vector == Vector3.Zero) { return false; }
-            else { vector.Normalize(); SelfDirection = vector; }
-            position /= Weapons.Count(); SelfPosition = position;
-            SelfVelocity = (Me?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero);
-            SelfGravity = Utils.MyPlanetInfoAPI.GetCurrentGravity(SelfPosition) * GravityMult;
-            bool Enabled = TargetLocked?.GetTarget_PV(Me, out TargetPosition, out TargetVelocity, out TargetLinearAcc) ?? false;
-            if (!Enabled) { return false; }
-            TargetLinearAcc = TargetLocked?.Entity?.Physics?.LinearAcceleration ?? Vector3D.Zero;
-            return true;
-        }
         private static float AverangeSpeed(float InitialSpeed, float DesiredSpeed, float Acc, double? t_n) { if (Acc <= 0) return DesiredSpeed; float _tn = (float)(t_n ?? 0); var acc_t = (DesiredSpeed - InitialSpeed) / Acc; if (_tn < acc_t) return InitialSpeed + 0.5f * Acc * _tn; var p = acc_t / _tn * 0.5f; return Math.Max(DesiredSpeed * (1 - p) + InitialSpeed * p, 0); }
         private static float MaxiumTime(float InitialSpeed, float DesiredSpeed, float Acc, float Trajectory) { if (Acc <= 0) return Trajectory / DesiredSpeed; var acc_t = (DesiredSpeed - InitialSpeed) / Acc; var dis_acc = (InitialSpeed + 0.5f * Acc * acc_t) * acc_t; if (dis_acc > Trajectory) return ((float)Math.Sqrt(InitialSpeed * InitialSpeed + 2 * Acc * Trajectory) - InitialSpeed) / Acc; if (dis_acc == Trajectory) return acc_t; return Math.Max((Trajectory - dis_acc) / DesiredSpeed + acc_t, 0); }
         private static double Function(double distance, double rate) { return Math.Max(distance / 1000 - 2.5, 0) * Math.Max(1 - rate, 0) + 1; }

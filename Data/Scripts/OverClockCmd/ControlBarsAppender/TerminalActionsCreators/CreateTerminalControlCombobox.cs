@@ -1,7 +1,7 @@
 ﻿using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 namespace SuperBlocks.Controller
 {
     public class CreateTerminalControlCombobox<TBlockType> : CreateTerminalAction<long, TBlockType>

@@ -2,7 +2,6 @@
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using VRage;
 using VRageMath;

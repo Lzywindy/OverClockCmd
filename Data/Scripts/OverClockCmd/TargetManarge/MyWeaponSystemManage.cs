@@ -1,29 +1,31 @@
-﻿using System;
-using Sandbox.ModAPI;
-using System.Collections.Generic;
-using SIngame = Sandbox.ModAPI.Ingame;
-using VRage;
-using VRageMath;
-using System.Linq;
+﻿using Sandbox.ModAPI;
+using System;
 using System.Collections.Concurrent;
+using System.Linq;
+using VRage;
+using SIngame = Sandbox.ModAPI.Ingame;
 namespace SuperBlocks.Controller
 {
     public static class MyWeaponSystemManage
     {
         public static bool 初始化完成 { get; private set; } = false;
+        public const string ModApiProperty_Start = @"LZY_WS_";
         #region 创建对应的应用     
         #endregion
         #region 更新函数
         public static void Update()
         {
+
             try
             {
                 if (!初始化完成) { CreateProperties(); return; }
                 count = (count + 1) % count_max;
                 if (count == 0) { RemoveNulls(); }
                 MyAPIGateway.Parallel.ForEach(BlockBindings_WeaponSystem, bound => { if (bound.Key.IsFunctional && (bound.Key is IMyFunctionalBlock) && (bound.Key as IMyFunctionalBlock).Enabled) bound.Value.Update(bound.Key); });
+                //MyAPIGateway.Utilities.ShowNotification($"Weapon Systems:{BlockBindings_WeaponSystem.Count}");
+                //MyAPIGateway.Utilities.ShowNotification($"Weapon Systems:{BlockBindings_WeaponSystem.Count}
             }
-            catch (Exception) { 初始化完成 = false; BlockBindings_WeaponSystem.Clear(); /*MyAPIGateway.Utilities.ShowNotification(e.Message);*/ }
+            catch (Exception) { 初始化完成 = false; try { BlockBindings_WeaponSystem.Clear(); } catch (Exception) { } /*MyAPIGateway.Utilities.ShowNotification(e.Message);*/ }
         }
         static int count = 0;
         const int count_max = 100;
@@ -33,20 +35,14 @@ namespace SuperBlocks.Controller
         {
             初始化完成 = true;
             #region CommonFunctions
-            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"LZY_WS_Setup", EnabledBlock, GetWeaponSysBindings, SetWeaponSysBindings);
-            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"LZY_WS_Enabled", EnabledBlock, GetWeaponSysEnabled, SetWeaponSysEnabled);
-            CreateProperty.CreateProperty_PB_CN<float, SIngame.IMyProgrammableBlock>($"LZY_WS_InitRadar", EnabledBlock, GetRadarRange, SetRadarRange);
-            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"LZY_WS_AutoFire", EnabledBlock, AutoFire, AutoFire);
-            CreateProperty.CreateProperty_PB_CN<MyTuple<string, string>, SIngame.IMyProgrammableBlock>($"LZY_WS_SetWeaponAmmo", EnabledBlock, b => new MyTuple<string, string>("DefaultWeapon", "DefaultAmmo"), WeaponAmmo);
-            #endregion
-            #region FixedWeaponConfig
-            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"LZY_WS_InitFixedWeapons", EnabledBlock, EnabledFixedWeapon, EnabledFixedWeapon);
-            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"LZY_WS_FixedWeaponsEnabled", EnabledBlock, FixedWeaponsEnabled, FixedWeaponsEnabled);
+            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}Setup", EnabledBlock, GetWeaponSysBindings, SetWeaponSysBindings);
+            CreateProperty.CreateProperty_PB_CN<float, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}InitRadar", EnabledBlock, GetRadarRange, SetRadarRange);
+            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}AutoFire", EnabledBlock, AutoFire, AutoFire);
+            CreateProperty.CreateProperty_PB_CN<MyTuple<string, string>, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}SetWeaponAmmo", EnabledBlock, b => new MyTuple<string, string>("DefaultWeapon", "DefaultAmmo"), WeaponAmmo);
             #endregion
             #region TurretConfig
-            CreateProperty.CreateProperty_PB_CN<string, SIngame.IMyProgrammableBlock>($"LZY_WS_InitTurrets", EnabledBlock, TurretSetup, TurretSetup);
-            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"LZY_WS_TurretEnabled", EnabledBlock, TurretEnabled, TurretEnabled);
-            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"LZY_WS_UsingWeaponCoreTracker", EnabledBlock, UsingWeaponCoreTracker, UsingWeaponCoreTracker);
+            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}TurretEnabled", EnabledBlock, TurretEnabled, TurretEnabled);
+            CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}UsingWeaponCoreTracker", EnabledBlock, UsingWeaponCoreTracker, UsingWeaponCoreTracker);
             #endregion
         }
         #region CommonFunctions
@@ -63,6 +59,7 @@ namespace SuperBlocks.Controller
                 }
                 BlockBindings_WeaponSystem.AddOrUpdate(Me, new MyWeaponSystemBinding(Me), (key, oldvalue) => { return oldvalue; });
                 BlockBindings_WeaponSystem[Me].EnabledWeapons = Enabled;
+                BlockBindings_WeaponSystem[Me].InitTurret(Me);
             }
             catch (Exception) { }
         }
@@ -74,19 +71,6 @@ namespace SuperBlocks.Controller
                 return BlockBindings_WeaponSystem.ContainsKey(Me);
             }
             catch (Exception) { return false; }
-        }
-        private static void SetWeaponSysEnabled(IMyTerminalBlock Me, bool Enabled)
-        {
-            try
-            {
-                if (Utils.Common.NullEntity(Me) || (!(Me is IMyProgrammableBlock)) || !BlockBindings_WeaponSystem.ContainsKey(Me)) return;
-                BlockBindings_WeaponSystem[Me].EnabledWeapons = Enabled;
-            }
-            catch (Exception) { }
-        }
-        private static bool GetWeaponSysEnabled(IMyTerminalBlock Me)
-        {
-            try { return GetWeaponSystemBinding(Me)?.EnabledWeapons ?? false; } catch (Exception) { return false; }
         }
         private static void SetRadarRange(IMyTerminalBlock Me, float Range)
         {
@@ -133,43 +117,6 @@ namespace SuperBlocks.Controller
             catch (Exception) { }
         }
         #endregion
-        #region FixedWeaponConfig
-        private static bool EnabledFixedWeapon(IMyTerminalBlock Me)
-        {
-            try { return GetWeaponSystemBinding(Me)?.EnabledFixedWeapon ?? false; } catch (Exception) { return false; }
-        }
-        private static void EnabledFixedWeapon(IMyTerminalBlock Me, bool value)
-        {
-            try
-            {
-                if (Utils.Common.NullEntity(Me) || (!(Me is IMyProgrammableBlock)) || !BlockBindings_WeaponSystem.ContainsKey(Me)) return;
-                BlockBindings_WeaponSystem[Me].EnabledFixedWeapon = value;
-            }
-            catch (Exception) { }
-        }
-        private static bool FixedWeaponsEnabled(IMyTerminalBlock Me)
-        {
-            try { return GetWeaponSystemBinding(Me)?.GetFixedWeaponsEnabled ?? false; } catch (Exception) { return false; }
-        }
-        private static void FixedWeaponsEnabled(IMyTerminalBlock Me, bool value)
-        {
-            try
-            {
-                GetWeaponSystemBinding(Me)?.SetFixedWeaponsEnabled(value);
-            }
-            catch (Exception) { }
-        }
-        #endregion
-
-
-        private static string TurretSetup(IMyTerminalBlock Me)
-        {
-            try { return GetWeaponSystemBinding(Me)?.TurretID ?? "TurretSetup"; } catch (Exception) { return "TurretSetup"; }
-        }
-        private static void TurretSetup(IMyTerminalBlock Me, string value)
-        {
-            try { GetWeaponSystemBinding(Me)?.InitTurret(Me, value); } catch (Exception) { }
-        }
         private static bool TurretEnabled(IMyTerminalBlock Me)
         {
             try { return GetWeaponSystemBinding(Me)?.TurretEnabled ?? false; } catch (Exception) { return false; }

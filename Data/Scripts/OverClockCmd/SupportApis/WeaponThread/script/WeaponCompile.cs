@@ -3,9 +3,9 @@ using VRageMath;
 using static WeaponThread.WeaponStructure;
 using static WeaponThread.WeaponStructure.WeaponDefinition;
 using static WeaponThread.WeaponStructure.WeaponDefinition.AnimationDef;
-using static WeaponThread.WeaponStructure.WeaponDefinition.AnimationDef.RelMove;
 using static WeaponThread.WeaponStructure.WeaponDefinition.AnimationDef.PartAnimationSetDef;
 using static WeaponThread.WeaponStructure.WeaponDefinition.AnimationDef.PartAnimationSetDef.EventTriggers;
+using static WeaponThread.WeaponStructure.WeaponDefinition.AnimationDef.RelMove;
 namespace WeaponThread
 {
     partial class Weapons
@@ -65,7 +65,7 @@ namespace WeaponThread
                 CycleEmissivesParts = CycleEmissiveParts,
                 LeavePreviousOn = LeavePreviousOn,
                 EmissivePartNames = EmissivePartNames,
-                IntensityRange = new[]{ IntensityFrom, IntensityTo }
+                IntensityRange = new[] { IntensityFrom, IntensityTo }
             };
         }
         internal EventTriggers[] Events(params EventTriggers[] events)

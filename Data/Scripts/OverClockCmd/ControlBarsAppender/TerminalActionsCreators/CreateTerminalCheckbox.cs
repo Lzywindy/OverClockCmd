@@ -1,8 +1,8 @@
 ﻿using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
-using VRage.Utils;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using VRage.Utils;
 namespace SuperBlocks.Controller
 {
     public class CreateTerminalCheckbox<TBlockType> : CreateTerminalAction<bool, TBlockType>

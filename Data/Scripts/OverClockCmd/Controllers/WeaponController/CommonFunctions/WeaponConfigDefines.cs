@@ -1,11 +1,8 @@
 ﻿using Sandbox.ModAPI;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI;
 using SuperBlocks.Controller;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using VRage;
 using VRageMath;
 namespace SuperBlocks
 {
@@ -45,8 +42,8 @@ namespace SuperBlocks
     public class MyWeaponConfig : IClear
     {
         public const string EnergyWeaponID = @"EnergyWeapon";
-        public bool IsDirect { get; private set; }
-        public bool Ignore_speed_self { get; private set; }
+        public bool IsDirect { get; private set; } = false;
+        public bool Ignore_speed_self { get; private set; } = false;
         public float Delta_t { get; private set; }
         public float Delta_precious { get; private set; }
         public int Calc_t { get; private set; }
@@ -61,8 +58,6 @@ namespace SuperBlocks
             {
                 switch (configitem.Key)
                 {
-                    case "direct": IsDirect = MyConfigs.ParseBool(configitem.Value); break;
-                    case "ignore_speed_self": Ignore_speed_self = MyConfigs.ParseBool(configitem.Value); break;
                     case "delta_t": Delta_t = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
                     case "delta_precious": Delta_precious = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
                     case "calc_t": Calc_t = Math.Abs(MyConfigs.ParseInt(configitem.Value)); break;
@@ -253,17 +248,17 @@ namespace SuperBlocks
     }
     public struct MyWeaponParametersConfig
     {
-        public bool IsDirect;
-        public bool Ignore_speed_self;
-        public float Delta_t;
-        public float Delta_precious;
-        public float Calc_t;
-        public float Offset;
-        public float TimeFixed;
-        public float Speed;
-        public float Acc;
-        public float Gravity_mult;
-        public float Trajectory;
+        public volatile bool IsDirect;
+        public volatile bool Ignore_speed_self;
+        public volatile float Delta_t;
+        public volatile float Delta_precious;
+        public volatile float Calc_t;
+        public volatile float Offset;
+        public volatile float TimeFixed;
+        public volatile float Speed;
+        public volatile float Acc;
+        public volatile float Gravity_mult;
+        public volatile float Trajectory;
     }
     public class MyTurretScript
     {

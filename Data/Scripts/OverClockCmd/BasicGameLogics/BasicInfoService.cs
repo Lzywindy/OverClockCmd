@@ -1,11 +1,8 @@
-﻿using VRage.Game.Components;
-using Sandbox.ModAPI;
-using System.Collections.Generic;
+﻿using Sandbox.ModAPI;
 using System;
+using System.Collections.Generic;
+using VRage.Game.Components;
 using VRageMath;
-using VRage;
-using VRage.Game.ModAPI;
-using System.Linq;
 
 namespace SuperBlocks.Controller
 {
@@ -23,7 +20,8 @@ namespace SuperBlocks.Controller
                 Init();
                 return;
             }
-            try { UpdateWeaponCoreApis(); } catch (Exception) { }
+            //MyAPIGateway.Utilities.ShowNotification($"Weapon Defs:{WcApi.WeaponDefinitions.Count}");
+            try { if (!WcApi.IsReady) WcApi.Load(null, true); } catch (Exception) { }
             try { MyWeaponSystemManage.Update(); } catch (Exception) { }
 
         }
@@ -48,7 +46,7 @@ namespace SuperBlocks.Controller
 
 
         #region ProgrammableBlock实用参数
-     
+
         #endregion
     }
 }

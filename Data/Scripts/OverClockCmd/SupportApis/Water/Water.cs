@@ -1,16 +1,8 @@
 ﻿using ProtoBuf;
 using Sandbox.Game.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using VRage.Game.Components;
 using VRage.Game.Entity;
-using VRage.Game.Models;
 using VRageMath;
 
 namespace Jakaria

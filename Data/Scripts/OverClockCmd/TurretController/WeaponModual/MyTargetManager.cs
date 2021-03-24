@@ -1,10 +1,10 @@
-﻿using System;
-using VRage.ModAPI;
-using Sandbox.ModAPI;
-using VRage.Game.ModAPI;
+﻿using Sandbox.ModAPI;
+using System;
 using System.Collections.Generic;
-using VRageMath;
 using VRage;
+using VRage.Game.ModAPI;
+using VRage.ModAPI;
+using VRageMath;
 namespace SuperBlocks.Controller
 {
     public struct MyTargetManager

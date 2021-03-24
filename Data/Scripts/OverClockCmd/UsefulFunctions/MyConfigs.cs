@@ -1,5 +1,5 @@
-﻿using System;
-using Sandbox.ModAPI;
+﻿using Sandbox.ModAPI;
+using System;
 using System.Collections.Generic;
 using System.Text;
 namespace SuperBlocks
@@ -73,7 +73,7 @@ namespace SuperBlocks
         public static int ParseInt(string str) { int value; if (!int.TryParse(str, out value)) value = 0; return value; }
         public static float ParseFloat(string str) { float value; if (!float.TryParse(str, out value)) value = 0; return value; }
         public static double ParseDouble(string str) { double value; if (!double.TryParse(str, out value)) value = 0; return value; }
-        public static bool ParseBool(string str) { bool value = false; if (str == "yes" || str == "true") value = true; else if (str == "no" || str == "false") value = false; return value; }
+        public static bool ParseBool(string str) { bool value; if (!bool.TryParse(str, out value)) value = false; return value; }
         public static string RemoveIniComment(string line) { var com_start_index = line.IndexOf(';'); if (com_start_index < 0) return line; return line.Remove(com_start_index); }
         public static string RemoveStartEndEmpty(string str) => str.TrimStart(' ', '\t').TrimEnd(' ', '\t');
         public static bool IsNewBlockStart(string str) => str.StartsWith("[") && str.EndsWith("]");

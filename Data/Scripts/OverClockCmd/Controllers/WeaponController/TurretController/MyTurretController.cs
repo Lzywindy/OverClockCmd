@@ -1,11 +1,9 @@
 ﻿using Sandbox.ModAPI;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using SIngame = Sandbox.ModAPI.Ingame;
-using System.Collections.Concurrent;
 using VRageMath;
-using System;
-using static WeaponThread.Session;
 
 namespace SuperBlocks.Controller
 {
@@ -26,7 +24,7 @@ namespace SuperBlocks.Controller
             }
         }
         public void SetTargetLocker(MyRadarTargets RadarTargets) { this.RadarTargets = RadarTargets; if (RadarTargets == null) MyAPIGateway.Parallel.ForEach(Turrets, Turret => { Turret.Value.TargetPredict.TargetLocked = null; }); }
-        public void SetWeaponAmmoConfigInfo(string weaponNM, string ammoNM) { if (Utils.Common.IsNullCollection(Turrets)) return; foreach (var Turret in Turrets) Turret.Value.TargetPredict.SetWeaponAmmoConfigInfo(Configs, weaponNM, ammoNM); }
+        public void SetWeaponAmmoConfigInfo(string weaponNM, string ammoNM) { if (Utils.Common.IsNullCollection(Turrets)) return; foreach (var Turret in Turrets) Turret.Value.SetWeaponAmmoConfigInfo(Configs, weaponNM, ammoNM); }
         public bool TurretEnabled { get; set; }
         public bool AutoFire { get; set; }
         public bool UsingWeaponCoreTracker { get; set; }
@@ -46,31 +44,32 @@ namespace SuperBlocks.Controller
                 UpdateControllersInfo(CtrlBlock);
                 UpdateBindings();
             }
-            MyAPIGateway.Parallel.ForEach(Turrets, Turret =>
+            //MyAPIGateway.Parallel.ForEach(Turrets, Turret => UpdateTurrets(Turret, CtrlBlock));
+            foreach (var Turret in Turrets) { UpdateTurrets(Turret, CtrlBlock); }
+        }
+        private void UpdateTurrets(KeyValuePair<IMyMotorStator, MyTurretBinding> Turret, IMyTerminalBlock CtrlBlock)
+        {
+            Turret.Value.Config = Configs;
+            if (RadarTargets == null || !TurretEnabled) { Turret.Value.TargetPredict.TargetLocked = null; Turret.Value.RunningDefault(); return; }
+            var range = Configs?.range ?? 3000;
+            var target = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(CtrlBlock.CubeGrid), Turret.Key, true) : RadarTargets.得的最近向我靠近最快的目标(Turret.Key, range);
+            try
             {
-                Turret.Value.Config = Configs;
-                if (RadarTargets == null || !TurretEnabled) { Turret.Value.TargetPredict.TargetLocked = null; Turret.Value.RunningDefault(); return; }
-                var range = Configs?.range ?? 3000;
-                var target = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(CtrlBlock.CubeGrid), Turret.Key, true) : RadarTargets.得的最近向我靠近最快的目标(Turret.Key, range);
-                try
-                {
-                    var position = target?.GetEntityPosition(CtrlBlock);
-                    if (position != null && target.Entity?.EntityId != Turret.Value.TargetPredict.TargetLocked?.Entity?.EntityId
-                    && Vector3D.Distance(position.Value, Turret.Key.GetPosition()) < range)
-                        Turret.Value.TargetPredict.TargetLocked = target;
-                }
-                catch (Exception) { }
-                if (Turret.Value.UnderControl)
-                    Turret.Value.RunningManual(Controller?.RotationIndicator);
-                else if (Turret.Value.ManuelOnly)
-                    Turret.Value.RunningDefault();
-                else
-                {
-                    Turret.Value.SetFire(AutoFire && TurretEnabled);
-                    Turret.Value.RunningAutoAimAt(Turret.Key);
-                    Turret.Value.RunningAutoFire();
-                }
-            });
+                var position = target?.GetEntityPosition(CtrlBlock);
+                if (position != null && target.Entity?.EntityId != Turret.Value.TargetPredict.TargetLocked?.Entity?.EntityId && Vector3D.Distance(position.Value, Turret.Key.GetPosition()) < range)
+                    Turret.Value.TargetPredict.TargetLocked = target;
+            }
+            catch (Exception) { }
+            if (Turret.Value.UnderControl)
+                Turret.Value.RunningManual(Controller?.RotationIndicator);
+            else if (Turret.Value.ManuelOnly)
+                Turret.Value.RunningDefault();
+            else
+            {
+                Turret.Value.SetFire(AutoFire && TurretEnabled);
+                Turret.Value.RunningAutoAimAt(Turret.Key);
+                Turret.Value.RunningAutoFire();
+            }
         }
         private ConcurrentDictionary<IMyMotorStator, MyTurretBinding> Turrets { get; } = new ConcurrentDictionary<IMyMotorStator, MyTurretBinding>();
         private HashSet<IMyShipController> Controllers { get; } = new HashSet<IMyShipController>();
@@ -84,7 +83,7 @@ namespace SuperBlocks.Controller
         private void UpdateBindings() { var removeable = Turrets.Keys?.ToList()?.Where(Utils.Common.NullEntity); if (Utils.Common.IsNullCollection(removeable)) return; MyAPIGateway.Parallel.ForEach(removeable, item => Turrets.Remove(item)); }
         private IMyShipController Controller { get { if (Utils.Common.IsNullCollection(Controllers) || !Controllers.Any(b => b.IsUnderControl)) return null; return Controllers.First(b => b.IsUnderControl); } }
         private MyRadarTargets RadarTargets;
-        private MyTurretConfig Configs;
+        public MyTurretConfig Configs;
         #endregion
     }
     public class MyRotorTurretCtrl : UpdateableClass

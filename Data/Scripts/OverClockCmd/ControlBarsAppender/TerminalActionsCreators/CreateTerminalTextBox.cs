@@ -1,8 +1,8 @@
 ﻿using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using System;
 namespace SuperBlocks.Controller
 {
     public class CreateTerminalTextBox<TBlockType> : CreateTerminalAction<StringBuilder, TBlockType>

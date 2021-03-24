@@ -169,6 +169,7 @@
     <Compile Include="Controllers\UniversalController\UniversalControllerService.cs" />
     <Compile Include="Controllers\WeaponController\CommonFunctions\WeaponConfigDefines.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\MyWeaponAndTurretApi.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\TurretController.cs" />
     <Compile Include="SupportApis\Shield\ShieldApi.cs" />
     <Compile Include="SupportApis\Water\Water.cs" />
     <Compile Include="SupportApis\Water\WaterModAPI.cs" />

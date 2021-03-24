@@ -1,12 +1,12 @@
 ﻿using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces.Terminal;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 namespace SuperBlocks.Controller
 {
     public class CreateTerminalButton<TBlockType> : CreateTerminalAction<bool, TBlockType>
     {
-        public Action<IMyTerminalBlock> TriggerFunc { get; set; } =(IMyTerminalBlock block)=> { };
+        public Action<IMyTerminalBlock> TriggerFunc { get; set; } = (IMyTerminalBlock block) => { };
         public CreateTerminalButton(string CtrlID, string Title, Func<IMyTerminalBlock, bool> Filter = null) : base(CtrlID, Title, Filter) { }
         public override void CreateController(IMyTerminalBlock block, List<IMyTerminalControl> controls)
         {

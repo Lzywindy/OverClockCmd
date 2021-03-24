@@ -1,6 +1,6 @@
+using Sandbox.ModAPI;
 using System;
 using System.IO;
-using Sandbox.ModAPI;
 using VRage.Game.Components;
 namespace WeaponThread
 {
