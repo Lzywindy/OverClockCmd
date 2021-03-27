@@ -168,8 +168,13 @@
     <Compile Include="Controllers\UniversalController\UniversalController.PrivateSignals.cs" />
     <Compile Include="Controllers\UniversalController\UniversalControllerService.cs" />
     <Compile Include="Controllers\WeaponController\CommonFunctions\WeaponConfigDefines.cs" />
+    <Compile Include="Controllers\WeaponController\RadarController\MyRadarSession.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.AdvanceFucntions.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.OuterControlLines.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\MyWeaponAndTurretApi.cs" />
-    <Compile Include="Controllers\WeaponController\TurretController\TurretController.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyStaticWeaponBinding.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyWeaponBinding.cs" />
     <Compile Include="SupportApis\Shield\ShieldApi.cs" />
     <Compile Include="SupportApis\Water\Water.cs" />
     <Compile Include="SupportApis\Water\WaterModAPI.cs" />
@@ -177,11 +182,11 @@
     <Compile Include="TargetManarge\MyWeaponSystemManage.cs" />
     <Compile Include="BasicGameLogics\Updatings\StepTimer.cs" />
     <Compile Include="BasicGameLogics\Updatings\IUpdates.cs" />
-    <Compile Include="TargetManarge\MyTargetDetected.cs" />
+    <Compile Include="Controllers\WeaponController\RadarController\MyTargetDetected.cs" />
     <Compile Include="Controllers\WeaponController\CommonFunctions\MyTargetPredict.cs" />
-    <Compile Include="TargetManarge\MyRadarTargets.cs" />
+    <Compile Include="Controllers\WeaponController\RadarController\MyRadarTargets.cs" />
     <Compile Include="BasicGameLogics\Updatings\UpdateableClass.cs" />
-    <Compile Include="Controllers\WeaponController\TurretController\MyTurretBinding.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyTurretBinding.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\MyTurretController.cs" />
     <Compile Include="TargetManarge\MyWeaponInfo.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetFilterManager.cs" />
@@ -211,6 +216,7 @@
     <Folder Include="Controllers\Radar\" />
     <Folder Include="Controllers\WeaponController\FixedWeaponController\" />
     <Folder Include="Controllers\WeaponController\WatcherController\" />
+    <Folder Include="Controllers\WeaponController\WeaponSystemController\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.  

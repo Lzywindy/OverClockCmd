@@ -7,20 +7,21 @@ namespace SuperBlocks.Controller
     public partial class UniversalController
     {
         #region Variables
-        private float MultAttitude = 25f;
-        private float _MaxiumHoverSpeed = DefaultSpeed;
-        private float _MaxiumFlightSpeed = DefaultSpeed;
-        private float _MaxiumSpeed = DefaultSpeed;
-        private bool _EnabledCuriser = false;
-        private bool _ForwardOrUp = false;
-        private float _SafetyStage = 1f;
-        private float _LocationSensetive = 1f;
-        private float _MaxReactions_AngleV = 1f;
+        private volatile bool hasWings = false;
+        private volatile float MultAttitude = 25f;
+        private volatile float _MaxiumHoverSpeed = DefaultSpeed;
+        private volatile float _MaxiumFlightSpeed = DefaultSpeed;
+        private volatile float _MaxiumSpeed = DefaultSpeed;
+        private volatile bool _EnabledCuriser = false;
+        private volatile bool _ForwardOrUp = false;
+        private volatile float _SafetyStage = 1f;
+        private volatile float _LocationSensetive = 1f;
+        private volatile float _MaxReactions_AngleV = 1f;
         private Vector3 AngularDampeners = Vector3.One;
         private Vector3 ForwardDirection;
         private IMyShipController _Controller;
-        private bool StartReady = false;
-        private ControllerRole _Role = ControllerRole.None;
+        private volatile bool StartReady = false;
+        private volatile ControllerRole _Role = ControllerRole.None;
         private const float DefaultSpeed = 100;
         public const float SafetyStageMin = 0f;
         public const float SafetyStageMax = 9f;

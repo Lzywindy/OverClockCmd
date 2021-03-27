@@ -11,6 +11,52 @@ namespace SuperBlocks
 {
     public static partial class Utils
     {
+        public static class RadarSubtypeId
+        {
+            public static IMyTerminalBlock GetFarestDetectedBlock(IMyCubeGrid Grid)
+            {
+                if (Common.NullEntity(Grid)) return null;
+                List<IMyTerminalBlock> RadarHooks = new List<IMyTerminalBlock>();
+                MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Grid)?.GetBlocksOfType<IMyTerminalBlock>(RadarHooks, AvaliableRadarBlocks);
+                return RadarHooks.MaxBy(DetectedRangeBlock);
+            }
+            public static float CommunicateRangeBlock(IMyTerminalBlock block)
+            {
+                if (Common.NullEntity(block)) return 0;
+                if (block is IMyRadioAntenna) return 4e4f;
+                if (block is IMyLaserAntenna) return 4e7f;
+                if (block is IMySensorBlock) return 2.5e3f;
+                if (block is IMyBeacon) return 4e4f;
+                if (block.BlockDefinition.SubtypeId.Contains("QuantumRadar")) return 1e8f;
+                if (block.BlockDefinition.SubtypeId.Contains("SpaceRadar")) return 1e10f;
+                if (block.BlockDefinition.SubtypeId.Contains("RegularRadar")) return 5e12f;
+                return 0;
+            }
+            public static float DetectedRangeBlock(IMyTerminalBlock block)
+            {
+                if (Common.NullEntity(block)) return 0;
+                if (block is IMyRadioAntenna) return Math.Min((block as IMyRadioAntenna).Radius, 5e4f);
+                if (block is IMyLaserAntenna) return Math.Min((block as IMyLaserAntenna).Range, 5e6f);
+                if (block is IMySensorBlock) return Math.Min((block as IMySensorBlock).MaxRange, 3e3f);
+                if (block is IMyBeacon) return Math.Min((block as IMyBeacon).Radius, 5e4f);
+                if (block.BlockDefinition.SubtypeId.Contains("QuantumRadar")) return 1e8f;
+                if (block.BlockDefinition.SubtypeId.Contains("SpaceRadar")) return 1e10f;
+                if (block.BlockDefinition.SubtypeId.Contains("RegularRadar")) return 5e12f;
+                return 0;
+            }
+            public static bool AvaliableRadarBlocks(IMyTerminalBlock block)
+            {
+                if (Common.NullEntity(block)) return false;
+                if (block is IMyRadioAntenna) return true;
+                if (block is IMyLaserAntenna) return true;
+                if (block is IMySensorBlock) return true;
+                if (block is IMyBeacon) return true;
+                if (block.BlockDefinition.SubtypeId.Contains("QuantumRadar")) return true;
+                if (block.BlockDefinition.SubtypeId.Contains("SpaceRadar")) return true;
+                if (block.BlockDefinition.SubtypeId.Contains("RegularRadar")) return true;
+                return false;
+            }
+        }
         public static class Common
         {
             public static bool IsNull(Vector3? Value) => Value == null || Value.Value == Vector3.Zero;
@@ -22,7 +68,7 @@ namespace SuperBlocks
             public static T GetT<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class { List<T> Items = GetTs<T>(gridTerminalSystem, requst); if (IsNullCollection(Items)) return null; else return Items.First(); }
             public static List<T> GetTs<T>(IMyGridTerminalSystem gridTerminalSystem, Func<T, bool> requst = null) where T : class { List<T> Items = new List<T>(); if (gridTerminalSystem == null) return Items; gridTerminalSystem.GetBlocksOfType<T>(Items, requst); return Items; }
             public static T GetT<T>(IMyTerminalBlock block, Func<T, bool> requst = null) where T : class { List<T> Items = GetTs<T>(block, requst); if (IsNullCollection(Items)) return null; else return Items.First(); }
-            public static List<T> GetTs<T>(IMyTerminalBlock block, Func<T, bool> requst = null) where T : class { if (block == null || block.CubeGrid == null) return null; List<T> Items = new List<T>(); MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid)?.GetBlocksOfType<T>(Items, requst); return Items; }
+            public static List<T> GetTs<T>(IMyTerminalBlock block, Func<T, bool> requst = null) where T : class { List<T> Items = new List<T>(); if (block == null || block.CubeGrid == null) return Items; MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid)?.GetBlocksOfType<T>(Items, requst); return Items; }
             public static IMyTerminalBlock GetBlock(IMyGridTerminalSystem gridTerminalSystem, long EntIds = 0) => gridTerminalSystem?.GetBlockWithId(EntIds) as IMyTerminalBlock;
             public static List<IMyTerminalBlock> GetBlocks(IMyGridTerminalSystem gridTerminalSystem, List<long> EntIds = null) { if (gridTerminalSystem == null) return null; return EntIds?.ConvertAll(id => gridTerminalSystem.GetBlockWithId(id) as IMyTerminalBlock); }
             public static T GetT<T>(IMyBlockGroup blockGroup, Func<T, bool> requst = null) where T : class => GetTs(blockGroup, requst).FirstOrDefault();
@@ -34,6 +80,11 @@ namespace SuperBlocks
                 List<IMySlimBlock> blocks = new List<IMySlimBlock>();
                 Grid?.GetBlocks(blocks, Filter);
                 return blocks;
+            }
+            public static bool IsStaticWeapon(IMyTerminalBlock block)
+            {
+                if (NullEntity(block) || !block.IsFunctional || (block is IMyLargeTurretBase)) return false;
+                return (block is IMySmallGatlingGun) | (block is IMySmallMissileLauncher) || (block is IMySmallMissileLauncherReload) || Controller.BasicInfoService.WcApi.HasCoreWeapon(block);
             }
             public static bool ExceptKeywords(IMyTerminalBlock block) { foreach (var item in BlackList_ShipController) { if (block.BlockDefinition.SubtypeId.Contains(item)) return false; } return true; }
             private static readonly string[] BlackList_ShipController = new string[] { "Hover", "Torpedo", "Torp", "Payload", "Missile", "At_Hybrid_Main_Thruster_Large", "At_Hybrid_Main_Thruster_Small", };
@@ -81,7 +132,7 @@ namespace SuperBlocks
     }
     public static partial class Utils
     {
-
+        public enum WeaponType { Energy, Rocket, Projectile }
 
 
 

@@ -176,12 +176,12 @@ namespace SuperBlocks.Controller
         private CreateTerminalButton<IMyTerminalBlock> SaveConfig { get; } = new CreateTerminalButton<IMyTerminalBlock>("SaveConfigID", "Save Config", UniversalController.EnabledGUI);
         private CreateTerminalControlCombobox<IMyTerminalBlock> ControllerRoleSelect { get; } = new CreateTerminalControlCombobox<IMyTerminalBlock>("ControllerRoleSelectID", "Controller Role Selecter", UniversalController.EnabledGUI);
         private CreateTerminalFence<IMyTerminalBlock> Fence_1 { get; } = new CreateTerminalFence<IMyTerminalBlock>(UniversalController.EnabledGUI);
-        private CreateTerminalButton<IMyTerminalBlock> HasWings { get; } = new CreateTerminalButton<IMyTerminalBlock>("HasWingsID", "Has Wings", UniversalController.EnabledGUI);
-        private CreateTerminalButton<IMyTerminalBlock> HoverMode { get; } = new CreateTerminalButton<IMyTerminalBlock>("HoverModeID", "Hover Mode", UniversalController.EnabledGUI);
+        private CreateTerminalSwitch<IMyTerminalBlock> HasWings { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("HasWingsID", "Has Wings", UniversalController.EnabledGUI);
+        private CreateTerminalSwitch<IMyTerminalBlock> HoverMode { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("HoverModeID", "Hover Mode", UniversalController.EnabledGUI);
         private CreateTerminalFence<IMyTerminalBlock> Fence_2 { get; } = new CreateTerminalFence<IMyTerminalBlock>(UniversalController.EnabledGUI);
-        private CreateTerminalButton<IMyTerminalBlock> EnabledCuriser { get; } = new CreateTerminalButton<IMyTerminalBlock>("EnabledCuriserID", "Enabled Curiser", UniversalController.EnabledGUI);
-        private CreateTerminalButton<IMyTerminalBlock> EnabledThrusters { get; } = new CreateTerminalButton<IMyTerminalBlock>("EnabledThrustsID", "Enabled Thrusts", UniversalController.EnabledGUI);
-        private CreateTerminalButton<IMyTerminalBlock> EnabledGyros { get; } = new CreateTerminalButton<IMyTerminalBlock>("EnabledGyrosID", "Enabled Gyros", UniversalController.EnabledGUI);
+        private CreateTerminalSwitch<IMyTerminalBlock> EnabledCuriser { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("EnabledCuriserID", "Enabled Curiser", UniversalController.EnabledGUI);
+        private CreateTerminalSwitch<IMyTerminalBlock> EnabledThrusters { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("EnabledThrustsID", "Enabled Thrusts", UniversalController.EnabledGUI);
+        private CreateTerminalSwitch<IMyTerminalBlock> EnabledGyros { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("EnabledGyrosID", "Enabled Gyros", UniversalController.EnabledGUI);
         private const string CtrlNM = "UC_";
         #endregion
         #region 进阶控件

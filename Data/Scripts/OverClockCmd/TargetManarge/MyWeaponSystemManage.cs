@@ -36,9 +36,7 @@ namespace SuperBlocks.Controller
             初始化完成 = true;
             #region CommonFunctions
             CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}Setup", EnabledBlock, GetWeaponSysBindings, SetWeaponSysBindings);
-            CreateProperty.CreateProperty_PB_CN<float, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}InitRadar", EnabledBlock, GetRadarRange, SetRadarRange);
             CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}AutoFire", EnabledBlock, AutoFire, AutoFire);
-            CreateProperty.CreateProperty_PB_CN<MyTuple<string, string>, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}SetWeaponAmmo", EnabledBlock, b => new MyTuple<string, string>("DefaultWeapon", "DefaultAmmo"), WeaponAmmo);
             #endregion
             #region TurretConfig
             CreateProperty.CreateProperty_PB_CN<bool, SIngame.IMyProgrammableBlock>($"{ModApiProperty_Start}TurretEnabled", EnabledBlock, TurretEnabled, TurretEnabled);
@@ -59,7 +57,6 @@ namespace SuperBlocks.Controller
                 }
                 BlockBindings_WeaponSystem.AddOrUpdate(Me, new MyWeaponSystemBinding(Me), (key, oldvalue) => { return oldvalue; });
                 BlockBindings_WeaponSystem[Me].EnabledWeapons = Enabled;
-                BlockBindings_WeaponSystem[Me].InitTurret(Me);
             }
             catch (Exception) { }
         }
@@ -71,19 +68,6 @@ namespace SuperBlocks.Controller
                 return BlockBindings_WeaponSystem.ContainsKey(Me);
             }
             catch (Exception) { return false; }
-        }
-        private static void SetRadarRange(IMyTerminalBlock Me, float Range)
-        {
-            try
-            {
-                if (Utils.Common.NullEntity(Me) || (!(Me is IMyProgrammableBlock)) || !BlockBindings_WeaponSystem.ContainsKey(Me)) return;
-                BlockBindings_WeaponSystem[Me].RadarTargets.ResetParameters(Me, Range);
-            }
-            catch (Exception) { }
-        }
-        private static float GetRadarRange(IMyTerminalBlock Me)
-        {
-            try { return (float)(GetWeaponSystemBinding(Me)?.RadarTargets?.Range ?? 1500) / 1.5f; } catch (Exception) { return 1000; }
         }
         private static MyWeaponSystemBinding GetWeaponSystemBinding(IMyTerminalBlock Me)
         {
@@ -104,15 +88,6 @@ namespace SuperBlocks.Controller
             {
                 if (Utils.Common.NullEntity(Me) || (!(Me is IMyProgrammableBlock)) || !BlockBindings_WeaponSystem.ContainsKey(Me)) return;
                 BlockBindings_WeaponSystem[Me].AutoFire = value;
-            }
-            catch (Exception) { }
-        }
-        private static void WeaponAmmo(IMyTerminalBlock Me, MyTuple<string, string> WANM)
-        {
-            try
-            {
-                if (Utils.Common.NullEntity(Me) || (!(Me is IMyProgrammableBlock)) || !BlockBindings_WeaponSystem.ContainsKey(Me)) return;
-                BlockBindings_WeaponSystem[Me].SetWeaponAmmo(WANM);
             }
             catch (Exception) { }
         }

@@ -123,7 +123,7 @@ namespace SuperBlocks.Controller
                     case ControllerRole.Aeroplane: return _MaxiumFlightSpeed;
                     case ControllerRole.Helicopter: return _MaxiumHoverSpeed;
                     case ControllerRole.VTOL: case ControllerRole.SpaceShip: return ForwardOrUp ? _MaxiumFlightSpeed : _MaxiumHoverSpeed;
-                    case ControllerRole.SeaShip: case ControllerRole.Submarine: case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: return _MaxiumSpeed;
+                    case ControllerRole.SeaShip: case ControllerRole.Submarine: case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: return MaximumCruiseSpeed;
                     default: return 100;
                 }
             }
@@ -135,7 +135,7 @@ namespace SuperBlocks.Controller
                     case ControllerRole.Aeroplane: _MaxiumFlightSpeed = thisvalue; return;
                     case ControllerRole.Helicopter: _MaxiumHoverSpeed = thisvalue; return;
                     case ControllerRole.VTOL: case ControllerRole.SpaceShip: if (ForwardOrUp) _MaxiumFlightSpeed = thisvalue; else _MaxiumHoverSpeed = thisvalue; return;
-                    case ControllerRole.SeaShip: case ControllerRole.Submarine: case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: _MaxiumSpeed = thisvalue; return;
+                    case ControllerRole.SeaShip: case ControllerRole.Submarine: case ControllerRole.TrackVehicle: case ControllerRole.WheelVehicle: case ControllerRole.HoverVehicle: MaximumCruiseSpeed = thisvalue; return;
                     default: return;
                 }
             }

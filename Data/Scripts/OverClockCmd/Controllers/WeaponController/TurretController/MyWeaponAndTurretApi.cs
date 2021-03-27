@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VRage;
 using VRageMath;
+using static SuperBlocks.Definitions.Structures;
 
 namespace SuperBlocks.Controller
 {
@@ -17,6 +18,7 @@ namespace SuperBlocks.Controller
 
         internal static bool CanFire(IMyTerminalBlock Weapon)
         {
+            if (Weapon == null) return false;
             return (BasicInfoService.WcApi.HasCoreWeapon(Weapon) && BasicInfoService.WcApi.IsWeaponReadyToFire(Weapon, GetWeaponID(Weapon))) || (!BasicInfoService.WcApi.HasCoreWeapon(Weapon));
         }
         internal static void FireWeapon(IMyTerminalBlock Weapon, bool Enabled)
@@ -24,13 +26,9 @@ namespace SuperBlocks.Controller
             try
             {
                 if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
-                {
                     BasicInfoService.WcApi.ToggleWeaponFire(Weapon, Enabled, true, GetWeaponID(Weapon));
-                }
                 else
-                {
                     (Weapon as IMyUserControllableGun)?.SetValue("Shoot", Enabled);
-                }
             }
             catch (Exception) { }
         }
@@ -39,13 +37,9 @@ namespace SuperBlocks.Controller
             try
             {
                 if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
-                {
                     BasicInfoService.WcApi.FireWeaponOnce(Weapon, true, GetWeaponID(Weapon));
-                }
                 else
-                {
                     (Weapon as IMyUserControllableGun).GetActionWithName("ShootOnce")?.Apply(Weapon);
-                }
             }
             catch (Exception) { }
         }
@@ -108,17 +102,11 @@ namespace SuperBlocks.Controller
             if (_AmmoDefinition == null) return null;
             return new MyWeaponParametersConfig()
             {
-                IsDirect = false,
-                Ignore_speed_self = false,
                 Delta_t = 1.2f,
                 Delta_precious = 0.005f,
                 Calc_t = 12,
-                Offset = GetMaxVector3D(block.LocalAABB.Max - block.LocalAABB.Min),
                 TimeFixed = 5,
-                Speed = _AmmoDefinition.Trajectory.DesiredSpeed,
-                Acc = _AmmoDefinition.Trajectory.AccelPerSec,
-                Trajectory = _AmmoDefinition.Trajectory.MaxTrajectory,
-                Gravity_mult = _AmmoDefinition.Trajectory.GravityMultiplier
+                Trajectory = TrajectoryDef.CreateFromWeaponCoreDatas(_AmmoDefinition.Trajectory)
             };
         }
     }

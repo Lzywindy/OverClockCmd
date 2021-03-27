@@ -3,305 +3,198 @@ using SuperBlocks.Controller;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using VRage.Game;
 using VRageMath;
+using static SuperBlocks.Utils;
+
 namespace SuperBlocks
 {
-    public interface IClear
+    public static class Definitions
     {
-        void Clear();
-    }
-    public class MyAmmoConfig : IClear
-    {
-        public float Speed { get; private set; }
-        public float Acc { get; private set; }
-        public float Gravity_mult { get; private set; }
-        public float Trajectory { get; private set; }
-        public MyAmmoConfig(Dictionary<string, string> Config)
+        public const float TimeGap = MyEngineConstants.PHYSICS_STEP_SIZE_IN_SECONDS;
+        public static class ConfigName
         {
-            if (Config == null) { Clear(); return; }
-            foreach (var configitem in Config)
+            public static class ProjectileDef
             {
-                switch (configitem.Key)
-                {
-                    case "speed": Speed = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "acc": Acc = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "gravity_mult": Gravity_mult = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "trajectory": Trajectory = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    default: break;
-                }
+                public const string DefaultAmmo = @"DefaultAmmo";
+                public const string InitialSpeed = "InitialSpeed";
+                public const string DesiredSpeed = "DesiredSpeed";
+                public const string Acceleration = "Acceleration";
+                public const string GravityMultipy = "GravityMultipy";
+                public const string Trajectory = "Trajectory";
+            }
+            public static class WeaponDef
+            {
+                public const string DefaultWeapon = @"DefaultWeapon";
+                public const string IsDirect = "IsDirect";
+                public const string Ignore_speed_self = "Ignore_speed_self";
+                public const string Delta_t = "Delta_t";
+                public const string Delta_precious = "Delta_precious";
+                public const string Calc_t = "Calc_t";
+                public const string TimeFixed = "TimeFixed";
+                public const string FireAngle = "FireAngle";
+                public const string Ammos = "Ammos";
+            }
+            public static class FunctionalGroupDef
+            {
+                public const string Weapons = "Weapons";
+                public const string Range = "Range";
+                public const string Firegap = "Firegap";
+                public const string Weapon_tag = "Weapon_tag";
+            }
+            public static class Turret
+            {
+                public const string TurretNM = "TurretNM";
+                public const string azNM = "Az";
+                public const string evNM = "Ev";
+                public const string AzLimit = "AzLimit";
+                public const string EvLimit = "EvLimit";
+                public const string AzUpperLimit = "AzUpperLimit";
+                public const string AzLowerLimit = "AzLowerLimit";
+                public const string EvUpperLimit = "EvUpperLimit";
+                public const string EvLowerLimit = "EvLowerLimit";
+            }
+            public static class FixedWeapon
+            {
+                public const string DetectedAngle = "DetectedAngle";
             }
         }
-        public void Clear()
+        public static class Structures
         {
-            Speed = 3e8f;
-            Acc = 0;
-            Gravity_mult = 0;
-            Trajectory = 10000;
-        }
-    }
-    public class MyWeaponConfig : IClear
-    {
-        public const string EnergyWeaponID = @"EnergyWeapon";
-        public bool IsDirect { get; private set; } = false;
-        public bool Ignore_speed_self { get; private set; } = false;
-        public float Delta_t { get; private set; }
-        public float Delta_precious { get; private set; }
-        public int Calc_t { get; private set; }
-        public float Offset { get; private set; }
-        public float TimeFixed { get; private set; }
-        private Dictionary<string, MyAmmoConfig> AmmoNMs { get; } = new Dictionary<string, MyAmmoConfig>();
-        public MyWeaponConfig(Dictionary<string, Dictionary<string, string>> ConfigTree, string WPNM)
-        {
-            if (Utils.Common.IsNullCollection(ConfigTree) || WPNM == EnergyWeaponID || !ConfigTree.ContainsKey(WPNM)) { Clear(); return; }
-            var Config = ConfigTree[WPNM];
-            foreach (var configitem in Config)
+            public struct TrajectoryDef
             {
-                switch (configitem.Key)
+                public volatile bool IsDirect;
+                public volatile float InitialSpeed;
+                public volatile float DesiredSpeed;
+                public volatile float AccelPerSec;
+                public volatile float GravityMultiplier;
+                public volatile int MaxTrajectoryTime;
+                public volatile float MaxTrajectory;
+                public WeaponType Type => (IsDirect || DesiredSpeed >= 3e8f) ? WeaponType.Energy : AccelPerSec > 0 ? WeaponType.Rocket : WeaponType.Projectile;
+                public static TrajectoryDef DefaultWeaponCore => new TrajectoryDef() { IsDirect = false, InitialSpeed = 900, DesiredSpeed = 900, AccelPerSec = 0, GravityMultiplier = 1.02f, MaxTrajectoryTime = 3000, MaxTrajectory = 3000 };
+                public static TrajectoryDef DefaultValue => new TrajectoryDef() { IsDirect = false, InitialSpeed = 100, DesiredSpeed = 200, AccelPerSec = 600, GravityMultiplier = 0, MaxTrajectoryTime = 1000, MaxTrajectory = 800 };
+                public static TrajectoryDef KeensRocket => new TrajectoryDef() { IsDirect = false, InitialSpeed = 100, DesiredSpeed = 200, AccelPerSec = 600, GravityMultiplier = 0, MaxTrajectoryTime = 1000, MaxTrajectory = 800 };
+                public static TrajectoryDef KeensProjectile_Small => new TrajectoryDef() { IsDirect = false, InitialSpeed = 300, DesiredSpeed = 300, AccelPerSec = 0, GravityMultiplier = 0, MaxTrajectoryTime = 1000, MaxTrajectory = 800 };
+                public static TrajectoryDef KeensProjectile_Large => new TrajectoryDef() { IsDirect = false, InitialSpeed = 400, DesiredSpeed = 400, AccelPerSec = 0, GravityMultiplier = 0, MaxTrajectoryTime = 1000, MaxTrajectory = 800 };
+                public static TrajectoryDef Energy => new TrajectoryDef() { IsDirect = true, InitialSpeed = 3e8f, DesiredSpeed = 3e8f, AccelPerSec = 0, GravityMultiplier = 0, MaxTrajectoryTime = 10, MaxTrajectory = 1e6f };
+                public static TrajectoryDef CreateFromWeaponCoreDatas(WeaponCore.Api.WcApiDef.WeaponDefinition.AmmoDef.TrajectoryDef WCTrajectoryDef)
                 {
-                    case "delta_t": Delta_t = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "delta_precious": Delta_precious = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "calc_t": Calc_t = Math.Abs(MyConfigs.ParseInt(configitem.Value)); break;
-                    case "offset": Offset = MyConfigs.ParseFloat(configitem.Value); break;
-                    case "ammo":
-                        var ammos = configitem.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                        if (ammos == null) continue;
-                        foreach (var ammo in ammos)
+                    return new TrajectoryDef() { IsDirect = false, InitialSpeed = 0, DesiredSpeed = WCTrajectoryDef.DesiredSpeed, AccelPerSec = WCTrajectoryDef.AccelPerSec, GravityMultiplier = WCTrajectoryDef.GravityMultiplier, MaxTrajectoryTime = (int)WCTrajectoryDef.MaxTrajectoryTime, MaxTrajectory = WCTrajectoryDef.MaxTrajectory };
+                }
+            }
+            public struct MyWeaponParametersConfig
+            {
+                public volatile float Delta_t;
+                public volatile float Delta_precious;
+                public volatile float Calc_t;
+                public volatile float TimeFixed;
+                public volatile float RPM;
+                public volatile float Range;
+                public TrajectoryDef Trajectory;
+                public static MyWeaponParametersConfig KeensRocket => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.KeensRocket };
+                public static MyWeaponParametersConfig DefaultWeaponCore => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 3000, Trajectory = TrajectoryDef.DefaultWeaponCore };
+                public static MyWeaponParametersConfig KeensProjectile_Small => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.KeensProjectile_Small };
+                public static MyWeaponParametersConfig KeensProjectile_Large => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.KeensProjectile_Large };
+                public static MyWeaponParametersConfig Energy => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.Energy };
+                public static MyWeaponParametersConfig CreateFromConfig(ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Config, string ConfigID)
+                {
+                    if (Common.IsNullCollection(Config) || ConfigID == null || ConfigID == "" || !Config.ContainsKey(ConfigID))
+                        return new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 1, TimeFixed = 3, RPM = float.MaxValue, Range = 3000, Trajectory = TrajectoryDef.DefaultValue };
+                    var value = Config[ConfigID];
+                    var data = new MyWeaponParametersConfig();
+                    foreach (var item in value)
+                    {
+                        switch (item.Key)
                         {
-                            if (!ConfigTree.ContainsKey(ammo)) continue;
-                            AmmoNMs.Add(ammo, new MyAmmoConfig(ConfigTree[ammo]));
+                            case "delta_t": data.Delta_t = MyConfigs.ParseFloat(item.Value); break;
+                            case "delta_precious": data.Delta_precious = MyConfigs.ParseFloat(item.Value); break;
+                            case "calc_t": data.Calc_t = MyConfigs.ParseFloat(item.Value); break;
+                            case "timefixed": data.TimeFixed = MyConfigs.ParseFloat(item.Value); break;
+                            case "range": data.Range = MyConfigs.ParseFloat(item.Value); break;
+                            case "rpm": data.RPM = MyConfigs.ParseFloat(item.Value); break;
+                            case "direct": data.Trajectory.IsDirect = MyConfigs.ParseBool(item.Value); break;
+                            case "initialspeed": data.Trajectory.InitialSpeed = MyConfigs.ParseFloat(item.Value); break;
+                            case "desiredspeed": data.Trajectory.DesiredSpeed = MyConfigs.ParseFloat(item.Value); break;
+                            case "accelpersec": data.Trajectory.AccelPerSec = MyConfigs.ParseFloat(item.Value); break;
+                            case "gravitymultiplier": data.Trajectory.GravityMultiplier = MyConfigs.ParseFloat(item.Value); break;
+                            case "maxtrajectory": data.Trajectory.MaxTrajectory = MyConfigs.ParseFloat(item.Value); break;
+                            case "maxtrajectorytime": data.Trajectory.MaxTrajectoryTime = MyConfigs.ParseInt(item.Value); break;
+                            default: break;
                         }
-                        break;
-                    case "timefixed": TimeFixed = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    default: break;
+                    }
+                    return data;
                 }
-            }
-        }
-        public void Clear() { TimeFixed = 1; IsDirect = true; Ignore_speed_self = false; Delta_t = 0; Delta_precious = 0; Calc_t = 0; Offset = 0; AmmoNMs.Clear(); AmmoNMs.Add("DefaultAmmo", new MyAmmoConfig(null)); }
-        public void GetConfig(string AmmoName, out MyWeaponParametersConfig Parameters)
-        {
-            Parameters.IsDirect = IsDirect; Parameters.Ignore_speed_self = Ignore_speed_self; Parameters.Delta_t = Delta_t;
-            Parameters.Delta_precious = Delta_precious; Parameters.Calc_t = Calc_t; Parameters.Offset = Offset;
-            Parameters.TimeFixed = TimeFixed;
-            if (!AmmoNMs.ContainsKey(AmmoName)) { Parameters.Speed = 3e8f; Parameters.Acc = 0; Parameters.Gravity_mult = 0; Parameters.Trajectory = 10000; return; }
-            Parameters.Speed = AmmoNMs[AmmoName].Speed; Parameters.Acc = AmmoNMs[AmmoName].Acc; Parameters.Gravity_mult = AmmoNMs[AmmoName].Gravity_mult; Parameters.Trajectory = AmmoNMs[AmmoName].Trajectory;
-        }
-    }
-    public class MyTurretConfig : IClear
-    {
-        public float max_az { get; private set; }
-        public float max_ev { get; private set; }
-        public float mult { get; private set; }
-        public float range { get; private set; }
-        public int firegap { get; private set; }
-        public string turretNM { get; private set; }
-        public string weapon_tag { get; private set; }
-        public Dictionary<string, MyWeaponConfig> TurretWeaponConfigs { get; } = new Dictionary<string, MyWeaponConfig>();
-        private const string azNM = "Az";
-        private const string evNM = "Ev";
-        public string TurretAzNM => $"{turretNM}{azNM}";
-        public string TurretEzNM => $"{turretNM}{evNM}";
-        public Vector2 Max_Speed => new Vector2(max_ev, max_az);
-        public MyTurretConfig(Dictionary<string, Dictionary<string, string>> ConfigTree, string ConfigID)
-        {
-            if (ConfigTree == null || ConfigID == null || ConfigID == "" || !ConfigTree.ContainsKey(ConfigID)) { Clear(); return; }
-            var Config = ConfigTree[ConfigID];
-            foreach (var configitem in Config)
-            {
-                switch (configitem.Key)
+                public static void SaveConfig(MyWeaponParametersConfig data, ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Config, string ConfigID)
                 {
-                    case "max_az": max_az = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "max_ev": max_ev = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "mult": mult = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "range": range = Math.Abs(MyConfigs.ParseFloat(configitem.Value)); break;
-                    case "firegap": firegap = Math.Abs(MyConfigs.ParseInt(configitem.Value)); break;
-                    case "turretNM": turretNM = configitem.Value; break;
-                    case "weapon_tag": weapon_tag = configitem.Value; break;
-                    case "weapons":
-                        var weapon_nms = configitem.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                        if (weapon_nms == null) continue;
-                        foreach (var weapon_nm in weapon_nms)
-                        {
-                            if (!ConfigTree.ContainsKey(weapon_nm)) continue;
-                            TurretWeaponConfigs.Add(weapon_nm, new MyWeaponConfig(ConfigTree, weapon_nm));
-                        }
-                        break;
-                    default: break;
+                    if (ConfigID == null || ConfigID == "" || Config == null) return;
+                    if (Config.TryAdd(ConfigID, new ConcurrentDictionary<string, string>()) || Config.ContainsKey(ConfigID))
+                    {
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "delta_t", data.Delta_t.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "delta_precious", data.Delta_precious.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "calc_t", data.Calc_t.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "timefixed", data.TimeFixed.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "range", data.Range.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "rpm", data.RPM.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "direct", data.Trajectory.IsDirect.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "initialspeed", data.Trajectory.InitialSpeed.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "desiredspeed", data.Trajectory.DesiredSpeed.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "accelpersec", data.Trajectory.AccelPerSec.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "gravitymultiplier", data.Trajectory.GravityMultiplier.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "maxtrajectory", data.Trajectory.MaxTrajectory.ToString());
+                        MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "maxtrajectorytime", data.Trajectory.MaxTrajectoryTime.ToString());
+                        return;
+                    }
                 }
             }
-        }
-        public void GetConfig(string WeaponName, string AmmoName, out MyWeaponParametersConfig Parameters)
-        {
-            if (!TurretWeaponConfigs.ContainsKey(WeaponName))
+            public struct FunctionalGroupDef
             {
-                TurretWeaponConfigs["DefaultWeapon"].GetConfig(AmmoName, out Parameters);
-                Parameters.Trajectory = Math.Min(range, Math.Max(0, Parameters.Trajectory));
-                return;
+                public Dictionary<string, WeaponDef> Weapons;
+                public float Range;
+                public int Firegap;
+                public string Weapon_tag;
             }
-            TurretWeaponConfigs[WeaponName].GetConfig(AmmoName, out Parameters);
-            Parameters.Trajectory = Math.Min(range, Math.Max(0, Parameters.Trajectory));
-        }
-        public void Clear() { max_az = 1; max_ev = 1; mult = 3; range = 1000; turretNM = "Turret"; weapon_tag = "Gun"; TurretWeaponConfigs.Clear(); TurretWeaponConfigs.Add("DefaultWeapon", new MyWeaponConfig(null, "DefaultWeapon")); }
-    }
-    public class MyTurretControllerConfig : IClear
-    {
-        public const string ConfigID = @"TCConfig";
-        public ConcurrentDictionary<string, MyTurretConfig> TurretConfigs { get; } = new ConcurrentDictionary<string, MyTurretConfig>();
-        public void UpdateConfigs(Dictionary<string, Dictionary<string, string>> ConfigTree)
-        {
-            if (ConfigTree == null || !ConfigTree.ContainsKey(ConfigID)) { Clear(); return; }
-            foreach (var config in ConfigTree[ConfigID])
+            public struct ProjectileDef
             {
-                switch (config.Key)
-                {
-                    case ConfigID:
-                        var turrets = Utils.Common.SpliteByQ(config.Value);
-                        foreach (var ConfigNM in turrets)
-                        {
-                            if (!ConfigTree.ContainsKey(ConfigNM)) continue;
-                            TurretConfigs.AddOrUpdate(ConfigNM, new MyTurretConfig(ConfigTree, ConfigNM), (cfNM, value) => new MyTurretConfig(ConfigTree, ConfigNM));
-                        }
-                        break;
-                    default: break;
-                }
+                public float InitialSpeed;
+                public float DesiredSpeed;
+                public float Acceleration;
+                public float GravityMultipy;
+                public float Trajectory;
             }
-        }
-        public void ForceReUpdateConfigs(Dictionary<string, Dictionary<string, string>> ConfigTree)
-        {
-            Clear();
-            if (ConfigTree == null || !ConfigTree.ContainsKey(ConfigID)) return;
-            foreach (var config in ConfigTree[ConfigID])
+            public struct WeaponDef
             {
-                switch (config.Key)
-                {
-                    case ConfigID:
-                        var turrets = Utils.Common.SpliteByQ(config.Value);
-                        foreach (var ConfigNM in turrets)
-                        {
-                            if (!ConfigTree.ContainsKey(ConfigNM)) continue;
-                            TurretConfigs.AddOrUpdate(ConfigNM, new MyTurretConfig(ConfigTree, ConfigNM), (cfNM, value) => new MyTurretConfig(ConfigTree, ConfigNM));
-                        }
-                        break;
-                    default: break;
-                }
+                public string IsDirect;
+                public string Ignore_speed_self;
+                public float Delta_t;
+                public float Delta_precious;
+                public int Calc_t;
+                public int TimeFixed;
+                public float FireAngle;
+                public Dictionary<string, ProjectileDef> Ammos;
+            }
+            public struct FixedWeaponDef
+            {
+                public float DetectedAngle;
+                public FunctionalGroupDef BasicWeaponSetup;
+            }
+            public struct TurretDef
+            {
+                public string TurretNM;
+                public float Max_AV_az;
+                public float Max_AV_ev;
+                public float Mult;
+                public FunctionalGroupDef BasicWeaponSetup;
+                public bool AzLimit;
+                public bool EvLimit;
+                public float AzUpperLimit;
+                public float AzLowerLimit;
+                public float EvUpperLimit;
+                public float EvLowerLimit;
+                public string TurretAzNM => $"{TurretNM}{ConfigName.Turret.azNM}";
+                public string TurretEzNM => $"{TurretNM}{ConfigName.Turret.evNM}";
+                public Vector2 Max_Speed => new Vector2(Max_AV_ev, Max_AV_az);
             }
         }
-        public void Clear() { TurretConfigs.Clear(); }
-        public override string ToString()
-        {
-            string str = $"[{ConfigID}]/r/n" + "turrets=";
-            foreach (var TurretConfig in TurretConfigs)
-                str += TurretConfig.Key + ",";
-            return str;
-        }
-    }
-    public class MyFixedWeaponsConfig : IClear
-    {
-        public const string ConfigID = @"FWConfig";
-        public void ForceReUpdateConfigs(Dictionary<string, Dictionary<string, string>> ConfigTree)
-        {
-            if (ConfigTree == null || !ConfigTree.ContainsKey(ConfigID)) { Clear(); return; }
-            foreach (var config in ConfigTree[ConfigID])
-            {
-                switch (config.Key)
-                {
-                    case ConfigID:
-                        var weapons = Utils.Common.SpliteByQ(config.Value);
-                        foreach (var ConfigNM in weapons)
-                        {
-                            if (!ConfigTree.ContainsKey(ConfigNM)) continue;
-                            WeaponConfigs.AddOrUpdate(ConfigNM, new MyWeaponConfig(ConfigTree, ConfigNM), (cfNM, value) => new MyWeaponConfig(ConfigTree, ConfigNM));
-                        }
-                        break;
-                    default: break;
-                }
-            }
-        }
-        public void UpdateConfigs(Dictionary<string, Dictionary<string, string>> ConfigTree)
-        {
-            Clear();
-            if (ConfigTree == null || !ConfigTree.ContainsKey(ConfigID)) return;
-            foreach (var config in ConfigTree[ConfigID])
-            {
-                switch (config.Key)
-                {
-                    case ConfigID:
-                        var weapons = Utils.Common.SpliteByQ(config.Value);
-                        foreach (var ConfigNM in weapons)
-                        {
-                            if (!ConfigTree.ContainsKey(ConfigNM)) continue;
-                            WeaponConfigs.AddOrUpdate(ConfigNM, new MyWeaponConfig(ConfigTree, ConfigNM), (cfNM, value) => new MyWeaponConfig(ConfigTree, ConfigNM));
-                        }
-                        break;
-                    default: break;
-                }
-            }
-        }
-        public ConcurrentDictionary<string, MyWeaponConfig> WeaponConfigs { get; } = new ConcurrentDictionary<string, MyWeaponConfig>();
-        public void Clear() => WeaponConfigs.Clear();
-        public override string ToString()
-        {
-            string str = $"[{ConfigID}]/r/n" + "fixedweapons=";
-            foreach (var WeaponConfig in WeaponConfigs)
-                str += WeaponConfig.Key + ",";
-            return str;
-        }
-    }
-    public struct MyWeaponParametersConfig
-    {
-        public volatile bool IsDirect;
-        public volatile bool Ignore_speed_self;
-        public volatile float Delta_t;
-        public volatile float Delta_precious;
-        public volatile float Calc_t;
-        public volatile float Offset;
-        public volatile float TimeFixed;
-        public volatile float Speed;
-        public volatile float Acc;
-        public volatile float Gravity_mult;
-        public volatile float Trajectory;
-    }
-    public class MyTurretScript
-    {
-        public MyTurretScript(IMyTerminalBlock Me, MyTurretConfig ThisConfig) { Init(Me, ThisConfig); }
-        public bool NeedRestart => Utils.Common.NullEntity(Me) || ThisConfig == null;
-        public void Init(IMyTerminalBlock Me, MyTurretConfig ThisConfig)
-        {
-            this.Me = Me; this.ThisConfig = ThisConfig;
-            if (Utils.Common.NullEntity(Me) || ThisConfig == null) return;
-        }
-        private IMyTerminalBlock Me;
-        private MyTurretConfig ThisConfig;
-    }
-    public class MyFixedWeaponScript
-    {
-        public MyFixedWeaponScript(IMyTerminalBlock Me, MyTurretConfig ThisConfig) { InitBasicParameters(Me, ThisConfig); }
-        public virtual void Init(IMyTerminalBlock Me, MyTurretConfig ThisConfig)
-        {
-            if (!InitBasicParameters(Me, ThisConfig)) return;
-        }
-        public void SetWeaponAmmo(string WeaponNM, string AmmoNM)
-        {
 
-        }
-        protected bool InitBasicParameters(IMyTerminalBlock Me, MyTurretConfig ThisConfig)
-        {
-            this.Me = Me; this.ThisConfig = ThisConfig;
-            WeaponBlocks.Clear();
-            if (NonBasicParametersReady) return false;
-            GetWeapons();
-            if (Utils.Common.IsNullCollection(WeaponBlocks)) return false;
-            return true;
-        }
-        private void GetWeapons()
-        {
-            if (NonBasicParametersReady) return;
-            WeaponBlocks.AddRange(Utils.Common.GetTs(Me, (IMyTerminalBlock block) => block.CustomName.Contains(Weapon_Tag)));
-        }
-        private IMyTerminalBlock Me;
-        private MyTurretConfig ThisConfig;
-        private bool NonBasicParametersReady => Utils.Common.NullEntity(Me) || ThisConfig == null;
-        private MyTargetPredict TargetPredict { get; } = new MyTargetPredict();
-        private string Weapon_Tag => ThisConfig?.weapon_tag ?? "Gun";
-        private List<IMyTerminalBlock> WeaponBlocks { get; } = new List<IMyTerminalBlock>();
     }
 }

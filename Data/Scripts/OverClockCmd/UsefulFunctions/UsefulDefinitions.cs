@@ -3,6 +3,7 @@ using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using VRage;
 using VRageMath;
 namespace SuperBlocks
@@ -16,33 +17,105 @@ namespace SuperBlocks
     }
     public static partial class Utils
     {
+        public class FireWeaponManage
+        {
+            public bool UnabledFire => Common.IsNullCollection(CurrentWeapons);
+            public List<IMyTerminalBlock> CurrentWeapons { get; private set; }
+            private Queue<IMyTerminalBlock> Weapons2Fire { get; } = new Queue<IMyTerminalBlock>();
+            int firegap;
+            int count = 0;
+            public void LoadCurrentWeapons(IEnumerable<IMyTerminalBlock> Weapons, float RPM) => LoadCurrentWeapons(Weapons, (int)(3600 / RPM));
+            public void LoadCurrentWeapons(IEnumerable<IMyTerminalBlock> Weapons, int firegap)
+            {
+                if (Common.IsNullCollection(Weapons)) return;
+                CurrentWeapons = new List<IMyTerminalBlock>();
+                CurrentWeapons.AddRange(Weapons);
+                Weapons2Fire.Clear();
+                foreach (var CurrentWeapon in CurrentWeapons)
+                    Weapons2Fire.Enqueue(CurrentWeapon);
+                this.firegap = firegap;
+            }
+            public void ResetFireRPM(float RPM) => firegap = (int)(3600 / RPM);
+            public void SetFire(bool Fire = false)
+            {
+                if (Common.IsNullCollection(CurrentWeapons)) return;
+                if (firegap <= 0)
+                {
+                    foreach (var weapon in CurrentWeapons) Controller.MyWeaponAndTurretApi.FireWeapon(weapon, Fire);
+                    Weapons2Fire.Clear(); count = 0;
+                    return;
+                }
+                if (!Common.IsNullCollection(Weapons2Fire))  return; 
+                if (Common.IsNullCollection(Weapons2Fire) && CurrentWeapons.All(Controller.MyWeaponAndTurretApi.CanFire))
+                {
+                    foreach (var weapon in CurrentWeapons) Controller.MyWeaponAndTurretApi.FireWeapon(weapon, false);
+                    foreach (var CurrentWeapon in CurrentWeapons)
+                        Weapons2Fire.Enqueue(CurrentWeapon);
+                    count = 0;
+                    return;
+                }
+            }
+            public void RunningAutoFire(bool CanFire = false)
+            {
+                if (!CanFire) { foreach (var weapon in CurrentWeapons) Controller.MyWeaponAndTurretApi.FireWeapon(weapon, false); return; }
+                if (Weapons2Fire.Count < 1) return;
+                if (!Controller.MyWeaponAndTurretApi.CanFire(Weapons2Fire.Peek())) return;
+                if (count > 0) { count--; return; }
+                Controller.MyWeaponAndTurretApi.FireWeaponOnce(Weapons2Fire.Dequeue());
+                count = firegap;
+            }
+        }
+        public class CycleStructure<T>
+        {
+            private List<T> Container;
+            private uint currentindex;
+            public int Count => Container?.Count ?? 0;
+            public void LoadDatas(IEnumerable<T> Datas)
+            {
+                if (Common.IsNullCollection(Datas)) return;
+                Container = new List<T>();
+                Container.AddRange(Datas);
+                currentindex = 0;
+            }
+            public void Increase()
+            {
+                if (Common.IsNullCollection(Container)) return;
+                currentindex++;
+                currentindex = (uint)(currentindex % (ulong)Container.Count);
+            }
+            public void Decrease()
+            {
+                if (Common.IsNullCollection(Container)) return;
+                currentindex--;
+                currentindex = (uint)Math.Max(Math.Min(currentindex, (ulong)Container.Count), 0);
+            }
+            public T GetCurrentSelect()
+            {
+                if (Common.IsNullCollection(Container)) return default(T);
+                return Container[(int)currentindex];
+            }
+        }
         public class MyWheelsController
         {
             public MyWheelsController() { }
             public void UpdateBlocks(IMyGridTerminalSystem GridTerminalSystem, IMyTerminalBlock Me)
             {
-                this.Me = null;
-                if (Common.IsNull(Me) || Common.IsNull(GridTerminalSystem)) return;
-                Motors_Hover = Common.GetTs(GridTerminalSystem, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
-                var Group = GridTerminalSystem.GetBlockGroupWithName(WheelsGroupNM);
-                SWheels = Common.GetTs<IMyMotorSuspension>(Group);
-                MWheels = Common.GetTs<IMyMotorStator>(Group);
                 this.Me = Me;
-                if (Common.IsNullCollection(Motors_Hover)) HoverDevices = false;
-                else { HoverDevices = true; return; }
-                if (NullWheels) return;
-                Wheels = Init4GetAction(GridTerminalSystem);
+                this.GridTerminalSystem = GridTerminalSystem;
+                if (Common.IsNull(Me) || Common.IsNull(GridTerminalSystem)) return;
+                Wheels = GridTerminalSystem.GetBlockGroupWithName(WheelsGroupNM);
+                Motors_Hover = Common.GetTs(Me, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
+                SWheels = Common.GetTs<IMyMotorSuspension>(Wheels);
+                MWheels = Common.GetTs<IMyMotorStator>(Wheels);
             }
-            internal ControllerRole ControlMode => NullWheels ? ControllerRole.None : HoverDevices ? ControllerRole.HoverVehicle : TrackVehicle ? ControllerRole.TrackVehicle : ControllerRole.WheelVehicle;
+            public ControllerRole ControlMode => NullWheels ? ControllerRole.None : HoverDevices ? ControllerRole.HoverVehicle : TrackVehicle ? ControllerRole.TrackVehicle : ControllerRole.WheelVehicle;
             public void Running()
             {
-                if (NullWheels) return;
-                Wheels?.Invoke();
+                if (Common.IsNull(Me) || Common.IsNull(GridTerminalSystem)) return;
+                LoadIndicateLights();
+                LoadSuspends();
+                LoadMotorWheels();
             }
-            private List<IMyMotorSuspension> SWheels;
-            private List<IMyMotorStator> MWheels;
-            private List<IMyTerminalBlock> Motors_Hover;
-            private IMyTerminalBlock Me;
             public bool TrackVehicle { get; set; } = true;
             public float MaxiumRpm { get; set; } = 90f;
             public float DiffRpmPercentage { get; set; } = 1f;
@@ -54,84 +127,58 @@ namespace SuperBlocks
             public bool NullWheels => Common.IsNull(Me) || (NullSWheel && NullMWheel);
             public bool NullSWheel => Common.IsNullCollection(SWheels);
             public bool NullMWheel => Common.IsNullCollection(MWheels);
-            public bool HoverDevices { get; private set; } = false;
+            public bool HoverDevices => !Common.IsNullCollection(Motors_Hover);
+            private List<IMyMotorSuspension> SWheels;
+            private List<IMyMotorStator> MWheels;
+            private IMyGridTerminalSystem GridTerminalSystem;
+            private List<IMyTerminalBlock> Motors_Hover;
+            private IMyBlockGroup Wheels;
+            private IMyTerminalBlock Me;
+            private List<IMyInteriorLight> brakelights;
+            private List<IMyInteriorLight> backlights;
             private Vector3 LinearVelocity => Me?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero;
-            private Action Init4GetAction(IMyGridTerminalSystem GridTerminalSystem)
+            private void LoadIndicateLights()
             {
-                Action Wheels = () => { };
-                if (HoverDevices) { HoverDevices = true; return Wheels + LoadIndicateLights(GridTerminalSystem); }
-                bool CanRunning = false;
-                {
-                    var action_wheels = LoadSuspends();
-                    if (action_wheels != null)
-                        Wheels += action_wheels;
-                    CanRunning = CanRunning || (action_wheels != null);
-                }
-                {
-                    var action_wheels = LoadMotorWheels();
-                    if (action_wheels != null)
-                        Wheels += action_wheels;
-                    CanRunning = CanRunning || (action_wheels != null);
-                }
-                if (!CanRunning) return Wheels;
-                return (Wheels + LoadIndicateLights(GridTerminalSystem));
+                if (Common.IsNull(GridTerminalSystem)) return;
+                if (Common.IsNullCollection(brakelights)) brakelights = Common.GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM));
+                foreach (var item in brakelights) { item.Enabled = ForwardIndicator == 0; }
+                if (Common.IsNullCollection(backlights)) backlights = Common.GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM));
+                foreach (var item in backlights) { item.Enabled = ForwardIndicator > 0; }
             }
-            private Action LoadIndicateLights(IMyGridTerminalSystem GridTerminalSystem)
+            private void LoadSuspends()
             {
-                Action UtilsCtrl = () => { };
-                var brakelights = Common.GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM));
-                foreach (var item in brakelights) { UtilsCtrl += () => item.Enabled = ForwardIndicator == 0; }
-                var backlights = Common.GetTs(GridTerminalSystem, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM));
-                foreach (var item in backlights) { UtilsCtrl += () => item.Enabled = ForwardIndicator > 0; }
-                return UtilsCtrl;
-            }
-            private Action LoadSuspends()
-            {
-                if (Common.IsNull(Me) || Common.IsNullCollection(SWheels)) return null;
-                Action Wheels = () => { };
+                if (Common.IsNull(Me) || Common.IsNull(Wheels) || HoverDevices) return;
+                if (Common.IsNullCollection(SWheels)) SWheels = Common.GetTs<IMyMotorSuspension>(Wheels);
+                if (Common.IsNullCollection(SWheels)) return;
                 foreach (var Motor in SWheels)
                 {
-                    Wheels += () =>
-                    {
-                        var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Motor.WorldMatrix.Up));
-                        bool EnTrO = (TrackVehicle || (LinearVelocity.LengthSquared() < 4f));
-                        float PropulsionOverride = (EnTrO ? DiffTurns(sign) : 0) + (ForwardIndicator * sign);
-                        Motor.Brake = PropulsionOverride == 0;
-                        Motor.InvertSteer = false;
-                        Motor.SetValue<float>(Motor.GetProperty(MotorOverrideId).Id, Math.Sign(PropulsionOverride));
-                        Motor.Power = Math.Abs(PropulsionOverride);
-                        Motor.Steering = !TrackVehicle;
-                        Motor.Friction = MathHelper.Clamp((TurnIndicator != 0) ? (TrackVehicle ? (TurnFaction / Vector3.DistanceSquared(Motor.GetPosition(), Me.CubeGrid.GetPosition())) : Friction) : Friction, 0, Friction);
-                        if (Motor.Steering && EnTrO && TurnIndicator != 0)
-                            Motor.SetValue<float>(Motor.GetProperty(SteerOverrideId).Id, Math.Sign(Me.WorldMatrix.Left.Dot(Motor.WorldMatrix.Up)) * (Motor.CustomName.Contains("Rear") ? -1 : 1));
-                        else
-                            Motor.SetValue<float>(Motor.GetProperty(SteerOverrideId).Id, 0);
-                    };
+                    var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Motor.WorldMatrix.Up));
+                    bool EnTrO = (TrackVehicle || (LinearVelocity.LengthSquared() < 4f));
+                    float PropulsionOverride = (EnTrO ? DiffTurns(sign) : 0) + (ForwardIndicator * sign);
+                    Motor.Brake = PropulsionOverride == 0;
+                    Motor.InvertSteer = false;
+                    Motor.SetValue<float>(Motor.GetProperty(MotorOverrideId).Id, Math.Sign(PropulsionOverride));
+                    Motor.Power = Math.Abs(PropulsionOverride);
+                    Motor.Steering = !TrackVehicle;
+                    Motor.Friction = MathHelper.Clamp((TurnIndicator != 0) ? (TrackVehicle ? (TurnFaction / Vector3.DistanceSquared(Motor.GetPosition(), Me.CubeGrid.GetPosition())) : Friction) : Friction, 0, Friction);
+                    if (Motor.Steering && EnTrO && TurnIndicator != 0)
+                        Motor.SetValue<float>(Motor.GetProperty(SteerOverrideId).Id, Math.Sign(Me.WorldMatrix.Left.Dot(Motor.WorldMatrix.Up)) * (Motor.CustomName.Contains("Rear") ? -1 : 1));
+                    else
+                        Motor.SetValue<float>(Motor.GetProperty(SteerOverrideId).Id, 0);
                 }
-                return Wheels;
             }
-            private Action LoadMotorWheels()
+            private void LoadMotorWheels()
             {
-                Action Wheels = () => { };
-                if (Common.IsNull(Me) || Common.IsNullCollection(MWheels)) return Wheels;
+                if (Common.IsNull(Me) || Common.IsNull(Wheels) || HoverDevices) return;
+                if (Common.IsNullCollection(MWheels)) MWheels = Common.GetTs<IMyMotorStator>(Wheels);
+                if (Common.IsNullCollection(MWheels)) return;
                 foreach (var Motor in MWheels)
                 {
-                    Wheels += () =>
-                    {
-                        var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Motor.WorldMatrix.Up));
-                        Motor.TargetVelocityRPM = -DiffTurns(sign) * MaxiumRpm;
-                    };
+                    var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Motor.WorldMatrix.Up));
+                    Motor.TargetVelocityRPM = -DiffTurns(sign) * MaxiumRpm;
                 }
-                return Wheels;
             }
-            private float DiffTurns(int sign)
-            {
-                Vector2 Indicator = new Vector2(Math.Max(Math.Sign(MaximumSpeed - LinearVelocity.Length()), 0) * ForwardIndicator * sign, TurnIndicator * DiffRpmPercentage);
-                if (Indicator != Vector2.Zero)
-                    Indicator = Vector2.Normalize(Indicator);
-                return Vector2.Dot(Vector2.One, Indicator);
-            }
-            private Action Wheels = () => { };
+            private float DiffTurns(int sign) { Vector2 Indicator = new Vector2(Math.Max(Math.Sign(MaximumSpeed - LinearVelocity.Length()), 0) * ForwardIndicator * sign, TurnIndicator * DiffRpmPercentage); if (Indicator != Vector2.Zero) Indicator = Vector2.Normalize(Indicator); return Vector2.Dot(Vector2.One, Indicator); }
         }
         public class MyThrusterController
         {
@@ -412,7 +459,7 @@ namespace SuperBlocks
         #endregion
     }
     public delegate void MyActionRef<T>(ref T value);
-    public enum ControllerRole : long { None, Aeroplane, Helicopter, VTOL, SpaceShip, SeaShip, Submarine, TrackVehicle, WheelVehicle, HoverVehicle }
+    public enum ControllerRole : int { None, Aeroplane, Helicopter, VTOL, SpaceShip, SeaShip, Submarine, TrackVehicle, WheelVehicle, HoverVehicle }
     public struct Direction6Values
     {
         public float Forward;

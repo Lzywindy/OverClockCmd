@@ -4,7 +4,6 @@ namespace SuperBlocks.Controller
 {
     public partial class UniversalController
     {
-        public bool HasWings { get; set; } = false;
         public bool HoverMode
         {
             get { switch (Role) { case ControllerRole.Helicopter: return true; case ControllerRole.VTOL: case ControllerRole.SpaceShip: return !ForwardOrUp; default: return false; } }
@@ -40,5 +39,6 @@ namespace SuperBlocks.Controller
         public float AngularDampeners_Roll { get { AngularDampeners.Z = SetInRange_AngularDampeners(AngularDampeners.Z); return AngularDampeners.Z; } set { AngularDampeners.Z = SetInRange_AngularDampeners(value); } }
         public float AngularDampeners_Yaw { get { AngularDampeners.Y = SetInRange_AngularDampeners(AngularDampeners.Y); return AngularDampeners.Y; } set { AngularDampeners.Y = SetInRange_AngularDampeners(value); } }
         public float AngularDampeners_Pitch { get { AngularDampeners.X = SetInRange_AngularDampeners(AngularDampeners.X); return AngularDampeners.X; } set { AngularDampeners.X = SetInRange_AngularDampeners(value); } }
+        public bool HasWings { get { return hasWings; } set { hasWings = value; } }
     }
 }

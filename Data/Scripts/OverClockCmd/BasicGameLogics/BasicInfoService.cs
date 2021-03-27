@@ -6,7 +6,7 @@ using VRageMath;
 
 namespace SuperBlocks.Controller
 {
-    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
+    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation| MyUpdateOrder.Simulation)]
     public sealed class BasicInfoService : MySessionComponentBase
     {
         public static HashSet<IMyTerminalBlock> Register { get; } = new HashSet<IMyTerminalBlock>();
@@ -22,8 +22,14 @@ namespace SuperBlocks.Controller
             }
             //MyAPIGateway.Utilities.ShowNotification($"Weapon Defs:{WcApi.WeaponDefinitions.Count}");
             try { if (!WcApi.IsReady) WcApi.Load(null, true); } catch (Exception) { }
-            try { MyWeaponSystemManage.Update(); } catch (Exception) { }
+           
 
+        }
+        public override void Simulate()
+        {
+            base.Simulate();
+            try { MyWeaponSystemManage.Update(); } catch (Exception) { }
+            //try { MyWeaponSystemManage.Update(); } catch (Exception) { }
         }
         public void Init()
         {

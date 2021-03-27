@@ -1,5 +1,6 @@
 ﻿using Sandbox.ModAPI;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 namespace SuperBlocks
@@ -31,6 +32,26 @@ namespace SuperBlocks
         {
             if (ShipController == null || Configs == null) return;
             var lines = ShipController.CustomData.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines == null || lines.Length < 1) return;
+            string current_block_name = "";
+            for (int index = 0; index < lines.Length; index++)
+            {
+                var line = RemoveStartEndEmpty(RemoveIniComment(lines[index]));
+                if (IsNewBlockStart(line))
+                {
+                    current_block_name = NewBlockName(line);
+                    if (!Configs.ContainsKey(current_block_name))
+                        Configs.Add(current_block_name, new Dictionary<string, string>());
+                    continue;
+                }
+                if (!Configs.ContainsKey(current_block_name))
+                    continue;
+                GetProperty(Configs[current_block_name], line);
+            }
+        }
+        public static void CustomDataConfigRead_INI(string CustomData, Dictionary<string, Dictionary<string, string>> Configs)
+        {
+            var lines = CustomData.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
             if (lines == null || lines.Length < 1) return;
             string current_block_name = "";
             for (int index = 0; index < lines.Length; index++)
@@ -93,5 +114,80 @@ namespace SuperBlocks
             ModifyProperty(Properties, key_value[0], key_value[1]);
         }
         #endregion
+        public static class Concurrent
+        {
+            public static void GetProperty(ConcurrentDictionary<string, string> Properties, string line)
+            {
+                if (Properties == null) return;
+                var key_value = line.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+                if (key_value == null || key_value.Length < 1) return;
+                for (int index = 0; index < key_value.Length; index++)
+                    key_value[index] = RemoveStartEndEmpty(key_value[index]);
+                if (key_value.Length == 1)
+                {
+                    ModifyProperty(Properties, key_value[0], "");
+                    return;
+                }
+                ModifyProperty(Properties, key_value[0], key_value[1]);
+            }
+            public static void ModifyProperty(ConcurrentDictionary<string, string> Properties, string key, string value)
+            {
+                if (Properties == null) return; Properties.AddOrUpdate(key, value, (k, v) => value);
+            }
+            public static void CustomDataConfigRead_INI(IMyTerminalBlock ShipController, ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Configs)
+            {
+                if (ShipController == null || Configs == null) return;
+                var lines = ShipController.CustomData.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+                if (lines == null || lines.Length < 1) return;
+                string current_block_name = "";
+                for (int index = 0; index < lines.Length; index++)
+                {
+                    var line = RemoveStartEndEmpty(RemoveIniComment(lines[index]));
+                    if (IsNewBlockStart(line))
+                    {
+                        current_block_name = NewBlockName(line);
+                        if (!Configs.ContainsKey(current_block_name))
+                            Configs.AddOrUpdate(current_block_name, new ConcurrentDictionary<string, string>(), (key, value) => new ConcurrentDictionary<string, string>());
+                        continue;
+                    }
+                    if (!Configs.ContainsKey(current_block_name))
+                        continue;
+                    GetProperty(Configs[current_block_name], line);
+                }
+            }
+            public static void CustomDataConfigRead_INI(string CustomData, ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Configs)
+            {
+                var lines = CustomData.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+                if (lines == null || lines.Length < 1) return;
+                string current_block_name = "";
+                for (int index = 0; index < lines.Length; index++)
+                {
+                    var line = RemoveStartEndEmpty(RemoveIniComment(lines[index]));
+                    if (IsNewBlockStart(line))
+                    {
+                        current_block_name = NewBlockName(line);
+                        Configs.AddOrUpdate(current_block_name, new ConcurrentDictionary<string, string>(), (key, value) => value);
+                        continue;
+                    }
+                    if (!Configs.ContainsKey(current_block_name)) continue;
+                    GetProperty(Configs[current_block_name], line);
+                }
+            }
+            public static string CustomDataConfigSave_INI(ConcurrentDictionary<string, ConcurrentDictionary<string, string>> ConfigTree)
+            {
+                if (ConfigTree == null || ConfigTree.Count < 1) return "";
+                StringBuilder _str = new StringBuilder();
+                _str.Clear();
+                foreach (var ConfigBlock in ConfigTree)
+                {
+                    _str.AppendLine($"[{ConfigBlock.Key}]");
+                    foreach (var ConfigItem in ConfigBlock.Value)
+                        _str.AppendLine($"{ConfigItem.Key}={ConfigItem.Value}");
+                    _str.AppendLine();
+                }
+                return _str.ToString();
+            }
+        }
     }
+
 }
