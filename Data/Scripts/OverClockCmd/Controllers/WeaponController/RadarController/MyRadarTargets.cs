@@ -25,8 +25,8 @@ namespace SuperBlocks.Controller
             {
                 var grid = Me?.GetTopMostParent() as IMyCubeGrid;
                 if (Utils.Common.NullEntity(grid)) return;
-                var block = Utils.RadarSubtypeId.GetFarestDetectedBlock(grid);
-                range = Utils.RadarSubtypeId.DetectedRangeBlock(block);
+                var block = Utils.MyRadarSubtypeIdHelper.GetFarestDetectedBlock(grid);
+                range = Utils.MyRadarSubtypeIdHelper.DetectedRangeBlock(block);
             }
             catch (Exception) { }
         }
@@ -99,8 +99,8 @@ namespace SuperBlocks.Controller
             {
                 var grid = Me?.GetTopMostParent() as IMyCubeGrid;
                 if (Utils.Common.NullEntity(grid)) return;
-                var block = Utils.RadarSubtypeId.GetFarestDetectedBlock(grid);
-                range = Utils.RadarSubtypeId.DetectedRangeBlock(block);
+                var block = Utils.MyRadarSubtypeIdHelper.GetFarestDetectedBlock(grid);
+                range = Utils.MyRadarSubtypeIdHelper.DetectedRangeBlock(block);
                 UpdateScanning(block);
             }
             catch (Exception) { }

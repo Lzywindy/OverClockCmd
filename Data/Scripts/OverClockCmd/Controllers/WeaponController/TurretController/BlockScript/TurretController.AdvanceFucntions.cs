@@ -67,7 +67,7 @@ namespace SuperBlocks.Controller
                 if (!EnabledGUI(Me)) return;
                 TriggerReadConfigs(Me);
                 TriggerSaveConfigs(Me);
-                Range = RadarSubtypeId.DetectedRangeBlock(RadarSubtypeId.GetFarestDetectedBlock(Me.CubeGrid));
+                Range = MyRadarSubtypeIdHelper.DetectedRangeBlock(MyRadarSubtypeIdHelper.GetFarestDetectedBlock(Me.CubeGrid));
                 List<MyTurretBinding> list = Common.GetTs<IMyMotorStator>(Me, HasEvMotors).ConvertAll(az => new MyTurretBinding(az));
                 if (Common.IsNullCollection(list)) { Turrets = null; return; }
                 Turrets = new ConcurrentBag<MyTurretBinding>(list);

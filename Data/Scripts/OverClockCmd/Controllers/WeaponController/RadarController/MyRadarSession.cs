@@ -39,7 +39,7 @@ namespace SuperBlocks.Controller
             {               
                 if (count_s % 18 == 0)
                 {
-                    var removeable = RadarScripts.Keys.Where(g => Utils.Common.NullEntity(g) || Utils.Common.GetTs<IMyTerminalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(g), Utils.RadarSubtypeId.AvaliableRadarBlocks).Count < 1);
+                    var removeable = RadarScripts.Keys.Where(g => Utils.Common.NullEntity(g) || Utils.Common.GetTs<IMyTerminalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(g), Utils.MyRadarSubtypeIdHelper.AvaliableRadarBlocks).Count < 1);
                     if (!Utils.Common.IsNullCollection(removeable))
                     {
                         MyAPIGateway.Parallel.ForEach(removeable, cubeGrid => { MyRadarTargets RadarTargets; RadarScripts.TryRemove(cubeGrid, out RadarTargets); });
@@ -50,7 +50,7 @@ namespace SuperBlocks.Controller
                     HashSet<IMyEntity> Entities = new HashSet<IMyEntity>();
                     MyAPIGateway.Entities.GetEntities(Entities, e => !Utils.Common.NullEntity(e) && (e is IMyCubeGrid));
                     if (Utils.Common.IsNullCollection(Entities)) return;
-                    var Grids = Entities.ToList().ConvertAll(e => e as IMyCubeGrid)?.Where(g => Utils.Common.GetTs<IMyTerminalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(g), Utils.RadarSubtypeId.AvaliableRadarBlocks).Count > 0);
+                    var Grids = Entities.ToList().ConvertAll(e => e as IMyCubeGrid)?.Where(g => Utils.Common.GetTs<IMyTerminalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(g), Utils.MyRadarSubtypeIdHelper.AvaliableRadarBlocks).Count > 0);
                     if (Utils.Common.IsNullCollection(Grids)) return;
                     MyAPIGateway.Parallel.ForEach(Grids, cubeGrid => { RadarScripts.TryAdd(cubeGrid, new MyRadarTargets()); });
                 }

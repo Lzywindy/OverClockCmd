@@ -27,7 +27,7 @@ namespace SuperBlocks.Controller
                 TriggerReadConfigs(Me);
             if (Me.CustomData.Length < 1)
                 TriggerSaveConfigs(Me);
-            Range = RadarSubtypeId.DetectedRangeBlock(RadarSubtypeId.GetFarestDetectedBlock(Me.CubeGrid));
+            Range = MyRadarSubtypeIdHelper.DetectedRangeBlock(MyRadarSubtypeIdHelper.GetFarestDetectedBlock(Me.CubeGrid));
             List<MyTurretBinding> list;
             if (Common.IsNullCollection(Turrets))
                 list = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az)).ConvertAll(az => new MyTurretBinding(az));

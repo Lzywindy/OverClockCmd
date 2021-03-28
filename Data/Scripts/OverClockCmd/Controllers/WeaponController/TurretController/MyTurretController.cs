@@ -54,7 +54,7 @@ namespace SuperBlocks.Controller
                 if (!Configs.ContainsKey("KeensProjectile_LargeWeapon")) MyWeaponParametersConfig.SaveConfig(MyWeaponParametersConfig.KeensProjectile_Large, Configs, "KeensProjectile_LargeWeapon");
                 if (!Configs.ContainsKey("EnergyWeapon")) MyWeaponParametersConfig.SaveConfig(MyWeaponParametersConfig.Energy, Configs, "EnergyWeapon");
                 ConfigsStrs = Me.CustomData = MyConfigs.Concurrent.CustomDataConfigSave_INI(Configs);
-                Range = Utils.RadarSubtypeId.DetectedRangeBlock(Utils.RadarSubtypeId.GetFarestDetectedBlock(this.Me.CubeGrid));
+                Range = Utils.MyRadarSubtypeIdHelper.DetectedRangeBlock(Utils.MyRadarSubtypeIdHelper.GetFarestDetectedBlock(this.Me.CubeGrid));
                 List<MyTurretBinding> list;
                 if (Utils.Common.IsNullCollection(Turrets))
                     list = Utils.Common.GetTs<IMyMotorStator>(Me, HasEvMotors).ConvertAll(az => new MyTurretBinding(az));
