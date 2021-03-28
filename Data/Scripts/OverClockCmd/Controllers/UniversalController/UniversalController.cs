@@ -89,7 +89,7 @@ namespace SuperBlocks.Controller
             WheelsController.TrackVehicle = Role == ControllerRole.TrackVehicle;
             WheelsController.RetractWheels = Dock;
             WheelsController.MaximumSpeed = MaximumSpeed;
-            WheelsController.Running(Me, InThisEntity, Enabled ? NoWheelCtrl ? 0 : ThrustsControlLine.Z : 0, Enabled ? NoWheelCtrl ? 0 : RotationCtrlLines.W : 0);
+            WheelsController.Running(Me, InThisEntity, Enabled ? NoWheelCtrl ? 0 : ThrustsControlLine.Z : 0, Enabled ? NoWheelCtrl ? 0 : RotationCtrlLines.W : 0, _WheelPowerMult);
         }
         private void UpdateTargetSealevel() { if (IgnoreLevel) diffsealevel = 0; else { sealevel = MyPlanetInfoAPI.GetSealevel(Me.GetPosition()) ?? 0; if (!KeepLevel) _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * MultAttitude; } }
         private static float SetInRange_AngularDampeners(float data) => MathHelper.Clamp(data, 0f, 20f);
@@ -98,13 +98,23 @@ namespace SuperBlocks.Controller
         private void PoseCtrl()
         {
             if (!Enabled) { GyroControllerSystem.GyrosOverride(Me, InThisEntity, null); return; }
-            Vector3 Rotation;
-            if (Role == ControllerRole.HoverVehicle || Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle || Role == ControllerRole.SeaShip || Role == ControllerRole.Submarine)
-                Rotation = PoseProcessFuncs.ProcessRotation_GroundVehicle(Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, MaxReactions_AngleV, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride) ?? RotationIndication;
+            Vector3? Rotation;
+            if (Role == ControllerRole.HoverVehicle || Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle)
+            {
+                Rotation = PoseProcessFuncs.ProcessRotation_GroundVehicle(Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, MaxReactions_AngleV, DisabledRotation, ForwardDirectionOverride);
+                GyroControllerSystem.SetEnabled(EnabledGyros && Rotation.HasValue);
+            }
+            else if (Role == ControllerRole.SeaShip || Role == ControllerRole.Submarine)
+            {
+                Rotation = PoseProcessFuncs.ProcessRotation_SeaVehicle(Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, MaxReactions_AngleV, DisabledRotation, ForwardDirectionOverride);
+                GyroControllerSystem.SetEnabled(EnabledGyros);
+            }
             else
-                Rotation = PoseProcessFuncs.ProcessRotation(_EnabledCuriser, Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, ForwardOrUp, PoseMode, MaximumSpeed, MaxReactions_AngleV, Need2CtrlSignal, LocationSensetive, SafetyStage, IgnoreForwardVelocity, Refer2Velocity, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride) ?? RotationIndication;
-            GyroControllerSystem.SetEnabled(EnabledGyros);
-            GyroControllerSystem.GyrosOverride(Me, InThisEntity, Rotation);
+            {
+                Rotation = PoseProcessFuncs.ProcessRotation(_EnabledCuriser, Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, ForwardOrUp, PoseMode, MaximumSpeed, MaxReactions_AngleV, Need2CtrlSignal, LocationSensetive, SafetyStage, IgnoreForwardVelocity, Refer2Velocity, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride);
+                GyroControllerSystem.SetEnabled(EnabledGyros);
+            }
+            GyroControllerSystem.GyrosOverride(Me, InThisEntity, Rotation ?? RotationIndication);
         }
         private void ThrustControl()
         {
@@ -143,6 +153,7 @@ namespace SuperBlocks.Controller
             var data = Configs[VehicleControllerConfigID];
             foreach (var configitem in data)
             {
+
                 switch (configitem.Key)
                 {
                     case "Enabled": Enabled = MyConfigs.ParseBool(configitem.Value); break;
@@ -161,6 +172,7 @@ namespace SuperBlocks.Controller
                     case "MaximumCruiseSpeed": WheelsController.MaximumSpeed = MaximumCruiseSpeed = MyConfigs.ParseFloat(configitem.Value); break;
                     case "Role": Role = (ControllerRole)Enum.Parse(typeof(ControllerRole), configitem.Value); break;
                     case "MultAttitude": MultAttitude = MyConfigs.ParseFloat(configitem.Value); break;
+                    case "WheelPowerMult": _WheelPowerMult = MathHelper.Clamp(MyConfigs.ParseFloat(configitem.Value), 0, 1); break;
                     default: break;
                 }
             }
@@ -186,6 +198,7 @@ namespace SuperBlocks.Controller
             MyConfigs.ModifyProperty(data, "MaximumCruiseSpeed", MaximumCruiseSpeed.ToString());
             MyConfigs.ModifyProperty(data, "Role", Role.ToString());
             MyConfigs.ModifyProperty(data, "MultAttitude", MultAttitude.ToString());
+            MyConfigs.ModifyProperty(data, "WheelPowerMult", _WheelPowerMult.ToString());
         }
         #endregion
         #region OverclockConfigs

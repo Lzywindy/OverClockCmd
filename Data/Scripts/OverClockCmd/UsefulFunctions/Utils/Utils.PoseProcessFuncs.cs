@@ -1,5 +1,6 @@
 ﻿using Sandbox.ModAPI;
 using System;
+using VRage.Utils;
 using VRageMath;
 namespace SuperBlocks
 {
@@ -54,10 +55,36 @@ namespace SuperBlocks
                     (ReferNormal.Value != Vector3.Zero) ? Dampener(SetupAngle(Calc_Direction_Vector(ReferNormal.Value, ShipController.WorldMatrix.Left), Calc_Direction_Vector(ReferNormal.Value, ShipController.WorldMatrix.Down))) : 0
                     ) * MaxReactions_AngleV));
             }
-            public static Vector3? ProcessRotation_GroundVehicle(IMyTerminalBlock ShipController, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, float MaxReactions_AngleV = 1f, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null, Vector3? PlaneNormalOverride = null)
+            public static Vector3? ProcessRotation_GroundVehicle(IMyTerminalBlock ShipController, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, float MaxReactions_AngleV = 1f, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null)
             {
                 if (Common.IsNull(ShipController) || DisabledRotation) return null;
-                Vector3 ReferNormal = PlaneNormalOverride ?? MyPlanetInfoAPI.GetCurrentGravity(ShipController.GetPosition());
+                var height = MyPlanetInfoAPI.GetSurfaceHight(ShipController.GetPosition());
+                Vector3 ReferNormal = MyPlanetInfoAPI.GetCurrentGravity(ShipController.GetPosition());
+                if (Vector3.IsZero(ReferNormal)) return null;
+                if (!height.HasValue) return null;
+                if ((ShipController.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Small && height.Value > 15) || (ShipController.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Large && height.Value > 30))
+                {
+                    Vector3 Direciton = (ForwardDirectionOverride ?? ShipController.WorldMatrix.Forward) + RotationCtrlLines.W * ShipController.WorldMatrix.Right;
+                    ForwardDirection = ProjectOnPlane(Direciton, ReferNormal);
+                    return ProcessDampeners(ShipController, InitAngularDampener, AngularDampeners) +
+                        new Vector3(Calc_Direction_Vector(ReferNormal, ShipController.WorldMatrix.Backward),
+                        Dampener(SetupAngle(Calc_Direction_Vector(Direciton, ShipController.WorldMatrix.Right), Calc_Direction_Vector(Direciton, ShipController.WorldMatrix.Forward))) * 1800000f,
+                        Dampener(SetupAngle(Calc_Direction_Vector(ReferNormal, ShipController.WorldMatrix.Left), Calc_Direction_Vector(ReferNormal, ShipController.WorldMatrix.Down)))) * MaxReactions_AngleV;
+                }
+                else
+                {
+                    if (RotationCtrlLines.W != 0) return new Vector3(0, RotationCtrlLines.W * 1800000f, 0);
+                    if (!ForwardDirectionOverride.HasValue) return null;
+                    return (ProcessDampeners(ShipController, InitAngularDampener, AngularDampeners) +
+                     new Vector3(0,
+                      Dampener(SetupAngle(Calc_Direction_Vector(ForwardDirectionOverride.Value, ShipController.WorldMatrix.Right), Calc_Direction_Vector(ForwardDirectionOverride.Value, ShipController.WorldMatrix.Forward))) * 1800000f,
+                      0) * MaxReactions_AngleV);
+                }
+            }
+            public static Vector3? ProcessRotation_SeaVehicle(IMyTerminalBlock ShipController, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, float MaxReactions_AngleV = 1f, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null)
+            {
+                if (Common.IsNull(ShipController) || DisabledRotation) return null;
+                Vector3 ReferNormal = MyPlanetInfoAPI.GetCurrentGravity(ShipController.GetPosition());
                 if (Vector3.IsZero(ReferNormal)) return null;
                 Vector3 Direciton = (ForwardDirectionOverride ?? ShipController.WorldMatrix.Forward) + RotationCtrlLines.W * ShipController.WorldMatrix.Right;
                 ForwardDirection = ProjectOnPlane(Direciton, ReferNormal);
@@ -76,6 +103,15 @@ namespace SuperBlocks
             {
                 if (ShipController == null) return Vector3.Zero;
                 var temp = Vector3.TransformNormal(ShipController?.CubeGrid?.Physics?.AngularVelocity ?? Vector3.Zero, Matrix.Transpose(ShipController.WorldMatrix));
+                var a_temp = Vector3.Abs(temp);
+                var _InitAngularDampener = InitAngularDampener ?? (new Vector3(70, 50, 10));
+                return Vector3.Clamp(a_temp * temp * _InitAngularDampener / 4, -_InitAngularDampener, _InitAngularDampener) * (AngularDampeners ?? Vector3.One);
+            }
+            public static Vector3 ProcessDampenersExp(IMyTerminalBlock ShipController, float Gap = 2, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null)
+            {
+                if (ShipController == null) return Vector3.Zero;
+                var temp = Vector3.TransformNormal(ShipController?.CubeGrid?.Physics?.AngularVelocity ?? Vector3.Zero, Matrix.Transpose(ShipController.WorldMatrix));
+                if (MyUtils.IsZero(temp, Gap)) return Vector3.Zero;
                 var a_temp = Vector3.Abs(temp);
                 var _InitAngularDampener = InitAngularDampener ?? (new Vector3(70, 50, 10));
                 return Vector3.Clamp(a_temp * temp * _InitAngularDampener / 4, -_InitAngularDampener, _InitAngularDampener) * (AngularDampeners ?? Vector3.One);

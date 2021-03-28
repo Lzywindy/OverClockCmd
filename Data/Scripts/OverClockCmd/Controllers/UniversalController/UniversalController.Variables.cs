@@ -19,6 +19,7 @@ namespace SuperBlocks.Controller
         private volatile float _SafetyStage = 1f;
         private volatile float _LocationSensetive = 1f;
         private volatile float _MaxReactions_AngleV = 1f;
+        private volatile float _WheelPowerMult = 1f;
         private Vector3 AngularDampeners = Vector3.One;
         private Vector3 ForwardDirection;
         private IMyShipController _Controller;

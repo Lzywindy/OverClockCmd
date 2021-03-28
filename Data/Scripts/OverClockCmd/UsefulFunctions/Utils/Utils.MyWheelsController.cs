@@ -11,10 +11,13 @@ namespace SuperBlocks
     {
         public class MyWheelsController
         {
-            public void Running(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, float ForwardIndicator, float TurnIndicator)
+            public void Running(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, float ForwardIndicator, float TurnIndicator, float PowerMult)
             {
                 this.Me = Me;
                 if (Common.IsNull(Me) || InThisEntity == null) return;
+                this.ForwardIndicator = ForwardIndicator;
+                this.TurnIndicator = TurnIndicator;
+                this.PowerMult = PowerMult;
                 LoadIndicateLights(InThisEntity);
                 LoadLandingGears(InThisEntity);
                 LoadConnect(InThisEntity);
@@ -32,8 +35,6 @@ namespace SuperBlocks
                     MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
                     BlockCount = count;
                 }
-                this.ForwardIndicator = ForwardIndicator;
-                this.TurnIndicator = TurnIndicator;
                 LoadSuspends(InThisEntity);
                 LoadMotorWheels(InThisEntity);
             }
@@ -48,6 +49,7 @@ namespace SuperBlocks
             public float MaximumSpeed { get; set; } = 20f;
             private float ForwardIndicator { get; set; } = 0;
             private float TurnIndicator { get; set; } = 0;
+            private float PowerMult { get; set; } = 1;
             #endregion
             #region PrivateFields&Functions
             public MyWheelsController() { }
@@ -87,8 +89,8 @@ namespace SuperBlocks
                     float PropulsionOverride = EnTrO ? DiffTurns(sign) : 0;
                     Wheel.Brake = PropulsionOverride == 0;
                     Wheel.InvertSteer = false;
-                    Wheel.SetValue<float>(Wheel.GetProperty(MotorOverrideId).Id, Math.Sign(PropulsionOverride));
-                    Wheel.Power = Math.Abs(PropulsionOverride);
+                    Wheel.SetValue(Wheel.GetProperty(MotorOverrideId).Id, Math.Sign(PropulsionOverride) * PowerMult);
+                    Wheel.Power = Math.Abs(PropulsionOverride) * PowerMult;
                     Wheel.Steering = !TrackVehicle;
                     Wheel.Friction = MathHelper.Clamp((TurnIndicator != 0) ? (TrackVehicle ? (TurnFaction / Vector3.DistanceSquared(Wheel.GetPosition(), Me.CubeGrid.GetPosition())) : Friction) : Friction, 0, Friction);
                     if (Wheel.Steering && EnTrO && TurnIndicator != 0)
@@ -108,7 +110,7 @@ namespace SuperBlocks
                 foreach (var Motor in MWheels)
                 {
                     var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Motor.WorldMatrix.Up));
-                    Motor.TargetVelocityRPM = RetractWheels ? 0 : (-DiffTurns(sign) * MaxiumRpm);
+                    Motor.TargetVelocityRPM = RetractWheels ? 0 : (-DiffTurns(sign) * MaxiumRpm * PowerMult);
                     Motor.RotorLock = RetractWheels;
                 }
             }
@@ -161,6 +163,25 @@ namespace SuperBlocks
             }
             private float DiffTurns(int sign) { Vector2 Indicator = new Vector2(Math.Max(Math.Sign(MaximumSpeed - LinearVelocity.Length()), 0) * ForwardIndicator * sign, TurnIndicator * DiffRpmPercentage); if (Indicator != Vector2.Zero) Indicator = Vector2.Normalize(Indicator); return Vector2.Dot(Vector2.One, Indicator); }
             #endregion
+
+            private const float SmallGridHightMax = 2.5f;
+            private const float LargeGridHightMax = 12.5f;
+            public Vector3D? GetCurrentPlaneNormal()
+            {
+                if (!HoverDevices || NullWheels) return null;
+                var gravity = MyPlanetInfoAPI.GetCurrentGravity(Me.CubeGrid.WorldAABB.Center);
+                var centerheight = MyPlanetInfoAPI.GetSurfaceHight(Me.CubeGrid.WorldAABB.Center);
+                if (Vector3D.IsZero(gravity) || !centerheight.HasValue) return null;
+                var corners = Me.CubeGrid.WorldAABB.GetCorners();
+                if (Common.IsNullCollection(corners)) return null;
+                var corners_height = corners.ToList().ConvertAll(vertex => MyPlanetInfoAPI.GetSurfaceHight(vertex) ?? 0);
+                var min_corners_height = corners_height.Min();
+                if ((Me.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Small && min_corners_height > SmallGridHightMax) || (Me.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Large && min_corners_height > LargeGridHightMax)) return null;
+                var vectors = corners.ToList().ConvertAll(vertex => (vertex - Me.CubeGrid.WorldAABB.Center) / MathHelper.Clamp(MyPlanetInfoAPI.GetSurfaceHight(vertex) ?? 0, 0.005f, 20f));
+                Vector3D vector = new Vector3D(vectors.Average(t => t.X), vectors.Average(t => t.Y), vectors.Average(t => t.Z)) + gravity * 3;
+                if (Vector3D.IsZero(vector)) return null;
+                return Vector3D.Normalize(vector);
+            }
         }
     }
 }
