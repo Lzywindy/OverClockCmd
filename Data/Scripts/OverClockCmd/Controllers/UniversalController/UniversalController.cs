@@ -50,6 +50,7 @@ namespace SuperBlocks.Controller
                             ThrustControl();
                             WheelControl();
                             UpdateState();
+                            RotorThrustRotorCtrl.Running(Me, InThisEntity, HoverMode, RotationIndication.Z, MaximumSpeed, MoveIndication);
                             AutoCloseDoorController.Running(GridTerminalSystem); break;
                         case Sandbox.ModAPI.Ingame.UpdateType.Update10: if (!StartReady) { InitDatas(); ReadDatas(); } break;
                         case Sandbox.ModAPI.Ingame.UpdateType.Update100: break;

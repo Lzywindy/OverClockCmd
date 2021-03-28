@@ -132,7 +132,7 @@ namespace SuperBlocks
                     Percentages[index] = MathHelper.Clamp((TF[index] != 0) ? (OV.Dot(Vector) > VelocityGate) ? 1 : (Force.Dot(Vector) / TF[index]) : 0, 0, 1);
                 }
             }
-            private const double DirectionGate = 0.95;
+            private const double DirectionGate = 0.65;
             private const float MiniValueC = 1e-6f;
             private const float VelocityGate = 50f;
             #endregion

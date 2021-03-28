@@ -213,6 +213,7 @@
     <Compile Include="UsefulFunctions\Utils\Utils.MyGyrosController.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyPlanetInfoAPI.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyRotorAPI.cs" />
+    <Compile Include="UsefulFunctions\Utils\Utils.MyRotorThrustRotorCtrl.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyTargetEnsureAPI.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyThrusterController.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyWheelsController.cs" />

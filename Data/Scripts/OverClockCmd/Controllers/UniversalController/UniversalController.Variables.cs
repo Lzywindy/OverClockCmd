@@ -33,6 +33,7 @@ namespace SuperBlocks.Controller
         private MyThrusterController ThrustControllerSystem { get; } = new MyThrusterController();
         private MyGyrosController GyroControllerSystem { get; } = new MyGyrosController();
         private MyWheelsController WheelsController { get; } = new MyWheelsController();
+        private MyRotorThrustRotorCtrl RotorThrustRotorCtrl { get; } = new MyRotorThrustRotorCtrl();
         private Dictionary<string, Dictionary<string, string>> Configs { get; } = new Dictionary<string, Dictionary<string, string>>();
         private MyAutoCloseDoorController AutoCloseDoorController { get; } = new MyAutoCloseDoorController();
         public ControllerRole Role { get { return _Role; } set { _Role = value; } }
