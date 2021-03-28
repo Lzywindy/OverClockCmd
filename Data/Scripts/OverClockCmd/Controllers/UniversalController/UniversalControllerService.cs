@@ -84,6 +84,8 @@ namespace SuperBlocks.Controller
         private void 加载_基础公共控件()
         {
             /*====================TriggerFunc Hook==================================================*/
+            EnabledBlock.TriggerFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.TriggleEnabledBlock(Me);
+            DockGround.TriggerFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.TriggleDockGround(Me);
             LoadConfig.TriggerFunc = UniversalController.ReadConfigs;
             SaveConfig.TriggerFunc = UniversalController.SaveConfigs;
             HasWings.TriggerFunc = UniversalController.TriggleHasWings;
@@ -93,6 +95,8 @@ namespace SuperBlocks.Controller
             EnabledGyros.TriggerFunc = UniversalController.TriggleEnabledCuriser;
             ControllerRoleSelect.ComboBoxContent = UniversalController.Controller_Role_List;
             /*====================GetterFunc Hook===================================================*/
+            EnabledBlock.GetterFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledBlock(Me) ?? false;
+            DockGround.GetterFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.DockGround(Me) ?? false;
             ControllerRoleSelect.GetterFunc = UniversalController.RoleGetter;
             HasWings.GetterFunc = UniversalController.GetHasWings;
             HoverMode.GetterFunc = UniversalController.GetHoverMode;
@@ -100,6 +104,8 @@ namespace SuperBlocks.Controller
             EnabledThrusters.GetterFunc = UniversalController.GetEnabledThrusters;
             EnabledGyros.GetterFunc = UniversalController.GetEnabledGyros;
             /*====================SetterFunc Hook===================================================*/
+            EnabledBlock.SetterFunc = (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledBlock(Me, value);
+            DockGround.SetterFunc = (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.DockGround(Me, value);
             ControllerRoleSelect.SetterFunc = UniversalController.RoleSetter;
             HasWings.SetterFunc = UniversalController.SetHasWings;
             HoverMode.SetterFunc = UniversalController.SetHoverMode;
@@ -108,10 +114,12 @@ namespace SuperBlocks.Controller
             EnabledGyros.SetterFunc = UniversalController.SetEnabledGyros;
             /*=======================Terminal Hook==================================================*/
             MyAPIGateway.TerminalControls.CustomControlGetter += Fence_0.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter += EnabledBlock.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += LoadConfig.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += SaveConfig.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += ControllerRoleSelect.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += Fence_1.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter += DockGround.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += HasWings.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += HoverMode.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += Fence_2.CreateController;
@@ -119,6 +127,8 @@ namespace SuperBlocks.Controller
             MyAPIGateway.TerminalControls.CustomControlGetter += EnabledThrusters.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += EnabledGyros.CreateController;
             /*=========================Action Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomActionGetter += EnabledBlock.CreateAction;
+            MyAPIGateway.TerminalControls.CustomActionGetter += DockGround.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter += LoadConfig.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter += SaveConfig.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter += HasWings.CreateAction;
@@ -129,19 +139,23 @@ namespace SuperBlocks.Controller
         }
         private void 卸载_基础公共控件()
         {
-            /*=======================Terminal UnHook================================================*/
+            /*=======================Terminal Hook==================================================*/
             MyAPIGateway.TerminalControls.CustomControlGetter -= Fence_0.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter -= EnabledBlock.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= LoadConfig.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= SaveConfig.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= ControllerRoleSelect.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= Fence_1.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter -= DockGround.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= HasWings.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= HoverMode.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= Fence_2.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= EnabledCuriser.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= EnabledThrusters.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= EnabledGyros.CreateController;
-            /*=========================Action UnHook==================================================*/
+            /*=========================Action Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomActionGetter -= EnabledBlock.CreateAction;
+            MyAPIGateway.TerminalControls.CustomActionGetter -= DockGround.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= LoadConfig.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= SaveConfig.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= HasWings.CreateAction;
@@ -152,6 +166,9 @@ namespace SuperBlocks.Controller
         }
         private void 创建_基础公共属性()
         {
+            CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}EnabledBlock", UniversalController.EnabledGUI, (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledBlock(Me) ?? false, (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledBlock(Me, value));
+            CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}DockGround", UniversalController.EnabledGUI, (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.DockGround(Me) ?? false, (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.DockGround(Me, value));
+            CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}DockGroundReady", UniversalController.EnabledGUI, (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.DockGroundReady(Me) ?? false, (Me, value) => { });
             CreateProperty.CreateProperty_PB_CN<long, IMyTerminalBlock>($"{CtrlNM}Role", UniversalController.EnabledGUI, UniversalController.RoleGetter, UniversalController.RoleSetter);
             CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}HasWings", UniversalController.EnabledGUI, UniversalController.GetHasWings, UniversalController.SetHasWings);
             CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}HoverMode", UniversalController.EnabledGUI, UniversalController.GetHoverMode, UniversalController.SetHoverMode);
@@ -172,6 +189,8 @@ namespace SuperBlocks.Controller
             });
         }
         private CreateTerminalFence<IMyTerminalBlock> Fence_0 { get; } = new CreateTerminalFence<IMyTerminalBlock>(UniversalController.EnabledGUI);
+        private CreateTerminalSwitch<IMyTerminalBlock> EnabledBlock { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("EnabledBlockID", "Enabled", UniversalController.EnabledGUI);
+        private CreateTerminalSwitch<IMyTerminalBlock> DockGround { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("DockGroundID", "DockGround", UniversalController.EnabledGUI);
         private CreateTerminalButton<IMyTerminalBlock> LoadConfig { get; } = new CreateTerminalButton<IMyTerminalBlock>("LoadConfigID", "Load Config", UniversalController.EnabledGUI);
         private CreateTerminalButton<IMyTerminalBlock> SaveConfig { get; } = new CreateTerminalButton<IMyTerminalBlock>("SaveConfigID", "Save Config", UniversalController.EnabledGUI);
         private CreateTerminalControlCombobox<IMyTerminalBlock> ControllerRoleSelect { get; } = new CreateTerminalControlCombobox<IMyTerminalBlock>("ControllerRoleSelectID", "Controller Role Selecter", UniversalController.EnabledGUI);

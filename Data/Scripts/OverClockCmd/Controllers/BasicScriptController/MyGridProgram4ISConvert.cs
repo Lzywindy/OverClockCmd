@@ -1,7 +1,9 @@
 ﻿using Sandbox.ModAPI;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using VRage.Game.Components;
+using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRage.ObjectBuilders;
 namespace SuperBlocks.Controller
@@ -13,7 +15,7 @@ namespace SuperBlocks.Controller
         {
             base.Init(objectBuilder);
             ThisBlock = Me;
-            try { Program(); EnabledRunning = true; } catch (Exception) { EnabledRunning = false; }
+            try { Program(); EnabledRunning = true; UpdateGridGroup(); } catch (Exception) { EnabledRunning = false; }
             ThisBlock.AppendingCustomInfo += ThisBlock_AppendingCustomInfo;
             ThisBlock.CustomDataChanged += ThisBlock_CustomDataChanged;
             NeedsUpdate |= (MyEntityUpdateEnum.BEFORE_NEXT_FRAME | MyEntityUpdateEnum.EACH_FRAME | MyEntityUpdateEnum.EACH_10TH_FRAME | MyEntityUpdateEnum.EACH_100TH_FRAME);
@@ -49,6 +51,7 @@ namespace SuperBlocks.Controller
             base.UpdateBeforeSimulation10();
             try
             {
+                UpdateGridGroup();
                 if (UpdateFrequency == Sandbox.ModAPI.Ingame.UpdateFrequency.None || (!EnabledRunning)) return;
                 if (UpdateFrequency.HasFlag(Sandbox.ModAPI.Ingame.UpdateFrequency.Update10))
                     Main("", Sandbox.ModAPI.Ingame.UpdateType.Update10);
@@ -90,6 +93,22 @@ namespace SuperBlocks.Controller
         private StringBuilder ShowText { get; } = new StringBuilder();
         private bool EnabledRunning { get; set; } = false;
         private IMyTerminalBlock ThisBlock;
+        protected HashSet<IMyCubeGrid> CurrentGridGroup { get; } = new HashSet<IMyCubeGrid>();
         #endregion
+        private void UpdateGridGroup()
+        {
+            try
+            {
+                if (Utils.Common.NullEntity(Me?.CubeGrid)) return;
+                MyAPIGateway.GridGroups.GetGroup(Me.CubeGrid, GridLinkTypeEnum.Mechanical, CurrentGridGroup);
+                CurrentGridGroup.Add(Me.CubeGrid);
+            }
+            catch (Exception) { }
+        }
+        protected bool InThisEntity(IMyTerminalBlock block)
+        {
+            if (Utils.Common.NullEntity(block?.CubeGrid)) return false;
+            return CurrentGridGroup.Contains(block.CubeGrid);
+        }
     }
 }

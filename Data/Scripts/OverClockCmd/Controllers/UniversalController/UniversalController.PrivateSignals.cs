@@ -118,6 +118,7 @@ namespace SuperBlocks.Controller
         {
             get
             {
+                if (Dock) return 4;
                 switch (Role)
                 {
                     case ControllerRole.Aeroplane: return _MaxiumFlightSpeed;
@@ -154,5 +155,11 @@ namespace SuperBlocks.Controller
         private bool Need2CtrlSignal { get { switch (Role) { case ControllerRole.Helicopter: return true; case ControllerRole.VTOL: return !(ForwardOrUp || Gravity == Vector3.Zero); default: return false; } } }
         private bool Refer2Velocity { get { switch (Role) { case ControllerRole.Aeroplane: case ControllerRole.Helicopter: return true; case ControllerRole.VTOL: return (HasWings && (Gravity != Vector3.Zero)) || Refer2Velocity_SpaceShip; case ControllerRole.SpaceShip: return Refer2Velocity_SpaceShip; default: return false; } } }
         private bool Refer2Velocity_SpaceShip => (ProjectLinnerVelocity_CockpitForward.LengthSquared() >= _MaxiumHoverSpeed * _MaxiumHoverSpeed) && (Gravity == Vector3.Zero || ForwardOrUp);
+        private void UpdateState()
+        {
+            Color CurrentColor = Enabled ? (Role!= ControllerRole.None ?  Color.Cyan : Color.Green) : Color.Black;
+            float e = Enabled ? 16 : 0;
+            try { Me.SetEmissiveParts("Emissive", CurrentColor, e); } catch (Exception) { }
+        }
     }
 }

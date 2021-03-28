@@ -208,11 +208,11 @@ namespace SuperBlocks.Controller
                         return $"{MathHelper.RoundOn2(MaximumSpeed / 3e8f)} c";
                 case ControllerRole.SeaShip:
                 case ControllerRole.Submarine://knot
-                    return $"{MathHelper.RoundOn2(MaximumSpeed / 1.852f)} kn";
+                    return $"{MathHelper.RoundOn2(MaximumSpeed * 3.6f / 1.852f)} kn";
                 case ControllerRole.TrackVehicle:
                 case ControllerRole.WheelVehicle:
                 case ControllerRole.HoverVehicle://km/h
-                    return $"{MathHelper.RoundOn2(MaximumSpeed)} km/h";
+                    return $"{MathHelper.RoundOn2(MaximumSpeed * 3.6f)} km/h";
                 default:
                     return $"{MathHelper.RoundOn2(MaximumSpeed)} m/s";
             }

@@ -1,6 +1,5 @@
 ﻿using Sandbox.ModAPI;
 using System.Collections.Generic;
-using VRage;
 
 namespace SuperBlocks.Controller
 {
@@ -19,7 +18,7 @@ namespace SuperBlocks.Controller
         protected override void UpdateFunctions(IMyTerminalBlock CtrlBlock)
         {
             if (updatecounts % 98 == 0) { MyConfigs.CustomDataConfigRead_INI(CtrlBlock, Configs); }
-            TurretCtrl.Update(CtrlBlock);
+            TurretCtrl.UpdateFunctions(CtrlBlock);
         }
 
 

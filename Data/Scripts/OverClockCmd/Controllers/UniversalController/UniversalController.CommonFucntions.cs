@@ -9,6 +9,13 @@ namespace SuperBlocks.Controller
         public static void SaveDatas(IMyTerminalBlock Me) { Me?.GameLogic?.GetAs<UniversalController>()?.WriteDatas(); }
         #endregion
         #region TriggerFunctions
+        public bool EnabledBlock(IMyTerminalBlock Me) { try { if (Me == this.Me) return Enabled; } catch (System.Exception) { } return false; }
+        public void EnabledBlock(IMyTerminalBlock Me, bool value) { try { if (Me == this.Me) Enabled = value; } catch (System.Exception) { } }
+        public void TriggleEnabledBlock(IMyTerminalBlock Me) { try { if (Me == this.Me) Enabled = !Enabled; } catch (System.Exception) { } }
+        public bool DockGround(IMyTerminalBlock Me) { try { if (Me == this.Me) return Dock; } catch (System.Exception) { } return false; }
+        public void DockGround(IMyTerminalBlock Me, bool value) { try { if (Me == this.Me) Dock = value; } catch (System.Exception) { } }
+        public void TriggleDockGround(IMyTerminalBlock Me) { try { if (Me == this.Me) Dock = !Dock; } catch (System.Exception) { } }
+        public bool DockGroundReady(IMyTerminalBlock Me) { try { if (Me == this.Me) return WheelsController.DockComplete; } catch (System.Exception) { } return false; }
         public static void ReadConfigs(IMyTerminalBlock Me)
         {
             if (Me == null || Me.GameLogic == null) return;

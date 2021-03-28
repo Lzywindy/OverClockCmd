@@ -170,7 +170,8 @@
     <Compile Include="Controllers\WeaponController\CommonFunctions\WeaponConfigDefines.cs" />
     <Compile Include="Controllers\WeaponController\RadarController\MyRadarSession.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.AdvanceFucntions.cs" />
-    <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.OuterControlLines.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.PrivateSignals.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretControllerService.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\MyWeaponAndTurretApi.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyStaticWeaponBinding.cs" />
@@ -206,6 +207,11 @@
     <Compile Include="UsefulFunctions\UsefulDefinitions.cs" />
     <Compile Include="UsefulFunctions\Utils.cs" />
     <Compile Include="UsefulFunctions\MyConfigs.cs" />
+    <Compile Include="UsefulFunctions\Utils.MyAutoCloseDoorController.cs" />
+    <Compile Include="UsefulFunctions\Utils.MyAutoCloseDoorTimer.cs" />
+    <Compile Include="UsefulFunctions\Utils.MyGyrosController.cs" />
+    <Compile Include="UsefulFunctions\Utils.MyThrusterController.cs" />
+    <Compile Include="UsefulFunctions\Utils.MyWheelsController.cs" />
     <Compile Include="UsefulFunctions\Utils.PoseProcessFuncs.cs" />
     <Compile Include="SupportApis\WeaponThread\script\Slave.cs" />
     <Compile Include="SupportApis\WeaponThread\script\WeaponCompile.cs" />

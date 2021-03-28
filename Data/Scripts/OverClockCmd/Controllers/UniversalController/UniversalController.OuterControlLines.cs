@@ -11,7 +11,7 @@ namespace SuperBlocks.Controller
         }
         public float MaxiumFlightSpeed { get { return _MaxiumFlightSpeed; } set { _MaxiumFlightSpeed = MathHelper.Clamp(value, 30, float.MaxValue); } }
         public float MaxiumHoverSpeed { get { return _MaxiumHoverSpeed; } set { _MaxiumHoverSpeed = MathHelper.Clamp(value, 5, 100); } }
-        public float MaximumCruiseSpeed { get { return _MaxiumSpeed * 3.6f; } set { _MaxiumSpeed = MathHelper.Clamp(Math.Abs(value / 3.6f), -360f, 360f); } }
+        public float MaximumCruiseSpeed { get { return _MaxiumSpeed; } set { _MaxiumSpeed = MathHelper.Clamp(Math.Abs(value), 0, 360f); } }
         public bool EnabledCuriser
         {
             get { switch (Role) { case ControllerRole.Aeroplane: case ControllerRole.VTOL: case ControllerRole.SpaceShip: return _EnabledCuriser; case ControllerRole.SeaShip: case ControllerRole.Submarine: return true; default: return false; } }

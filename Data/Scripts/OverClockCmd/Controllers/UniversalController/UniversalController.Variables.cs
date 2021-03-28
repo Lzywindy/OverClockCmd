@@ -7,6 +7,8 @@ namespace SuperBlocks.Controller
     public partial class UniversalController
     {
         #region Variables
+        private volatile bool Dock = false;
+        private volatile bool Enabled = true;
         private volatile bool hasWings = false;
         private volatile float MultAttitude = 25f;
         private volatile float _MaxiumHoverSpeed = DefaultSpeed;

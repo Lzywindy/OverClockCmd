@@ -43,7 +43,14 @@ namespace SuperBlocks.Controller
                             if (argument.Contains("LoadConfig")) ReadDatas();
                             if (argument.Contains("SaveConfig")) WriteDatas();
                             break;
-                        case Sandbox.ModAPI.Ingame.UpdateType.Update1: PoseCtrl(); ThrustControl(); WheelControl(); AutoCloseDoorController.Running(GridTerminalSystem); break;
+                        case Sandbox.ModAPI.Ingame.UpdateType.Update1:
+                            if (Common.NullEntity(Controller))
+                                Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
+                            PoseCtrl();
+                            ThrustControl();
+                            WheelControl();
+                            UpdateState();
+                            AutoCloseDoorController.Running(GridTerminalSystem); break;
                         case Sandbox.ModAPI.Ingame.UpdateType.Update10: if (!StartReady) { InitDatas(); ReadDatas(); } break;
                         case Sandbox.ModAPI.Ingame.UpdateType.Update100: break;
                         case Sandbox.ModAPI.Ingame.UpdateType.Once: break;
@@ -67,58 +74,54 @@ namespace SuperBlocks.Controller
         public Vector3? Override_RotationIndication { get; set; } = null;
         public bool? Override_HandBrake { get; set; } = null;
         public bool? Override_Dampener { get; set; } = null;
-
         #region InternalFunctions
         private void InitDatas()
         {
-            Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
-            ThrustControllerSystem.UpdateBlocks(GridTerminalSystem, Me);
-            GyroControllerSystem.UpdateBlocks(GridTerminalSystem, Me);
-            WheelsController.UpdateBlocks(GridTerminalSystem, Me);
-            WheelsController.TrackVehicle = Role == ControllerRole.TrackVehicle;
+            if (Common.NullEntity(Controller)) Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
             if (Common.NullEntity(Controller)) { StartReady = false; return; }
             OnModeChange();
             StartReady = true;
         }
         private void OnModeChange() { _Target_Sealevel = sealevel = MyPlanetInfoAPI.GetSealevel(Me.GetPosition()) ?? 0; }
+        private void WheelControl()
+        {
+            bool NoWheelCtrl = !(Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle);
+            WheelsController.TrackVehicle = Role == ControllerRole.TrackVehicle;
+            WheelsController.RetractWheels = Dock;
+            WheelsController.MaximumSpeed = MaximumSpeed;
+            WheelsController.Running(Me, InThisEntity, Enabled ? NoWheelCtrl ? 0 : ThrustsControlLine.Z : 0, Enabled ? NoWheelCtrl ? 0 : RotationCtrlLines.W : 0);
+        }
+        private void UpdateTargetSealevel() { if (IgnoreLevel) diffsealevel = 0; else { sealevel = MyPlanetInfoAPI.GetSealevel(Me.GetPosition()) ?? 0; if (!KeepLevel) _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * MultAttitude; } }
+        private static float SetInRange_AngularDampeners(float data) => MathHelper.Clamp(data, 0f, 20f);
+        #endregion
+        #region Gyros&Thrusts
         private void PoseCtrl()
         {
+            if (!Enabled) { GyroControllerSystem.GyrosOverride(Me, InThisEntity, null); return; }
             Vector3 Rotation;
-            bool EnabledGyros_Inner = EnabledGyros;
             if (Role == ControllerRole.HoverVehicle || Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle || Role == ControllerRole.SeaShip || Role == ControllerRole.Submarine)
                 Rotation = PoseProcessFuncs.ProcessRotation_GroundVehicle(Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, MaxReactions_AngleV, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride) ?? RotationIndication;
             else
                 Rotation = PoseProcessFuncs.ProcessRotation(_EnabledCuriser, Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, ForwardOrUp, PoseMode, MaximumSpeed, MaxReactions_AngleV, Need2CtrlSignal, LocationSensetive, SafetyStage, IgnoreForwardVelocity, Refer2Velocity, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride) ?? RotationIndication;
-            GyroControllerSystem.SetEnabled(EnabledGyros_Inner);
-            GyroControllerSystem.GyrosOverride(Rotation);
+            GyroControllerSystem.SetEnabled(EnabledGyros);
+            GyroControllerSystem.GyrosOverride(Me, InThisEntity, Rotation);
         }
         private void ThrustControl()
         {
+            if (!Enabled) { ThrustControllerSystem.RunningDefault(Me, InThisEntity); return; }
             if (Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle || Role == ControllerRole.HoverVehicle)
-            {
-                ThrustControllerSystem.SetupMode(false, true, (!EnabledThrusters), MaximumSpeed);
-                ThrustControllerSystem.Running(ThrustsControlLine, 0, true);
-            }
+                ThrustControllerSystem.Running(Me, InThisEntity, ThrustsControlLine, false, true, (!EnabledThrusters), MaximumSpeed, 0, true);
             else
             {
                 Vector3 Ctrl = ThrustsControlLine;
                 bool CtrlOrCruise = HoverMode || (Ctrl != Vector3.Zero);
                 UpdateTargetSealevel();
                 target_speed = MathHelper.Clamp(HandBrake ? 0 : (Ctrl != Vector3.Zero) ? ForwardOrUp ? LinearVelocity.Dot(Forward) : 0 : target_speed, 0, MaximumSpeed);
-                ThrustControllerSystem.SetupMode((!ForwardOrUp), EnabledAllDirection, (!EnabledThrusters), CtrlOrCruise ? MaximumSpeed : target_speed);
-                ThrustControllerSystem.Running(CtrlOrCruise ? Ctrl : Vector3.Forward, diffsealevel, Dampener);
+                ThrustControllerSystem.Running(Me, InThisEntity, CtrlOrCruise ? Ctrl : Vector3.Forward, (!ForwardOrUp), EnabledAllDirection, (!EnabledThrusters), CtrlOrCruise ? MaximumSpeed : target_speed, diffsealevel, Dampener);
             }
         }
-        private void WheelControl()
-        {
-            bool NoWheelCtrl = !(Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle);
-            WheelsController.TrackVehicle = Role == ControllerRole.TrackVehicle;
-            WheelsController.ForwardIndicator = NoWheelCtrl ? 0 : ThrustsControlLine.Z;
-            WheelsController.TurnIndicator = NoWheelCtrl ? 0 : RotationCtrlLines.W;
-            WheelsController.Running();
-        }
-        private void UpdateTargetSealevel() { if (IgnoreLevel) diffsealevel = 0; else { sealevel = MyPlanetInfoAPI.GetSealevel(Me.GetPosition()) ?? 0; if (!KeepLevel) _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * MultAttitude; } }
-        private static float SetInRange_AngularDampeners(float data) => MathHelper.Clamp(data, 0f, 20f);
+        #endregion
+        #region ConfigRW
         private void ReadDatas()
         {
             MyConfigs.CustomDataConfigRead_INI(Me, Configs);
@@ -142,8 +145,10 @@ namespace SuperBlocks.Controller
             {
                 switch (configitem.Key)
                 {
+                    case "Enabled": Enabled = MyConfigs.ParseBool(configitem.Value); break;
                     case "HasWings": HasWings = MyConfigs.ParseBool(configitem.Value); break;
                     case "EnabledCuriser": EnabledCuriser = MyConfigs.ParseBool(configitem.Value); break;
+                    case "Dock": Dock = MyConfigs.ParseBool(configitem.Value); break;
                     case "HoverMode": HoverMode = MyConfigs.ParseBool(configitem.Value); break;
                     case "AngularDampeners_Roll": AngularDampeners_Roll = MyConfigs.ParseFloat(configitem.Value); break;
                     case "AngularDampeners_Pitch": AngularDampeners_Pitch = MyConfigs.ParseFloat(configitem.Value); break;
@@ -165,6 +170,8 @@ namespace SuperBlocks.Controller
         {
             if (Common.IsNullCollection(Configs) || !Configs.ContainsKey(VehicleControllerConfigID)) { Configs.Add(VehicleControllerConfigID, new Dictionary<string, string>()); InitParameters(); }
             var data = Configs[VehicleControllerConfigID];
+            MyConfigs.ModifyProperty(data, "Enabled", Enabled.ToString());
+            MyConfigs.ModifyProperty(data, "Dock", Dock.ToString());
             MyConfigs.ModifyProperty(data, "HasWings", HasWings.ToString());
             MyConfigs.ModifyProperty(data, "EnabledCuriser", EnabledCuriser.ToString());
             MyConfigs.ModifyProperty(data, "HoverMode", HoverMode.ToString());
@@ -180,6 +187,8 @@ namespace SuperBlocks.Controller
             MyConfigs.ModifyProperty(data, "Role", Role.ToString());
             MyConfigs.ModifyProperty(data, "MultAttitude", MultAttitude.ToString());
         }
+        #endregion
+        #region OverclockConfigs
         private bool ControllerOverclocked_Read()
         {
             if (Common.IsNullCollection(Configs) || !Configs.ContainsKey(OverclockedID)) return false;

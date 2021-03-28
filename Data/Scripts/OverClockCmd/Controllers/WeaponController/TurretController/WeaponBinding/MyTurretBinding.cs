@@ -1,10 +1,10 @@
 ﻿using Sandbox.ModAPI;
+using SpaceEngineers.Game.ModAPI;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using VRage.Game.ModAPI;
 using VRageMath;
 using static SuperBlocks.Definitions.Structures;
 
@@ -20,12 +20,65 @@ namespace SuperBlocks.Controller
         }
         public void SetConfig(ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Configs)
         {
-            ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, _TurretWeaponConfigID);
+            if (SlaveWeapons.UnabledFire)
+                ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, _TurretWeaponConfigID);
+            else if (BasicInfoService.WcApi.HasCoreWeapon(SlaveWeapons.CurrentWeapons.First()))
+                ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "DefaultWeaponCoreWeapon");
+            else if (SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId.Contains("Direct") || SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId.Contains("direct") || SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId.Contains("Laser") || SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId.Contains("Plasam") || SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId.Contains("laser") || SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId.Contains("plasam"))
+                ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "EnergyWeapon");
+            else if ((SlaveWeapons.CurrentWeapons.First() is IMyLargeGatlingTurret) || (SlaveWeapons.CurrentWeapons.First() is IMySmallGatlingGun))
+            {
+                switch (SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId)
+                {
+                    case null:
+                    case "":
+                    case "SmallGatlingTurret":
+                        ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "KeensProjectile_LargeWeapon");
+                        break;
+                    default:
+                        ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "DefaultTurretWeaponConfig");
+                        break;
+                }
+            }
+            else if ((SlaveWeapons.CurrentWeapons.First() is IMyLargeMissileTurret) || (SlaveWeapons.CurrentWeapons.First() is IMySmallMissileLauncher) || (SlaveWeapons.CurrentWeapons.First() is IMySmallMissileLauncherReload))
+            {
+                switch (SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId)
+                {
+                    case null:
+                    case "":
+                    case "LargeMissileLauncher":
+                    case "SmallMissileTurret":
+                    case "SmallRocketLauncherReload":
+                        ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "KeensRocketWeapon");
+                        break;
+                    default:
+                        ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "DefaultTurretWeaponConfig");
+                        break;
+                }
+            }
+            else if ((SlaveWeapons.CurrentWeapons.First() is IMyLargeInteriorTurret))
+            {
+                switch (SlaveWeapons.CurrentWeapons.First().BlockDefinition.SubtypeId)
+                {
+                    case "LargeInteriorTurret":
+                        ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "KeensProjectile_SmallWeapon");
+                        break;
+                    default:
+                        ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "DefaultTurretWeaponConfig");
+                        break;
+                }
+            }
+            else
+            {
+                ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "DefaultTurretWeaponConfig");
+            }
         }
         public void Running()
         {
             RemoveEmptyBlocks();
-            SetFire(AutoFire && Enabled);
+            SetFire(AutoFire && Enabled && RotorsEnabled);
+            MotorAz.Enabled = RotorsEnabled;
+            foreach (var motorEv in motorEvs) { motorEv.Enabled = RotorsEnabled; }
             if (!Enabled || !CanRunning) { RunningDefault(); return; }
             if (UnderControl)
             {
@@ -36,12 +89,13 @@ namespace SuperBlocks.Controller
             else
             {
                 RunningAutoAimAt(MotorAz);
-                RunningAutoFire(AutoFire && Enabled);
+                RunningAutoFire(AutoFire && Enabled && RotorsEnabled);
             }
         }
         public MyTargetDetected AimTarget { get { return TargetPredict.TargetLocked; } set { TargetPredict.TargetLocked = value; } }
         public volatile bool AutoFire = false;
         public volatile bool Enabled = false;
+        public volatile bool RotorsEnabled = true;
         public Vector3D? PredictDirection => TargetPredict.Direction;
     }
     public sealed partial class MyTurretBinding
@@ -106,6 +160,7 @@ namespace SuperBlocks.Controller
             Cameras.RemoveWhere(Utils.Common.NullEntity);
             Weapons.RemoveWhere(Utils.Common.NullEntity);
         }
+        public void CycleWeapons() { }
     }
     public sealed partial class MyTurretBinding
     {

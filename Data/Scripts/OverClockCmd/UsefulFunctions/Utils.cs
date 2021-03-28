@@ -81,6 +81,8 @@ namespace SuperBlocks
                 Grid?.GetBlocks(blocks, Filter);
                 return blocks;
             }
+            public static Sandbox.ModAPI.Ingame.IMyBlockGroup GetBg(IMyTerminalBlock block, Func<Sandbox.ModAPI.Ingame.IMyBlockGroup, bool> requst = null) { List<IMyBlockGroup> Items = GetTs<IMyBlockGroup>(block, requst); if (IsNullCollection(Items)) return null; else return Items.First(); }
+            public static List<Sandbox.ModAPI.Ingame.IMyBlockGroup> GetBgs(IMyTerminalBlock block, Func<Sandbox.ModAPI.Ingame.IMyBlockGroup, bool> requst = null)  { List<Sandbox.ModAPI.Ingame.IMyBlockGroup> Items = new List<Sandbox.ModAPI.Ingame.IMyBlockGroup>(); if (block == null || block.CubeGrid == null) return Items; MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid)?.GetBlockGroups(Items, requst); return Items; }
             public static bool IsStaticWeapon(IMyTerminalBlock block)
             {
                 if (NullEntity(block) || !block.IsFunctional || (block is IMyLargeTurretBase)) return false;
