@@ -9,7 +9,12 @@ namespace SuperBlocks
         public class MyGyrosController
         {
             public Vector3 PowerScale3Axis { get; set; } = Vector3.One;
-          
+            public void ForceUpdate(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity)
+            {
+                if (Common.IsNull(Me) || InThisEntity == null) return;
+                gyros = Common.GetTs(Me, (IMyGyro gyro) => Common.ExceptKeywords(gyro) && InThisEntity(gyro));
+                BlockCount = Common.GetTs(Me, InThisEntity).Count;
+            }
             public void SetOverclocked(float mult = 1)
             {
                 if (Common.IsNullCollection(gyros)) return;
@@ -22,7 +27,7 @@ namespace SuperBlocks
             public void SetEnabled(bool Enabled) { if (gyros == null || gyros.Count < 1) return; foreach (var gyro in gyros) gyro.Enabled = Enabled; }
             public void GyrosOverride(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, Vector3? RotationIndicate)
             {
-                if (Common.IsNull(Me)) return;
+                if (Common.IsNull(Me) || InThisEntity == null) return;
                 var count = Common.GetTs(Me, InThisEntity).Count;
                 if (Common.IsNullCollection(gyros) || BlockCount != count) { gyros = Common.GetTs(Me, (IMyGyro gyro) => Common.ExceptKeywords(gyro) && InThisEntity(gyro)); BlockCount = count; }
                 if (Common.IsNullCollection(gyros)) return;

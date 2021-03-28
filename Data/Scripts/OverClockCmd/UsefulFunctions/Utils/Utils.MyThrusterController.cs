@@ -15,6 +15,12 @@ namespace SuperBlocks
                 if (NullThrust) return;
                 foreach (var thrust in thrusts) { if (thrust.BlockDefinition.SubtypeId.Contains("HoverEngine")) continue; if (thrust.BlockDefinition.SubtypeId.Contains("Hover")) continue; if (thrust.BlockDefinition.SubtypeId.Contains("Hover Engine")) continue; thrust.PowerConsumptionMultiplier = mult; thrust.ThrustMultiplier = mult; }
             }
+            public void ForceUpdate(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity)
+            {
+                if (Common.IsNull(Me) || InThisEntity == null) return;
+                thrusts = Common.GetTs(Me, (IMyThrust thrust) => Common.ExceptKeywords(thrust) && InThisEntity(thrust));
+                BlockCount = Common.GetTs(Me, InThisEntity).Count;
+            }
             public void RunningDefault(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity)
             {
                 this.Me = Me;

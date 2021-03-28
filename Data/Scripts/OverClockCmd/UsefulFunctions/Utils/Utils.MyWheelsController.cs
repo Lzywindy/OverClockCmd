@@ -1,6 +1,7 @@
 ﻿using Sandbox.ModAPI;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI;
+using SuperBlocks.Controller;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,20 @@ namespace SuperBlocks
     {
         public class MyWheelsController
         {
+            public void ForceUpdate(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity)
+            {
+                if (Common.IsNull(Me) || InThisEntity == null) return;
+                Wheels = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Me.CubeGrid).GetBlockGroupWithName(WheelsGroupNM);
+                Motors_Hover = Common.GetTs(Me, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
+                SWheels = Common.GetTs<IMyMotorSuspension>(Wheels, InThisEntity);
+                MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
+                BlockCount = Common.GetTs(Wheels, InThisEntity).Count;
+                Pistons = Common.GetTs<IMyPistonBase>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
+                ShipConnectors = Common.GetTs<IMyShipConnector>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
+                LandingGears = Common.GetTs<IMyLandingGear>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
+                brakelights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM) && InThisEntity(lightblock));
+                backlights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM) && InThisEntity(lightblock));
+            }
             public void Running(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, float ForwardIndicator, float TurnIndicator, float PowerMult)
             {
                 this.Me = Me;
@@ -86,7 +101,7 @@ namespace SuperBlocks
                 {
                     var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Wheel.WorldMatrix.Up));
                     bool EnTrO = (TrackVehicle || (LinearVelocity.LengthSquared() < 4f));
-                    float PropulsionOverride = EnTrO ? DiffTurns(sign) : 0;
+                    float PropulsionOverride = EnTrO ? DiffTurns(sign) : (ForwardIndicator * sign);
                     Wheel.Brake = PropulsionOverride == 0;
                     Wheel.InvertSteer = false;
                     Wheel.SetValue(Wheel.GetProperty(MotorOverrideId).Id, Math.Sign(PropulsionOverride) * PowerMult);

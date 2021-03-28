@@ -52,8 +52,14 @@ namespace SuperBlocks.Controller
                             UpdateState();
                             RotorThrustRotorCtrl.Running(Me, InThisEntity, HoverMode, RotationIndication.Z, MaximumSpeed, MoveIndication);
                             AutoCloseDoorController.Running(GridTerminalSystem); break;
-                        case Sandbox.ModAPI.Ingame.UpdateType.Update10: if (!StartReady) { InitDatas(); ReadDatas(); } break;
-                        case Sandbox.ModAPI.Ingame.UpdateType.Update100: break;
+                        case Sandbox.ModAPI.Ingame.UpdateType.Update10:
+                            if (!StartReady) { InitDatas(); ReadDatas(); }
+                            break;
+                        case Sandbox.ModAPI.Ingame.UpdateType.Update100:
+                            ThrustControllerSystem.ForceUpdate(Me, InThisEntity);
+                            GyroControllerSystem.ForceUpdate(Me, InThisEntity);
+                            WheelsController.ForceUpdate(Me, InThisEntity);
+                            break;
                         case Sandbox.ModAPI.Ingame.UpdateType.Once: break;
                         default: break;
                     }
