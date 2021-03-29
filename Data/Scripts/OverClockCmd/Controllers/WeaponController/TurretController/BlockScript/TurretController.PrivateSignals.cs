@@ -48,16 +48,13 @@ namespace SuperBlocks.Controller
                 if (!TurretEnabled || !BlockEnabled) { Turret.AimTarget = null; }
                 else
                 {
-                    try
-                    {
-                        Turret.AimTarget = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets?.GetTheMostThreateningTarget(Turret.MotorAz, Turret.TargetInRange_Angle);
-                    }
-                    catch (Exception) { }
+                    Turret.AimTarget = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz, Turret.TargetInRange_Angle);
                 }
-                Turret.Running();
+
             }
-            catch (Exception) { }
-           
+            catch (Exception) { Turret.RotorsEnabled = BlockEnabled = false; }
+            Turret.Running();
+
         }
         private static bool HasEvMotors(IMyMotorStator MotorAz)
         {
@@ -73,8 +70,7 @@ namespace SuperBlocks.Controller
         private void Try2AttachTops()
         {
             var rotors = Common.GetTs<IMyMotorStator>(Me, rt => rt.TopGrid == null && InThisEntity(rt));
-            foreach (var rotor in rotors)
-                rotor.GetActionWithName("Attach").Apply(rotor);
+            foreach (var rotor in rotors) rotor.GetActionWithName("Attach").Apply(rotor);
         }
     }
 }

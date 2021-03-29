@@ -99,8 +99,8 @@ namespace SuperBlocks
                     float PropulsionOverride = EnTrO ? DiffTurns(sign) : (ForwardIndicator * sign);
                     Wheel.Brake = PropulsionOverride == 0;
                     Wheel.InvertSteer = false;
-                    Wheel.SetValue(Wheel.GetProperty(MotorOverrideId).Id, Math.Sign(PropulsionOverride) * PowerMult);
-                    Wheel.Power = Math.Abs(PropulsionOverride) * PowerMult;
+                    Wheel.SetValue(Wheel.GetProperty(MotorOverrideId).Id, MathHelper.Clamp(PropulsionOverride, -PowerMult, PowerMult));
+                    Wheel.Power = Math.Min(Math.Abs(PropulsionOverride), PowerMult);
                     Wheel.Steering = !TrackVehicle;
                     Wheel.Friction = MathHelper.Clamp((TurnIndicator != 0) ? (TrackVehicle ? (TurnFaction / Vector3.DistanceSquared(Wheel.GetPosition(), Me.CubeGrid.GetPosition())) : Friction) : Friction, 0, Friction);
                     if (Wheel.Steering && EnTrO && TurnIndicator != 0)

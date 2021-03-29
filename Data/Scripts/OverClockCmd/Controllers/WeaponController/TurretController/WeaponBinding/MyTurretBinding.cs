@@ -99,11 +99,7 @@ namespace SuperBlocks.Controller
                     RunningAutoFire(AutoFire && Enabled && RotorsEnabled);
                 }
             }
-            catch (Exception)
-            {
-                BasicInit(MotorAz);
-
-            }
+            catch (Exception) { BasicInit(MotorAz); }
 
         }
         public MyTargetDetected AimTarget { get { return TargetPredict.TargetLocked; } set { TargetPredict.TargetLocked = value; } }
@@ -216,7 +212,7 @@ namespace SuperBlocks.Controller
             catch (Exception)
             {
                 BasicInit(this.MotorAz);
-            }           
+            }
         }
         private void ReferWeapon()
         {

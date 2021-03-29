@@ -222,7 +222,6 @@
     <Compile Include="UsefulFunctions\Utils\Utils.MyRadarSubtypeIdHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\Radar\" />
     <Folder Include="Controllers\WeaponController\FixedWeaponController\" />
     <Folder Include="Controllers\WeaponController\WatcherController\" />
     <Folder Include="Controllers\WeaponController\WeaponSystemController\" />
