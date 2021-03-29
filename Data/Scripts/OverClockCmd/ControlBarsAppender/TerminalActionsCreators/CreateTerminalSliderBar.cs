@@ -37,6 +37,17 @@ namespace SuperBlocks.Controller
                 triggle.Enabled = Filter;
                 triggle.Name = CtrlNM_S;
                 triggle.Icon = @"Textures\GUI\Icons\Actions\Increase.dds";
+                triggle.Writer = (me, sb) => { sb.Clear(); sb.AppendLine($"{Title}:{(GetterFunc?.Invoke(me) ?? 0)}"); };
+                MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
+                actions.Add(triggle);
+            }
+            {
+                var triggle = MyAPIGateway.TerminalControls.CreateAction<TBlockType>($"{ControlID} Decrease");
+                triggle.Action = DecreaseFunc;
+                triggle.Enabled = Filter;
+                triggle.Name = CtrlNM_S;
+                triggle.Icon = @"Textures\GUI\Icons\Actions\Decrease.dds";
+                triggle.Writer = (me, sb) => { sb.Clear(); sb.AppendLine($"{Title}:{(GetterFunc?.Invoke(me) ?? 0)}"); };
                 MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
                 actions.Add(triggle);
             }

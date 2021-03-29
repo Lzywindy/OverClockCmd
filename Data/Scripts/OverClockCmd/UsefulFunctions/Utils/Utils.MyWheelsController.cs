@@ -25,7 +25,7 @@ namespace SuperBlocks
                 brakelights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM) && InThisEntity(lightblock));
                 backlights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM) && InThisEntity(lightblock));
             }
-            public void Running(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, float ForwardIndicator, float TurnIndicator, float PowerMult)
+            public void Running(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, float ForwardIndicator, float TurnIndicator, float PowerMult, bool Brake)
             {
                 this.Me = Me;
                 if (Common.IsNull(Me) || InThisEntity == null) return;
@@ -47,8 +47,8 @@ namespace SuperBlocks
                     SWheels = Common.GetTs<IMyMotorSuspension>(Wheels, InThisEntity);
                     MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
                 }
-                LoadSuspends();
-                LoadMotorWheels();
+                LoadSuspends(Brake);
+                LoadMotorWheels(Brake);
             }
             #region PublicControllerLines
             public bool DockComplete => (LandingGears?.Any(b => b.IsLocked) ?? false) || (ShipConnectors?.Any(b => b.Status == Sandbox.ModAPI.Ingame.MyShipConnectorStatus.Connected) ?? false);
@@ -88,7 +88,7 @@ namespace SuperBlocks
                 if (!Common.IsNullCollection(backlights))
                     foreach (var item in backlights) { item.Enabled = ForwardIndicator > 0; }
             }
-            private void LoadSuspends()
+            private void LoadSuspends(bool Brake)
             {
                 if (Common.IsNull(Me) || HoverDevices) return;
                 if (NullSWheel) return;
@@ -96,8 +96,8 @@ namespace SuperBlocks
                 {
                     var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Wheel.WorldMatrix.Up));
                     bool EnTrO = (TrackVehicle || (LinearVelocity.LengthSquared() < 4f));
-                    float PropulsionOverride = EnTrO ? DiffTurns(sign) : (ForwardIndicator * sign);
-                    Wheel.Brake = PropulsionOverride == 0;
+                    float PropulsionOverride = Brake ? 0 : EnTrO ? DiffTurns(sign) : Direct(sign);
+                    Wheel.Brake = PropulsionOverride == 0 || Brake;
                     Wheel.InvertSteer = false;
                     Wheel.SetValue(Wheel.GetProperty(MotorOverrideId).Id, MathHelper.Clamp(PropulsionOverride, -PowerMult, PowerMult));
                     Wheel.Power = Math.Min(Math.Abs(PropulsionOverride), PowerMult);
@@ -112,14 +112,14 @@ namespace SuperBlocks
                     Wheel.Brake = RetractWheels;
                 }
             }
-            private void LoadMotorWheels()
+            private void LoadMotorWheels(bool Brake)
             {
                 if (Common.IsNull(Me) || HoverDevices) return;
                 if (NullMWheel) return;
                 foreach (var Motor in MWheels)
                 {
                     var sign = Math.Sign(Me.WorldMatrix.Right.Dot(Motor.WorldMatrix.Up));
-                    Motor.TargetVelocityRPM = RetractWheels ? 0 : (-DiffTurns(sign) * MaxiumRpm * PowerMult);
+                    Motor.TargetVelocityRPM = (RetractWheels || Brake) ? 0 : (-DiffTurns(sign) * MaxiumRpm * PowerMult);
                     Motor.RotorLock = RetractWheels;
                 }
             }
@@ -167,7 +167,15 @@ namespace SuperBlocks
                         Piston.Velocity = -1;
                 }
             }
-            private float DiffTurns(int sign) { Vector2 Indicator = new Vector2(Math.Max(Math.Sign(MaximumSpeed - LinearVelocity.Length()), 0) * ForwardIndicator * sign, TurnIndicator * DiffRpmPercentage); if (Indicator != Vector2.Zero) Indicator = Vector2.Normalize(Indicator); return Vector2.Dot(Vector2.One, Indicator); }
+            private float DiffTurns(int sign)
+            {
+                var indicate = (float)(LinearVelocity - MaximumSpeed * Me.WorldMatrix.Forward * (-ForwardIndicator)).Dot(Me.WorldMatrix.Forward) * sign / 100;
+                return Vector2.Dot(Vector2.One, new Vector2(indicate, TurnIndicator * DiffRpmPercentage));
+            }
+            private float Direct(int sign)
+            {
+                return (float)(LinearVelocity - MaximumSpeed * Me.WorldMatrix.Forward * (-ForwardIndicator)).Dot(Me.WorldMatrix.Forward) * sign / 100;
+            }
             #endregion
 
             private const float SmallGridHightMax = 2.5f;

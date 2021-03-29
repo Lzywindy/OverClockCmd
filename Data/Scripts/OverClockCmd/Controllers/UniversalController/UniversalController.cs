@@ -95,7 +95,7 @@ namespace SuperBlocks.Controller
             WheelsController.TrackVehicle = Role == ControllerRole.TrackVehicle;
             WheelsController.RetractWheels = Dock;
             WheelsController.MaximumSpeed = MaximumSpeed;
-            WheelsController.Running(Me, InThisEntity, Enabled ? NoWheelCtrl ? 0 : ThrustsControlLine.Z : 0, Enabled ? NoWheelCtrl ? 0 : RotationCtrlLines.W : 0, _WheelPowerMult);
+            WheelsController.Running(Me, InThisEntity, Enabled ? NoWheelCtrl ? 0 : ThrustsControlLine.Z : 0, Enabled ? NoWheelCtrl ? 0 : RotationCtrlLines.W : 0, _WheelPowerMult, HandBrake);
         }
         private void UpdateTargetSealevel() { if (IgnoreLevel) diffsealevel = 0; else { sealevel = MyPlanetInfoAPI.GetSealevel(Me.GetPosition()) ?? 0; if (!KeepLevel) _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * MultAttitude; } }
         private static float SetInRange_AngularDampeners(float data) => MathHelper.Clamp(data, 0f, 20f);
