@@ -28,7 +28,7 @@ namespace SuperBlocks.Controller
         public override void Simulate()
         {
             base.Simulate();
-            try { MyWeaponSystemManage.Update(); } catch (Exception) { }
+            //try { MyWeaponSystemManage.Update(); } catch (Exception) { }
             //try { MyWeaponSystemManage.Update(); } catch (Exception) { }
         }
         public void Init()
