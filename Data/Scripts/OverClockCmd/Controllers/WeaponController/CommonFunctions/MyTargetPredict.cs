@@ -30,9 +30,10 @@ namespace SuperBlocks.Controller
             if (!GetParameters(Me, Weapons, ref Parameters, out SelfPosition, out CannonDirection, out SelfVelocity, out SelfGravity, out TargetPosition, out TargetVelocity, out TargetLinearAcc)) { VpD = null; Tn = null; return; }
             var time_fixed = (Parameters.TimeFixed * Definitions.TimeGap);
             var dis_v = (TargetPosition - SelfPosition) + (TargetVelocity - SelfVelocity + 0.5f * TargetLinearAcc * time_fixed) * time_fixed;
-            var d_length = (float)dis_v.Length();
-            var d_vector = ((d_length <= 0) ? Vector3.Zero : Vector3.Normalize(dis_v));
-            if (Parameters.Trajectory.IsDirect) { if (d_length <= 1 || d_length > Parameters.Trajectory.MaxTrajectory) { VpD = null; Tn = null; return; } else { VpD = d_vector; Tn = null; return; } }
+            var d_length = Math.Max((float)dis_v.Length(), 0);
+            if (d_length > Parameters.Trajectory.MaxTrajectory) { Clear(); return; }
+            var d_vector = (d_length < 1) ? Vector3.Zero : Vector3.Normalize(dis_v);
+            if (Parameters.Trajectory.IsDirect) { VpD = d_vector; Tn = null; return; }
             var v_r = TargetVelocity - SelfVelocity;
             var max_time = Parameters.Trajectory.MaxTrajectoryTime * Definitions.TimeGap;
             var V_project_length = Math.Max(AverangeSpeed(Parameters.Trajectory.InitialSpeed, Parameters.Trajectory.DesiredSpeed, Parameters.Trajectory.AccelPerSec, Definitions.TimeGap), 10);
@@ -200,8 +201,9 @@ namespace SuperBlocks.Controller
             var time_fixed = (Parameters.TimeFixed * Definitions.TimeGap);
             var dis_v = (TargetPosition - SelfPosition) + (TargetVelocity - SelfVelocity + 0.5f * TargetLinearAcc * time_fixed) * time_fixed;
             var d_length = (float)dis_v.Length();
-            var d_vector = ((d_length <= 0) ? Vector3.Zero : Vector3.Normalize(dis_v));
-            if (Parameters.Trajectory.IsDirect) { if (d_length <= 0 || d_length > Parameters.Trajectory.MaxTrajectory) return null; else return d_vector; }
+            if (d_length > Parameters.Trajectory.MaxTrajectory) return null;
+            var d_vector = (d_length < 1) ? Vector3.Zero : Vector3.Normalize(dis_v);
+            if (Parameters.Trajectory.IsDirect) return d_vector;
             var v_r = TargetVelocity - SelfVelocity;
             var V_project_length = AverangeSpeed(Parameters.Trajectory.InitialSpeed, Parameters.Trajectory.DesiredSpeed, Parameters.Trajectory.AccelPerSec, null);
             var min_time = d_length / V_project_length * 0.7f;
