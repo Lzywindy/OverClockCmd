@@ -13,7 +13,6 @@ namespace SuperBlocks
             {
                 if (Common.IsNull(Me) || InThisEntity == null) return;
                 gyros = Common.GetTs(Me, (IMyGyro gyro) => Common.ExceptKeywords(gyro) && InThisEntity(gyro));
-                BlockCount = Common.GetTs(Me, InThisEntity).Count;
             }
             public void SetOverclocked(float mult = 1)
             {
@@ -28,8 +27,6 @@ namespace SuperBlocks
             public void GyrosOverride(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, Vector3? RotationIndicate)
             {
                 if (Common.IsNull(Me) || InThisEntity == null) return;
-                var count = Common.GetTs(Me, InThisEntity).Count;
-                if (Common.IsNullCollection(gyros) || BlockCount != count) { gyros = Common.GetTs(Me, (IMyGyro gyro) => Common.ExceptKeywords(gyro) && InThisEntity(gyro)); BlockCount = count; }
                 if (Common.IsNullCollection(gyros)) return;
                 foreach (var gyro in gyros)
                 {
@@ -46,7 +43,6 @@ namespace SuperBlocks
             }
             public MyGyrosController() { }
             private List<IMyGyro> gyros;
-            private int BlockCount = 0;
         }
     }
 }

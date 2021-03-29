@@ -5,17 +5,9 @@ using VRage.Game.Components;
 using VRage.ModAPI;
 namespace SuperBlocks.Controller
 {
-    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation | MyUpdateOrder.Simulation)]
-    public sealed class TurretControllerService : MySessionComponentBase
+    public static class TurretRegister
     {
         private static Dictionary<IMyEntity, IMyTerminalBlock> Register { get; } = new Dictionary<IMyEntity, IMyTerminalBlock>();
-        public static bool SetupComplete { get; private set; } = false;
-        public override void UpdateBeforeSimulation()
-        {
-            if (!Initialized) return;
-            if (!BasicInfoService.SetupComplete) return;
-            if (!SetupComplete) { SetupComplete = true; Init(); return; }
-        }
         public static bool RegistControllerBlock(IMyTerminalBlock Block)
         {
             try
@@ -26,7 +18,7 @@ namespace SuperBlocks.Controller
                 Register.Add(TopmostEnt, Block);
                 return true;
             }
-            catch (Exception) { return false; }
+            catch (Exception e) { MyAPIGateway.Utilities.CreateNotification($"{"TurretRegister"}:{e.Message}"); if (Block?.GetTopMostParent() != null && Register.ContainsKey(Block.GetTopMostParent())) Register.Remove(Block.GetTopMostParent()); return false; }
         }
         public static bool IsMainController(IMyTerminalBlock Block)
         {
@@ -34,12 +26,10 @@ namespace SuperBlocks.Controller
             {
                 var TopmostEnt = Block?.GetTopMostParent();
                 if (TopmostEnt == null) return false;
-                if (!Register.ContainsKey(TopmostEnt)) { Register.Add(TopmostEnt, Block); return true; }
-                if (Utils.Common.NullEntity(Register[TopmostEnt])) Register.Remove(TopmostEnt);
-                if (!Register.ContainsKey(TopmostEnt)) { Register.Add(TopmostEnt, Block); return true; }
-                return Register[TopmostEnt] == Block;
+                if (Register.ContainsKey(TopmostEnt)) return Register[TopmostEnt] == Block;
+                Register.Add(TopmostEnt, Block); return true;
             }
-            catch (Exception) { return false; }
+            catch (Exception e) { MyAPIGateway.Utilities.CreateNotification($"{"TurretRegister"}:{e.Message}"); if (Block?.GetTopMostParent() != null && Register.ContainsKey(Block.GetTopMostParent())) Register.Remove(Block.GetTopMostParent()); return false; }
         }
         public static string GetRegistControllerBlockConfig(IMyTerminalBlock Block)
         {
@@ -62,6 +52,48 @@ namespace SuperBlocks.Controller
                 if (TopmostEnt == null) return;
                 if (Register.ContainsKey(TopmostEnt) && Register[TopmostEnt] == Block) { Register.Remove(TopmostEnt); return; }
             }
+            catch (Exception e) { MyAPIGateway.Utilities.CreateNotification($"{"TurretRegister"}:{e.Message}"); if (Block?.GetTopMostParent() != null && Register.ContainsKey(Block.GetTopMostParent())) Register.Remove(Block.GetTopMostParent()); }
+        }
+        public static void SaveDatas()
+        {
+            foreach (var KV in Register)
+            {
+                try
+                {
+                    if (Utils.Common.NullEntity(KV.Value)) return;
+                    KV.Value?.GameLogic?.GetAs<TurretController>()?.TriggerSaveConfigs(KV.Value);
+                }
+                catch (Exception) { }
+            }
+        }
+        public static void SaveDatasExit()
+        {
+            foreach (var KV in Register)
+            {
+                try
+                {
+                    if (Utils.Common.NullEntity(KV.Value)) return;
+                    KV.Value?.GameLogic?.GetAs<TurretController>()?.TriggerSaveConfigs(KV.Value);
+                }
+                catch (Exception) { }
+            }
+        }
+    }
+
+
+    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation | MyUpdateOrder.Simulation)]
+    public sealed class TurretControllerService : MySessionComponentBase
+    {
+
+        public static bool SetupComplete { get; private set; } = false;
+        public override void UpdateBeforeSimulation()
+        {
+            try
+            {
+                if (!Initialized) return;
+                if (!BasicInfoService.SetupComplete) return;
+                if (!SetupComplete) { SetupComplete = true; Init(); return; }
+            }
             catch (Exception) { }
         }
         public void Init()
@@ -72,8 +104,7 @@ namespace SuperBlocks.Controller
         protected override void UnloadData()
         {
             卸载_基础公共控件();
-            存储信息();
-            Register.Clear();
+            TurretRegister.SaveDatasExit();
             base.UnloadData();
         }
         #region 基础公共控件
@@ -165,18 +196,7 @@ namespace SuperBlocks.Controller
                 Me => Me?.GameLogic?.GetAs<TurretController>()?.RangeMultiply_Getter(Me) ?? 0,
                 (Me, value) => Me?.GameLogic?.GetAs<TurretController>()?.RangeMultiply_Setter(Me, value));
         }
-        private static void 存储信息()
-        {
-            MyAPIGateway.Parallel.ForEach(Register, (KeyValuePair<IMyEntity, IMyTerminalBlock> KV) =>
-            {
-                try
-                {
-                    if (Utils.Common.NullEntity(KV.Value)) return;
-                    KV.Value?.GameLogic?.GetAs<TurretController>()?.TriggerSaveConfigs(KV.Value);
-                }
-                catch (Exception) { }
-            });
-        }
+
         private CreateTerminalFence<IMyTerminalBlock> Fence_0 { get; } = new CreateTerminalFence<IMyTerminalBlock>((Me) => Me?.GameLogic?.GetAs<TurretController>()?.EnabledGUI(Me) ?? false);
         private CreateTerminalSwitch<IMyTerminalBlock> BlockOnOff { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("TBlockOnOff", "Block Enabled", (Me) => Me?.GameLogic?.GetAs<TurretController>()?.EnabledGUI(Me) ?? false);
         private CreateTerminalButton<IMyTerminalBlock> Restart { get; } = new CreateTerminalButton<IMyTerminalBlock>("TRestartID", "Restart", (Me) => Me?.GameLogic?.GetAs<TurretController>()?.EnabledGUI(Me) ?? false);

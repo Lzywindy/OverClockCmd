@@ -74,7 +74,7 @@ namespace SuperBlocks.Controller
             {
                 try
                 {
-                    Turret.AimTarget = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(CtrlBlock.CubeGrid), CtrlBlock, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz, Range, Turret.TargetInRange_Angle);// target;
+                    Turret.AimTarget = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(CtrlBlock.CubeGrid), CtrlBlock, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz/*, Turret.TargetInRange_Angle*/);// target;
                 }
                 catch (Exception) { }
             }

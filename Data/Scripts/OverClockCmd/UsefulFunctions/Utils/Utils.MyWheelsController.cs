@@ -19,7 +19,6 @@ namespace SuperBlocks
                 Motors_Hover = Common.GetTs(Me, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
                 SWheels = Common.GetTs<IMyMotorSuspension>(Wheels, InThisEntity);
                 MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
-                BlockCount = Common.GetTs(Wheels, InThisEntity).Count;
                 Pistons = Common.GetTs<IMyPistonBase>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
                 ShipConnectors = Common.GetTs<IMyShipConnector>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
                 LandingGears = Common.GetTs<IMyLandingGear>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
@@ -33,25 +32,23 @@ namespace SuperBlocks
                 this.ForwardIndicator = ForwardIndicator;
                 this.TurnIndicator = TurnIndicator;
                 this.PowerMult = PowerMult;
-                LoadIndicateLights(InThisEntity);
-                LoadLandingGears(InThisEntity);
-                LoadConnect(InThisEntity);
-                LoadPistons(InThisEntity);
+                LoadIndicateLights();
+                LoadLandingGears();
+                LoadConnect();
+                LoadPistons();
                 if (Wheels == null && !HoverDevices)
                 {
                     Wheels = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Me.CubeGrid).GetBlockGroupWithName(WheelsGroupNM);
                     Motors_Hover = Common.GetTs(Me, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
                 }
                 if (Wheels == null) return;
-                var count = Common.GetTs(Wheels, InThisEntity).Count;
-                if (BlockCount != count || NullWheels)
+                if (NullWheels)
                 {
                     SWheels = Common.GetTs<IMyMotorSuspension>(Wheels, InThisEntity);
                     MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
-                    BlockCount = count;
                 }
-                LoadSuspends(InThisEntity);
-                LoadMotorWheels(InThisEntity);
+                LoadSuspends();
+                LoadMotorWheels();
             }
             #region PublicControllerLines
             public bool DockComplete => (LandingGears?.Any(b => b.IsLocked) ?? false) || (ShipConnectors?.Any(b => b.Status == Sandbox.ModAPI.Ingame.MyShipConnectorStatus.Connected) ?? false);
@@ -78,24 +75,22 @@ namespace SuperBlocks
             private List<IMyLandingGear> LandingGears;
             private List<IMyShipConnector> ShipConnectors;
             private List<IMyPistonBase> Pistons;
-            private int BlockCount = 0;
             private Vector3 LinearVelocity => Me?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero;
             private bool NullWheels => Common.IsNull(Me) || (NullSWheel && NullMWheel);
             private bool NullSWheel => Common.IsNullCollection(SWheels);
             private bool NullMWheel => Common.IsNullCollection(MWheels);
             private bool HoverDevices => !Common.IsNullCollection(Motors_Hover);
-            private void LoadIndicateLights(Func<IMyTerminalBlock, bool> InThisEntity)
+            private void LoadIndicateLights()
             {
                 if (Common.IsNull(Me)) return;
-                if (Common.IsNullCollection(brakelights)) brakelights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM) && InThisEntity(lightblock));
-                foreach (var item in brakelights) { item.Enabled = ForwardIndicator == 0; }
-                if (Common.IsNullCollection(backlights)) backlights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM) && InThisEntity(lightblock));
-                foreach (var item in backlights) { item.Enabled = ForwardIndicator > 0; }
+                if (!Common.IsNullCollection(brakelights))
+                    foreach (var item in brakelights) { item.Enabled = ForwardIndicator == 0; }
+                if (!Common.IsNullCollection(backlights))
+                    foreach (var item in backlights) { item.Enabled = ForwardIndicator > 0; }
             }
-            private void LoadSuspends(Func<IMyTerminalBlock, bool> InThisEntity)
+            private void LoadSuspends()
             {
                 if (Common.IsNull(Me) || HoverDevices) return;
-                if (NullSWheel) SWheels = Common.GetTs<IMyMotorSuspension>(Wheels, InThisEntity);
                 if (NullSWheel) return;
                 foreach (var Wheel in SWheels)
                 {
@@ -117,10 +112,9 @@ namespace SuperBlocks
                     Wheel.Brake = RetractWheels;
                 }
             }
-            private void LoadMotorWheels(Func<IMyTerminalBlock, bool> InThisEntity)
+            private void LoadMotorWheels()
             {
                 if (Common.IsNull(Me) || HoverDevices) return;
-                if (NullMWheel) MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
                 if (NullMWheel) return;
                 foreach (var Motor in MWheels)
                 {
@@ -129,10 +123,9 @@ namespace SuperBlocks
                     Motor.RotorLock = RetractWheels;
                 }
             }
-            private void LoadLandingGears(Func<IMyTerminalBlock, bool> InThisEntity)
+            private void LoadLandingGears()
             {
                 if (Common.IsNull(Me)) return;
-                if (Common.IsNullCollection(LandingGears)) LandingGears = Common.GetTs<IMyLandingGear>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
                 if (Common.IsNullCollection(LandingGears)) return;
                 foreach (var LandingGear in LandingGears)
                 {
@@ -149,10 +142,9 @@ namespace SuperBlocks
 
                 }
             }
-            private void LoadConnect(Func<IMyTerminalBlock, bool> InThisEntity)
+            private void LoadConnect()
             {
                 if (Common.IsNull(Me)) return;
-                if (Common.IsNullCollection(ShipConnectors)) ShipConnectors = Common.GetTs<IMyShipConnector>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
                 if (Common.IsNullCollection(ShipConnectors)) return;
                 foreach (var ShipConnector in ShipConnectors)
                 {
@@ -163,10 +155,9 @@ namespace SuperBlocks
                     ShipConnector.PullStrength = 1;
                 }
             }
-            private void LoadPistons(Func<IMyTerminalBlock, bool> InThisEntity)
+            private void LoadPistons()
             {
                 if (Common.IsNull(Me)) return;
-                if (Common.IsNullCollection(Pistons)) Pistons = Common.GetTs<IMyPistonBase>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
                 if (Common.IsNullCollection(Pistons)) return;
                 foreach (var Piston in Pistons)
                 {

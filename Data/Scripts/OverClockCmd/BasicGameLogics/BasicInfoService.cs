@@ -1,12 +1,15 @@
 ﻿using Sandbox.ModAPI;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using VRage.Game.Components;
 using VRageMath;
+using static SuperBlocks.Definitions.Structures;
 
 namespace SuperBlocks.Controller
 {
-    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation| MyUpdateOrder.Simulation)]
+    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation | MyUpdateOrder.Simulation)]
     public sealed class BasicInfoService : MySessionComponentBase
     {
         public static HashSet<IMyTerminalBlock> Register { get; } = new HashSet<IMyTerminalBlock>();
@@ -18,16 +21,33 @@ namespace SuperBlocks.Controller
             {
                 SetupComplete = true;
                 Init();
+                if (!WcApi.IsReady)
+                {
+                    WcApi.Load(null, true);
+                    foreach (var weapondefs in WcApi.WeaponDefinitions)
+                    {
+                        var ammos = weapondefs.Ammos;
+                        if (Utils.Common.IsNullCollection(ammos)) continue;
+                        ConcurrentDictionary<string, TrajectoryDef> _tammos = new ConcurrentDictionary<string, TrajectoryDef>();
+                        foreach (var item in ammos)
+                            _tammos.AddOrUpdate(item.AmmoRound, TrajectoryDef.CreateFromWeaponCoreDatas(item), (k, v) => v);
+                        if (Utils.Common.IsNullCollection(weapondefs.Assignments.MountPoints)) continue;
+                        foreach (var item in weapondefs.Assignments.MountPoints)
+                            WeaponInfos.AddOrUpdate(item.SubtypeId, _tammos, (k, v) => v);
+                    }
+                }
                 return;
             }
             //MyAPIGateway.Utilities.ShowNotification($"Weapon Defs:{WcApi.WeaponDefinitions.Count}");
-            try { if (!WcApi.IsReady) WcApi.Load(null, true); } catch (Exception) { }
-           
+            //try { } catch (Exception) { }
+            
+
 
         }
         public override void Simulate()
         {
             base.Simulate();
+           
             //try { MyWeaponSystemManage.Update(); } catch (Exception) { }
             //try { MyWeaponSystemManage.Update(); } catch (Exception) { }
         }
@@ -50,7 +70,7 @@ namespace SuperBlocks.Controller
         }
         public static WeaponCore.Api.WcApi WcApi { get; } = new WeaponCore.Api.WcApi();
 
-
+        public static ConcurrentDictionary<string, ConcurrentDictionary<string, TrajectoryDef>> WeaponInfos { get; } = new ConcurrentDictionary<string, ConcurrentDictionary<string, TrajectoryDef>>();
         #region ProgrammableBlock实用参数
 
         #endregion

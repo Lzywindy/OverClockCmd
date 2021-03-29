@@ -19,14 +19,11 @@ namespace SuperBlocks
             {
                 if (Common.IsNull(Me) || InThisEntity == null) return;
                 thrusts = Common.GetTs(Me, (IMyThrust thrust) => Common.ExceptKeywords(thrust) && InThisEntity(thrust));
-                BlockCount = Common.GetTs(Me, InThisEntity).Count;
             }
             public void RunningDefault(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity)
             {
                 this.Me = Me;
                 if (Common.IsNull(this.Me) || InThisEntity == null) return;
-                var count = Common.GetTs(Me, InThisEntity).Count;
-                if (NullThrust || BlockCount != count) { thrusts = Common.GetTs(Me, (IMyThrust thrust) => Common.ExceptKeywords(thrust) && InThisEntity(thrust)); BlockCount = count; }
                 if (NullThrust) return;
                 foreach (var thrust in thrusts)
                 {
@@ -45,8 +42,6 @@ namespace SuperBlocks
             {
                 this.Me = Me;
                 if (Common.IsNull(this.Me) || InThisEntity == null) return;
-                var count = Common.GetTs(Me, InThisEntity).Count;
-                if (NullThrust || BlockCount != count) { thrusts = Common.GetTs(Me, (IMyThrust thrust) => Common.ExceptKeywords(thrust) && InThisEntity(thrust)); BlockCount = count; }
                 if (NullThrust) return;
                 if (DisableAll) { for (int index = 0; index < 6; index++) Enables[index] = false; return; }
                 Enables[(int)Base6Directions.Direction.Up] = EnableAll || UpOrForward;
@@ -67,7 +62,6 @@ namespace SuperBlocks
             private float _MiniValue;
             private List<IMyThrust> thrusts;
             private IMyTerminalBlock Me;
-            private int BlockCount = 0;
             private float[] Percentages { get; } = new float[6];
             private bool[] Enables { get; } = new bool[6];
             private bool NullThrust => Common.IsNullCollection(thrusts);

@@ -1,4 +1,6 @@
 ﻿using Sandbox.ModAPI;
+using System;
+
 namespace SuperBlocks.Controller
 {
     using static Utils;
@@ -29,6 +31,16 @@ namespace SuperBlocks.Controller
             var script = Me.GameLogic.GetAs<UniversalController>();
             if (Common.IsNull(script)) return;
             script.Trigger("SaveConfig");
+        }
+        public void TriggleRestart(IMyTerminalBlock Me)
+        {
+            if (Me != this.Me) return;
+            try
+            {
+                InitDatas();
+                ReadDatas();
+            }
+            catch (Exception) { }
         }
         public static void TriggleHasWings(IMyTerminalBlock Me)
         {

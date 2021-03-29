@@ -12,7 +12,7 @@ namespace SuperBlocks.Controller
     {
         protected override void Program()
         {
-            try { InitDatas(); ReadDatas(); } catch (Exception) { StartReady = false; }
+            try { InitDatas(); } catch (Exception) { StartReady = false; }
             UpdateFrequency = Sandbox.ModAPI.Ingame.UpdateFrequency.Update1 | Sandbox.ModAPI.Ingame.UpdateFrequency.Update10 | Sandbox.ModAPI.Ingame.UpdateFrequency.Update100;
         }
         protected override void Main(string argument, Sandbox.ModAPI.Ingame.UpdateType updateSource)
@@ -26,7 +26,7 @@ namespace SuperBlocks.Controller
                 //Echo($"[Enabled Thrusters:{EnabledThrusters}]");
                 //Echo($"[Enabled Gyros    :{EnabledGyros}]");
                 //Echo($"[Has Wings        :{HasWings}]");
-                if (UniversalControllerService.IsMainController(Me))
+                if (UniversalControllerManage.IsMainController(Me))
                 {
                     switch (updateSource)
                     {
@@ -52,14 +52,8 @@ namespace SuperBlocks.Controller
                             UpdateState();
                             RotorThrustRotorCtrl.Running(Me, InThisEntity, HoverMode, RotationIndication.Z, MaximumSpeed, MoveIndication);
                             AutoCloseDoorController.Running(GridTerminalSystem); break;
-                        case Sandbox.ModAPI.Ingame.UpdateType.Update10:
-                            if (!StartReady) { InitDatas(); ReadDatas(); }
-                            break;
-                        case Sandbox.ModAPI.Ingame.UpdateType.Update100:
-                            ThrustControllerSystem.ForceUpdate(Me, InThisEntity);
-                            GyroControllerSystem.ForceUpdate(Me, InThisEntity);
-                            WheelsController.ForceUpdate(Me, InThisEntity);
-                            break;
+                        case Sandbox.ModAPI.Ingame.UpdateType.Update10: if (!StartReady) InitDatas(); break;
+                        case Sandbox.ModAPI.Ingame.UpdateType.Update100: break;
                         case Sandbox.ModAPI.Ingame.UpdateType.Once: break;
                         default: break;
                     }
@@ -68,14 +62,14 @@ namespace SuperBlocks.Controller
                 {
                     switch (updateSource)
                     {
-                        case Sandbox.ModAPI.Ingame.UpdateType.Update10: Me.CustomData = UniversalControllerService.GetRegistControllerBlockConfig(Me); InitDatas(); ReadDatas(); break;
+                        case Sandbox.ModAPI.Ingame.UpdateType.Update10: Me.CustomData = UniversalControllerManage.GetRegistControllerBlockConfig(Me); InitDatas(); break;
                         default: break;
                     }
                 }
             }
             catch (Exception) { StartReady = false; }
         }
-        protected override void ClosedBlock() { UniversalControllerService.UnRegistControllerBlock(Me); }
+        protected override void ClosedBlock() { UniversalControllerManage.UnRegistControllerBlock(Me); }
         protected override void CustomDataChangedProcess() { ReadDatas(); }
         public Vector3? Override_MoveIndication { get; set; } = null;
         public Vector3? Override_RotationIndication { get; set; } = null;
@@ -84,7 +78,12 @@ namespace SuperBlocks.Controller
         #region InternalFunctions
         private void InitDatas()
         {
-            if (Common.NullEntity(Controller)) Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
+            Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
+            ThrustControllerSystem.ForceUpdate(Me, InThisEntity);
+            GyroControllerSystem.ForceUpdate(Me, InThisEntity);
+            WheelsController.ForceUpdate(Me, InThisEntity);
+            AutoCloseDoorController.UpdateBlocks(GridTerminalSystem);
+            ReadDatas();
             if (Common.NullEntity(Controller)) { StartReady = false; return; }
             OnModeChange();
             StartReady = true;

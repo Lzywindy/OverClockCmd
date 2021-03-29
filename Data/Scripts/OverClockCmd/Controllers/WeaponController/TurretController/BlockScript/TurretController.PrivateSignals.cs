@@ -17,7 +17,7 @@ namespace SuperBlocks.Controller
         private volatile bool UsingWeaponCoreTracker;
         private volatile uint updatecounts = 0;
         private volatile float Range = 3000f;
-        private MyRadarTargets RadarTargets;
+        private MyRadarTargets RadarTargets { get; } = new MyRadarTargets();
         private ConcurrentBag<MyTurretBinding> Turrets;
         private ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Configs = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
         private void UpdateBindings()
@@ -38,21 +38,26 @@ namespace SuperBlocks.Controller
         }
         private void UpdateTurrets(MyTurretBinding Turret)
         {
-            if (!Common.NullEntity(Me))
-                Turret.SetConfig(Configs);
-            Turret.RotorsEnabled = BlockEnabled;
-            Turret.AutoFire = AutoFire;
-            Turret.Enabled = TurretEnabled;
-            if (RadarTargets == null || !TurretEnabled || !BlockEnabled) { Turret.AimTarget = null; }
-            else
+            try
             {
-                try
+                if (!Common.NullEntity(Me))
+                    Turret.SetConfig(Configs);
+                Turret.RotorsEnabled = BlockEnabled;
+                Turret.AutoFire = AutoFire;
+                Turret.Enabled = TurretEnabled;
+                if (!TurretEnabled || !BlockEnabled) { Turret.AimTarget = null; }
+                else
                 {
-                    Turret.AimTarget = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz, Range, Turret.TargetInRange_Angle);// target;
+                    try
+                    {
+                        Turret.AimTarget = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets?.GetTheMostThreateningTarget(Turret.MotorAz, Turret.TargetInRange_Angle);
+                    }
+                    catch (Exception) { }
                 }
-                catch (Exception) { }
+                Turret.Running();
             }
-            Turret.Running();
+            catch (Exception) { }
+           
         }
         private static bool HasEvMotors(IMyMotorStator MotorAz)
         {

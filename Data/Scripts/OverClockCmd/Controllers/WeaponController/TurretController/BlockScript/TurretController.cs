@@ -12,23 +12,23 @@ namespace SuperBlocks.Controller
         protected override void Program()
         {
             UpdateBindings();
-            TurretControllerService.RegistControllerBlock(Me);
+            TurretRegister.RegistControllerBlock(Me);
             UpdateFrequency = Sandbox.ModAPI.Ingame.UpdateFrequency.Update1 | Sandbox.ModAPI.Ingame.UpdateFrequency.Update10 | Sandbox.ModAPI.Ingame.UpdateFrequency.Update100;
         }
         protected override void Main(string argument, Sandbox.ModAPI.Ingame.UpdateType updateSource)
         {
-            if (TurretControllerService.IsMainController(Me))
+            if (TurretRegister.IsMainController(Me))
             {
                 switch (updateSource)
                 {
-                   
+
                     case Sandbox.ModAPI.Ingame.UpdateType.Update1:
                         MyAPIGateway.Parallel.ForEach(Turrets, Turret => UpdateTurrets(Turret));
                         UpdateState();
                         break;
                     case Sandbox.ModAPI.Ingame.UpdateType.Update10:
                         updatecounts = (updatecounts + 1) % 10;
-                        if (updatecounts % 7 == 0) { if (!MyRadarSession.SetupComplete) RadarTargets = null; else RadarTargets = MyRadarSession.GetRadarTargets(Me); }
+                        RadarTargets.UpdateScanning(Me?.GetTopMostParent());
                         if (updatecounts % 8 == 0) { UpdateBindings(); }
                         if (updatecounts % 9 == 0) { MyAPIGateway.Parallel.ForEach(Turrets, Turret => Turret.ReadConfig_Turret_Rotors()); }
                         break;
@@ -42,6 +42,7 @@ namespace SuperBlocks.Controller
         }
         protected override void ClosedBlock()
         {
+            TurretRegister.UnRegistControllerBlock(Me);
             Configs.Clear();
             Turrets = null;
         }

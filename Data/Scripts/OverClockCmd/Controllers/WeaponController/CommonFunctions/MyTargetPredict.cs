@@ -31,15 +31,14 @@ namespace SuperBlocks.Controller
             var time_fixed = (Parameters.TimeFixed * Definitions.TimeGap);
             var dis_v = (TargetPosition - SelfPosition) + (TargetVelocity - SelfVelocity + 0.5f * TargetLinearAcc * time_fixed) * time_fixed;
             var d_length = Math.Max((float)dis_v.Length(), 0);
-            if (d_length > Parameters.Trajectory.MaxTrajectory) { Clear(); return; }
-            var d_vector = (d_length < 1) ? Vector3.Zero : Vector3.Normalize(dis_v);
-            if (Parameters.Trajectory.IsDirect) { VpD = d_vector; Tn = null; return; }
+            if (d_length > Parameters.Trajectory.MaxTrajectory) { VpD = null; Tn = null; return; }
+            var d_vector = (d_length < 1) ? null : new Vector3?(Vector3.Normalize(dis_v));
+            if (Parameters.Trajectory.IsDirect) { Tn = null; VpD = d_vector; return; }
             var v_r = TargetVelocity - SelfVelocity;
             var max_time = Parameters.Trajectory.MaxTrajectoryTime * Definitions.TimeGap;
             var V_project_length = Math.Max(AverangeSpeed(Parameters.Trajectory.InitialSpeed, Parameters.Trajectory.DesiredSpeed, Parameters.Trajectory.AccelPerSec, Definitions.TimeGap), 10);
             var min_time = d_length / V_project_length * 0.65f;
             var time = min_time;
-            //if (min_time >= max_time) { VpD = null; Tn = null; return; }
             var a_r = TargetLinearAcc - SelfGravity;
             var a = a_r.LengthSquared() * 0.25;
             var b = (-v_r.Dot(a_r) * 0.5);
@@ -201,15 +200,13 @@ namespace SuperBlocks.Controller
             var time_fixed = (Parameters.TimeFixed * Definitions.TimeGap);
             var dis_v = (TargetPosition - SelfPosition) + (TargetVelocity - SelfVelocity + 0.5f * TargetLinearAcc * time_fixed) * time_fixed;
             var d_length = (float)dis_v.Length();
-            if (d_length > Parameters.Trajectory.MaxTrajectory) return null;
-            var d_vector = (d_length < 1) ? Vector3.Zero : Vector3.Normalize(dis_v);
+            var d_vector = (d_length < 1 || d_length > Parameters.Trajectory.MaxTrajectory) ? null : new Vector3?(Vector3.Normalize(dis_v));
             if (Parameters.Trajectory.IsDirect) return d_vector;
             var v_r = TargetVelocity - SelfVelocity;
             var V_project_length = AverangeSpeed(Parameters.Trajectory.InitialSpeed, Parameters.Trajectory.DesiredSpeed, Parameters.Trajectory.AccelPerSec, null);
             var min_time = d_length / V_project_length * 0.7f;
             var time = min_time;
             var max_time = Parameters.Trajectory.MaxTrajectoryTime * Definitions.TimeGap;
-            if (min_time >= max_time) return null;
             var a_r = TargetLinearAcc - SelfGravity;
             var a = a_r.LengthSquared() * 0.25;
             var b = (-v_r.Dot(a_r) * 0.5);

@@ -30,12 +30,12 @@ namespace SuperBlocks.Controller
             }
             catch (Exception) { }
         }
-        public MyTargetDetected GetTheMostThreateningTarget(IMyTerminalBlock RequstBlock, double MaxRange = 3000)
+        public MyTargetDetected GetTheMostThreateningTarget(IMyTerminalBlock RequstBlock)
         {
             try
             {
                 if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
-                var ent_tgs = TargetsList.AsParallel().Where(tg => tg.GetDistance(RequstBlock) < MaxRange)?.ToList();
+                var ent_tgs = TargetsList.AsParallel().Where(tg => tg.GetDistance(RequstBlock) < Range)?.ToList();
                 if (Utils.Common.IsNullCollection(ent_tgs)) return null;
                 if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
                 else return TargetsList.FirstOrDefault();
@@ -46,12 +46,12 @@ namespace SuperBlocks.Controller
             }
 
         }
-        public MyTargetDetected GetTheMostThreateningTarget(IMyTerminalBlock RequstBlock, double MaxRange = 3000, Func<MyTargetDetected, bool> TargetFilter = null)
+        public MyTargetDetected GetTheMostThreateningTarget(IMyTerminalBlock RequstBlock, Func<MyTargetDetected, bool> TargetFilter = null)
         {
             try
             {
                 if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
-                var ent_tgs = TargetsList.AsParallel().Where(tg => (tg.GetDistance(RequstBlock) < MaxRange) && (TargetFilter?.Invoke(tg) ?? true))?.ToList();
+                var ent_tgs = TargetsList.AsParallel().Where(tg => (tg.GetDistance(RequstBlock) < Range) && (TargetFilter?.Invoke(tg) ?? true))?.ToList();
                 if (Utils.Common.IsNullCollection(ent_tgs)) return null;
                 if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
                 else return TargetsList.FirstOrDefault();
@@ -100,7 +100,7 @@ namespace SuperBlocks.Controller
                 var grid = Me?.GetTopMostParent() as IMyCubeGrid;
                 if (Utils.Common.NullEntity(grid)) return;
                 var block = Utils.MyRadarSubtypeIdHelper.GetFarestDetectedBlock(grid);
-                range = Utils.MyRadarSubtypeIdHelper.DetectedRangeBlock(block);
+                range = Utils.MyRadarSubtypeIdHelper.DetectedRangeBlock(block) * 1.5f;
                 UpdateScanning(block);
             }
             catch (Exception) { }

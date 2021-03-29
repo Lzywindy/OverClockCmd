@@ -11,7 +11,7 @@ namespace SuperBlocks.Controller
 {
     internal static class MyWeaponAndTurretApi
     {
-        internal static bool IsIMyTerminalBlockWeapon(IMyTerminalBlock block) => BasicInfoService.WcApi.HasCoreWeapon(block) || (block is IMyUserControllableGun);
+        internal static bool IsIMyTerminalBlockWeapon(IMyTerminalBlock block) => BasicInfoService.WeaponInfos.ContainsKey(block.BlockDefinition.SubtypeId) || (block is IMyUserControllableGun);
         internal static void SetIMyTerminalBlock(IMyTerminalBlock block, bool Enabled) { if (block is IMyFunctionalBlock) (block as IMyFunctionalBlock).Enabled = Enabled; }
         internal static bool GetIMyTerminalBlock(IMyTerminalBlock block) => (block as IMyFunctionalBlock)?.Enabled ?? true;
         internal static float GetMaxVector3D(Vector3D value) => (float)Math.Max(Math.Max(value.X, value.Y), value.Z);
@@ -19,13 +19,13 @@ namespace SuperBlocks.Controller
         internal static bool CanFire(IMyTerminalBlock Weapon)
         {
             if (Weapon == null) return false;
-            return (BasicInfoService.WcApi.HasCoreWeapon(Weapon) && BasicInfoService.WcApi.IsWeaponReadyToFire(Weapon, GetWeaponID(Weapon))) || (!BasicInfoService.WcApi.HasCoreWeapon(Weapon));
+            return (BasicInfoService.WeaponInfos.ContainsKey(Weapon.BlockDefinition.SubtypeId) && BasicInfoService.WcApi.IsWeaponReadyToFire(Weapon, GetWeaponID(Weapon))) || (!BasicInfoService.WeaponInfos.ContainsKey(Weapon.BlockDefinition.SubtypeId));
         }
         internal static void FireWeapon(IMyTerminalBlock Weapon, bool Enabled)
         {
             try
             {
-                if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
+                if (BasicInfoService.WeaponInfos.ContainsKey(Weapon.BlockDefinition.SubtypeId))
                     BasicInfoService.WcApi.ToggleWeaponFire(Weapon, Enabled, true, GetWeaponID(Weapon));
                 else
                     (Weapon as IMyUserControllableGun)?.SetValue("Shoot", Enabled);
@@ -36,7 +36,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
+                if (BasicInfoService.WeaponInfos.ContainsKey(Weapon.BlockDefinition.SubtypeId))
                     BasicInfoService.WcApi.FireWeaponOnce(Weapon, true, GetWeaponID(Weapon));
                 else
                     (Weapon as IMyUserControllableGun).GetActionWithName("ShootOnce")?.Apply(Weapon);
@@ -94,19 +94,19 @@ namespace SuperBlocks.Controller
             return new MyTuple<Vector3D?, Vector3D?>(direction * Vector3D.Distance(center, Gun_Rotor_Group.Key.GetPosition()), center);//Get arm of force and it force point
         }
         internal static bool ActiveRotorBasicFilter(IMyMotorStator block) => block?.TopGrid != null;
-        internal static MyWeaponParametersConfig? GetWeaponCoreDefinition(IMyTerminalBlock block, string WeaponName, string AmmoName)
+        internal static MyWeaponParametersConfig? GetWeaponCoreDefinition(IMyTerminalBlock block, string AmmoName)
         {
-            var _WeaponDefinition = BasicInfoService.WcApi.WeaponDefinitions.Where(def => def.HardPoint.WeaponName == WeaponName)?.First();
-            if (_WeaponDefinition == null || Utils.Common.IsNullCollection(_WeaponDefinition.Value.Ammos)) return null;
-            var _AmmoDefinition = Array.Find(_WeaponDefinition.Value.Ammos, ammo => ammo.AmmoRound == AmmoName);
-            if (_AmmoDefinition == null) return null;
-            return new MyWeaponParametersConfig()
+            if (!BasicInfoService.WeaponInfos.ContainsKey(block.BlockDefinition.SubtypeId)) return null;
+            if (!BasicInfoService.WeaponInfos[block.BlockDefinition.SubtypeId].ContainsKey(AmmoName)) return null;
+            var ammo = BasicInfoService.WeaponInfos[block.BlockDefinition.SubtypeId][AmmoName];
+            return new MyWeaponParametersConfig
             {
                 Delta_t = 1.2f,
                 Delta_precious = 0.005f,
                 Calc_t = 12,
                 TimeFixed = 5,
-                Trajectory = TrajectoryDef.CreateFromWeaponCoreDatas(_AmmoDefinition.Trajectory)
+                Range = ammo.MaxTrajectory,
+                Trajectory = ammo
             };
         }
     }

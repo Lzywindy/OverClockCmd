@@ -179,8 +179,6 @@
     <Compile Include="SupportApis\Shield\ShieldApi.cs" />
     <Compile Include="SupportApis\Water\Water.cs" />
     <Compile Include="SupportApis\Water\WaterModAPI.cs" />
-    <Compile Include="TargetManarge\MyWeaponSystemBinding.cs" />
-    <Compile Include="TargetManarge\MyWeaponSystemManage.cs" />
     <Compile Include="BasicGameLogics\Updatings\StepTimer.cs" />
     <Compile Include="BasicGameLogics\Updatings\IUpdates.cs" />
     <Compile Include="Controllers\WeaponController\RadarController\MyTargetDetected.cs" />
@@ -189,7 +187,6 @@
     <Compile Include="BasicGameLogics\Updatings\UpdateableClass.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyTurretBinding.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\MyTurretController.cs" />
-    <Compile Include="TargetManarge\MyWeaponInfo.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetFilterManager.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetManager.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateProperty.cs" />

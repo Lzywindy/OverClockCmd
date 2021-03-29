@@ -6,17 +6,9 @@ using VRage.ModAPI;
 using VRageMath;
 namespace SuperBlocks.Controller
 {
-    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
-    public sealed class UniversalControllerService : MySessionComponentBase
+    public static class UniversalControllerManage
     {
         private static Dictionary<IMyEntity, IMyTerminalBlock> Register { get; } = new Dictionary<IMyEntity, IMyTerminalBlock>();
-        public static bool SetupComplete { get; private set; } = false;
-        public override void UpdateBeforeSimulation()
-        {
-            if (!Initialized) return;
-            if (!BasicInfoService.SetupComplete) return;
-            if (!SetupComplete) { SetupComplete = true; Init(); return; }
-        }
         public static bool RegistControllerBlock(IMyTerminalBlock Block)
         {
             try
@@ -27,7 +19,7 @@ namespace SuperBlocks.Controller
                 Register.Add(TopmostEnt, Block);
                 return true;
             }
-            catch (Exception) { return false; }
+            catch (Exception e) { MyAPIGateway.Utilities.CreateNotification($"{"UniversalControllerManage"}:{e.Message}"); if (Block?.GetTopMostParent() != null && Register.ContainsKey(Block.GetTopMostParent())) Register.Remove(Block.GetTopMostParent()); return false; }
         }
         public static bool IsMainController(IMyTerminalBlock Block)
         {
@@ -40,7 +32,7 @@ namespace SuperBlocks.Controller
                 if (!Register.ContainsKey(TopmostEnt)) { Register.Add(TopmostEnt, Block); return true; }
                 return Register[TopmostEnt] == Block;
             }
-            catch (Exception) { return false; }
+            catch (Exception e) { MyAPIGateway.Utilities.CreateNotification($"{"UniversalControllerManage"}:{e.Message}"); if (Block?.GetTopMostParent() != null && Register.ContainsKey(Block.GetTopMostParent())) Register.Remove(Block.GetTopMostParent());return false; }
         }
         public static string GetRegistControllerBlockConfig(IMyTerminalBlock Block)
         {
@@ -63,6 +55,36 @@ namespace SuperBlocks.Controller
                 if (TopmostEnt == null) return;
                 if (Register.ContainsKey(TopmostEnt) && Register[TopmostEnt] == Block) { Register.Remove(TopmostEnt); return; }
             }
+            catch (Exception e) { MyAPIGateway.Utilities.CreateNotification($"{"UniversalControllerManage"}:{e.Message}"); if (Block?.GetTopMostParent() != null && Register.ContainsKey(Block.GetTopMostParent())) Register.Remove(Block.GetTopMostParent()); }
+        }
+
+        public static void SaveDatasExit()
+        {
+            foreach (var KV in Register)
+            {
+                try
+                {
+                    if (Utils.Common.NullEntity(KV.Value)) return;
+                    KV.Value?.GameLogic?.GetAs<TurretController>()?.TriggerSaveConfigs(KV.Value);
+                }
+                catch (Exception) { }
+            }
+        }
+    }
+
+
+    [MySessionComponentDescriptor(MyUpdateOrder.BeforeSimulation)]
+    public sealed class UniversalControllerService : MySessionComponentBase
+    {
+        public static bool SetupComplete { get; private set; } = false;
+        public override void UpdateBeforeSimulation()
+        {
+            try
+            {
+                if (!Initialized) return;
+                if (!BasicInfoService.SetupComplete) return;
+                if (!SetupComplete) { SetupComplete = true; Init(); return; }
+            }
             catch (Exception) { }
         }
         public void Init()
@@ -76,14 +98,14 @@ namespace SuperBlocks.Controller
         {
             卸载_基础公共控件();
             卸载_进阶控件();
-            存储信息();
-            Register.Clear();
+            UniversalControllerManage.SaveDatasExit();
             base.UnloadData();
         }
         #region 基础公共控件
         private void 加载_基础公共控件()
         {
             /*====================TriggerFunc Hook==================================================*/
+            Restart.TriggerFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.TriggleRestart(Me);
             EnabledBlock.TriggerFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.TriggleEnabledBlock(Me);
             DockGround.TriggerFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.TriggleDockGround(Me);
             LoadConfig.TriggerFunc = UniversalController.ReadConfigs;
@@ -114,6 +136,7 @@ namespace SuperBlocks.Controller
             EnabledGyros.SetterFunc = UniversalController.SetEnabledGyros;
             /*=======================Terminal Hook==================================================*/
             MyAPIGateway.TerminalControls.CustomControlGetter += Fence_0.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter += Restart.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += EnabledBlock.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += LoadConfig.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += SaveConfig.CreateController;
@@ -127,6 +150,7 @@ namespace SuperBlocks.Controller
             MyAPIGateway.TerminalControls.CustomControlGetter += EnabledThrusters.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter += EnabledGyros.CreateController;
             /*=========================Action Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomActionGetter += Restart.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter += EnabledBlock.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter += DockGround.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter += LoadConfig.CreateAction;
@@ -141,6 +165,7 @@ namespace SuperBlocks.Controller
         {
             /*=======================Terminal Hook==================================================*/
             MyAPIGateway.TerminalControls.CustomControlGetter -= Fence_0.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter -= Restart.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= EnabledBlock.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= LoadConfig.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= SaveConfig.CreateController;
@@ -154,6 +179,7 @@ namespace SuperBlocks.Controller
             MyAPIGateway.TerminalControls.CustomControlGetter -= EnabledThrusters.CreateController;
             MyAPIGateway.TerminalControls.CustomControlGetter -= EnabledGyros.CreateController;
             /*=========================Action Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomActionGetter -= Restart.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= EnabledBlock.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= DockGround.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= LoadConfig.CreateAction;
@@ -176,19 +202,9 @@ namespace SuperBlocks.Controller
             CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}EnabledThrusters", UniversalController.EnabledGUI, UniversalController.GetEnabledThrusters, UniversalController.SetEnabledThrusters);
             CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}EnabledGyros", UniversalController.EnabledGUI, UniversalController.GetEnabledGyros, UniversalController.SetEnabledGyros);
         }
-        private static void 存储信息()
-        {
-            MyAPIGateway.Parallel.ForEach(Register, (KeyValuePair<IMyEntity, IMyTerminalBlock> KV) =>
-            {
-                try
-                {
-                    if (Utils.Common.NullEntity(KV.Value)) return;
-                    UniversalController.SaveDatas(KV.Value);
-                }
-                catch (Exception) { }
-            });
-        }
+
         private CreateTerminalFence<IMyTerminalBlock> Fence_0 { get; } = new CreateTerminalFence<IMyTerminalBlock>(UniversalController.EnabledGUI);
+        private CreateTerminalButton<IMyTerminalBlock> Restart { get; } = new CreateTerminalButton<IMyTerminalBlock>("RestartID", "Restart", UniversalController.EnabledGUI);
         private CreateTerminalSwitch<IMyTerminalBlock> EnabledBlock { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("EnabledBlockID", "Enabled", UniversalController.EnabledGUI);
         private CreateTerminalSwitch<IMyTerminalBlock> DockGround { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("DockGroundID", "DockGround", UniversalController.EnabledGUI);
         private CreateTerminalButton<IMyTerminalBlock> LoadConfig { get; } = new CreateTerminalButton<IMyTerminalBlock>("LoadConfigID", "Load Config", UniversalController.EnabledGUI);

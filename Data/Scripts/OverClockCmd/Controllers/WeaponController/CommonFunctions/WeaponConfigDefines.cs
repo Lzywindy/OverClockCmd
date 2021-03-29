@@ -60,6 +60,7 @@ namespace SuperBlocks
         {
             public struct TrajectoryDef
             {
+                public volatile string SubtypeId;
                 public volatile bool IsDirect;
                 public volatile float InitialSpeed;
                 public volatile float DesiredSpeed;
@@ -76,7 +77,30 @@ namespace SuperBlocks
                 public static TrajectoryDef Energy => new TrajectoryDef() { IsDirect = true, InitialSpeed = 3e8f, DesiredSpeed = 3e8f, AccelPerSec = 0, GravityMultiplier = 0, MaxTrajectoryTime = 10, MaxTrajectory = 1e6f };
                 public static TrajectoryDef CreateFromWeaponCoreDatas(WeaponCore.Api.WcApiDef.WeaponDefinition.AmmoDef.TrajectoryDef WCTrajectoryDef)
                 {
-                    return new TrajectoryDef() { IsDirect = false, InitialSpeed = 0, DesiredSpeed = WCTrajectoryDef.DesiredSpeed, AccelPerSec = WCTrajectoryDef.AccelPerSec, GravityMultiplier = WCTrajectoryDef.GravityMultiplier, MaxTrajectoryTime = (int)WCTrajectoryDef.MaxTrajectoryTime, MaxTrajectory = WCTrajectoryDef.MaxTrajectory };
+                    return new TrajectoryDef()
+                    {
+                        IsDirect = false,
+                        InitialSpeed = 0,
+                        DesiredSpeed = WCTrajectoryDef.DesiredSpeed,
+                        AccelPerSec = WCTrajectoryDef.AccelPerSec,
+                        GravityMultiplier = WCTrajectoryDef.GravityMultiplier,
+                        MaxTrajectoryTime = (int)WCTrajectoryDef.MaxTrajectoryTime,
+                        MaxTrajectory = WCTrajectoryDef.MaxTrajectory
+                    };
+                }
+                public static TrajectoryDef CreateFromWeaponCoreDatas(WeaponCore.Api.WcApiDef.WeaponDefinition.AmmoDef WCTrajectoryDef)
+                {
+                    return new TrajectoryDef()
+                    {
+                        IsDirect = false,
+                        InitialSpeed = 0,
+                        SubtypeId = WCTrajectoryDef.AmmoMagazine,
+                        DesiredSpeed = WCTrajectoryDef.Trajectory.DesiredSpeed,
+                        AccelPerSec = WCTrajectoryDef.Trajectory.AccelPerSec,
+                        GravityMultiplier = WCTrajectoryDef.Trajectory.GravityMultiplier,
+                        MaxTrajectoryTime = (int)WCTrajectoryDef.Trajectory.MaxTrajectoryTime,
+                        MaxTrajectory = WCTrajectoryDef.Trajectory.MaxTrajectory
+                    };
                 }
             }
             public struct MyWeaponParametersConfig
@@ -88,15 +112,15 @@ namespace SuperBlocks
                 public volatile float RPM;
                 public volatile float Range;
                 public TrajectoryDef Trajectory;
-                public static MyWeaponParametersConfig KeensRocket => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.KeensRocket };
-                public static MyWeaponParametersConfig DefaultWeaponCore => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 3000, Trajectory = TrajectoryDef.DefaultWeaponCore };
-                public static MyWeaponParametersConfig KeensProjectile_Small => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.KeensProjectile_Small };
-                public static MyWeaponParametersConfig KeensProjectile_Large => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.KeensProjectile_Large };
-                public static MyWeaponParametersConfig Energy => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = 800, Trajectory = TrajectoryDef.Energy };
+                public static MyWeaponParametersConfig KeensRocket => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = float.MaxValue, Trajectory = TrajectoryDef.KeensRocket };
+                public static MyWeaponParametersConfig DefaultWeaponCore => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = float.MaxValue, Trajectory = TrajectoryDef.DefaultWeaponCore };
+                public static MyWeaponParametersConfig KeensProjectile_Small => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = float.MaxValue, Trajectory = TrajectoryDef.KeensProjectile_Small };
+                public static MyWeaponParametersConfig KeensProjectile_Large => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = float.MaxValue, Trajectory = TrajectoryDef.KeensProjectile_Large };
+                public static MyWeaponParametersConfig Energy => new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 5, TimeFixed = 5, RPM = 600, Range = float.MaxValue, Trajectory = TrajectoryDef.Energy };
                 public static MyWeaponParametersConfig CreateFromConfig(ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Config, string ConfigID)
                 {
                     if (Common.IsNullCollection(Config) || ConfigID == null || ConfigID == "" || !Config.ContainsKey(ConfigID))
-                        return new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 1, TimeFixed = 3, RPM = float.MaxValue, Range = 3000, Trajectory = TrajectoryDef.DefaultValue };
+                        return new MyWeaponParametersConfig() { Delta_t = 1, Delta_precious = 0.0005f, Calc_t = 1, TimeFixed = 3, RPM = float.MaxValue, Range = float.MaxValue, Trajectory = TrajectoryDef.DefaultValue };
                     var value = Config[ConfigID];
                     var data = new MyWeaponParametersConfig();
                     foreach (var item in value)
