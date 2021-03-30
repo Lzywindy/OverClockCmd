@@ -8,6 +8,9 @@ using static SuperBlocks.Utils;
 
 namespace SuperBlocks.Controller
 {
+   
+
+
     public partial class TurretController
     {
         private volatile bool BlockEnabled = true;
@@ -20,6 +23,16 @@ namespace SuperBlocks.Controller
         private MyRadarTargets RadarTargets { get; } = new MyRadarTargets();
         private ConcurrentBag<MyTurretBinding> Turrets;
         private ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Configs = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
+        private MyBlockGroupService BlockGroupService { get; } = new MyBlockGroupService();
+
+        private bool IsTurretBase(IMyMotorStator Motor)
+        {
+            var str = Motor.BlockDefinition.SubtypeId.ToLower();
+            if (str.Contains("turret")) return true;
+            str = Motor.CustomName.ToLower();
+            if (str.Contains("turret")) return true;
+            return BlockGroupService.TestBlockInGroups(Motor);
+        }
         private void UpdateBindings()
         {
             if (Common.NullEntity(Me)) return;
@@ -28,9 +41,10 @@ namespace SuperBlocks.Controller
             if (Me.CustomData.Length < 1)
                 TriggerSaveConfigs(Me);
             Range = MyRadarSubtypeIdHelper.DetectedRangeBlock(MyRadarSubtypeIdHelper.GetFarestDetectedBlock(Me.CubeGrid));
+            BlockGroupService.Init(Me);
             List<MyTurretBinding> list;
             if (Common.IsNullCollection(Turrets))
-                list = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az)).ConvertAll(az => new MyTurretBinding(az));
+                list = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az) && IsTurretBase(az)).ConvertAll(az => new MyTurretBinding(az));
             else
                 list = Turrets.Where(t => t.CanRunning).ToList();
             if (Common.IsNullCollection(list)) { Turrets = null; return; }

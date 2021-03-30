@@ -41,6 +41,7 @@ namespace SuperBlocks
                 if (NullEntity(block) || !block.IsFunctional || (block is IMyLargeTurretBase)) return false;
                 return (block is IMySmallGatlingGun) | (block is IMySmallMissileLauncher) || (block is IMySmallMissileLauncherReload) || BasicInfoService.WeaponInfos.ContainsKey(block.BlockDefinition.SubtypeId);
             }
+            public static bool BlockInTurretGroup(IMyBlockGroup group, IMyTerminalBlock Me) { List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>(); group?.GetBlocks(blocks); if (blocks.Count < 1 || !blocks.Contains(Me)) return false; return true; }
             public static bool ExceptKeywords(IMyTerminalBlock block) { foreach (var item in BlackList_ShipController) { if (block.BlockDefinition.SubtypeId.Contains(item)) return false; } return true; }
             private static readonly string[] BlackList_ShipController = new string[] { "Hover", "Torpedo", "Torp", "Payload", "Missile", "At_Hybrid_Main_Thruster_Large", "At_Hybrid_Main_Thruster_Small", };
         }

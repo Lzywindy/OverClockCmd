@@ -8,7 +8,7 @@ using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRageMath;
 namespace SuperBlocks
-{   
+{
     public static partial class Utils
     {
         public static Guid MyGuid { get; } = new Guid("5F1A43D3-02D3-C959-2413-5922F4EEB917");
@@ -45,17 +45,7 @@ namespace SuperBlocks
     public static partial class Utils
     {
         public enum WeaponType { Energy, Rocket, Projectile }
-        public static bool BlockInTurretGroup(IMyBlockGroup group, IMyTerminalBlock Me)
-        {
-            if (group == null) return false;
-            List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-            group.GetBlocks(blocks); if (blocks.Count < 1) return false;
-            if (!blocks.Contains(Me)) return false;
-            if (!blocks.Exists((IMyTerminalBlock block) => block is IMyRemoteControl)) return false;
-            if (!blocks.Exists((IMyTerminalBlock block) => block is IMyUserControllableGun)) return false;
-            if (!blocks.Exists((IMyTerminalBlock block) => (block is IMyMotorStator) && (block.CustomName.Contains("Turret") || block.CustomName.Contains("turret") || block.CustomName.Contains("Gun") || block.CustomName.Contains("gun")))) return false;
-            return true;
-        }
+       
         public static Sandbox.ModAPI.Ingame.MyDetectedEntityInfo? CreateTarget(IMyEntity Target, IMyTerminalBlock SensorBlock, Vector3D? Position = null)
         {
             if (Target == null || SensorBlock == null) return null;

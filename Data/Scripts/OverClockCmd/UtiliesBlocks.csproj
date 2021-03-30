@@ -207,6 +207,7 @@
     <Compile Include="UsefulFunctions\MyConfigs.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyAutoCloseDoorController.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyAutoCloseDoorTimer.cs" />
+    <Compile Include="UsefulFunctions\Utils\Utils.MyBlockGroupService.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyGyrosController.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyPlanetInfoAPI.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyRotorAPI.cs" />
