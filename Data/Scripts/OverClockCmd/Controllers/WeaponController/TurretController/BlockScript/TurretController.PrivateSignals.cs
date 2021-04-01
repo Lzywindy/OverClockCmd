@@ -8,21 +8,19 @@ using static SuperBlocks.Utils;
 
 namespace SuperBlocks.Controller
 {
-   
+
 
 
     public partial class TurretController
     {
-        private volatile bool BlockEnabled = true;
         private volatile float RangeMultiply = 1;
-        private volatile bool TurretEnabled;
-        private volatile bool AutoFire;
-        private volatile bool UsingWeaponCoreTracker;
+        private MyEventParameter_Bool TurretEnabled { get; } = new MyEventParameter_Bool(true);
+        private MyEventParameter_Bool AutoFire { get; } = new MyEventParameter_Bool(false);
+        private MyEventParameter_Bool UsingWeaponCoreTracker { get; } = new MyEventParameter_Bool(false);
         private volatile uint updatecounts = 0;
         private volatile float Range = 3000f;
         private MyRadarTargets RadarTargets { get; } = new MyRadarTargets();
         private ConcurrentBag<MyTurretBinding> Turrets;
-        private ConcurrentDictionary<string, ConcurrentDictionary<string, string>> Configs = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
         private MyBlockGroupService BlockGroupService { get; } = new MyBlockGroupService();
 
         private bool IsTurretBase(IMyMotorStator Motor)
@@ -37,16 +35,13 @@ namespace SuperBlocks.Controller
         {
             if (Common.NullEntity(Me)) return;
             if (Common.IsNullCollection(Configs))
-                TriggerReadConfigs(Me);
+                LoadData(Me);
             if (Me.CustomData.Length < 1)
-                TriggerSaveConfigs(Me);
+                SaveData(Me);
             Range = MyRadarSubtypeIdHelper.DetectedRangeBlock(MyRadarSubtypeIdHelper.GetFarestDetectedBlock(Me.CubeGrid));
             BlockGroupService.Init(Me);
-            List<MyTurretBinding> list;
-            if (Common.IsNullCollection(Turrets))
-                list = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az) && IsTurretBase(az)).ConvertAll(az => new MyTurretBinding(az));
-            else
-                list = Turrets.Where(t => t.CanRunning).ToList();
+            if (!Common.IsNullCollection(Turrets)) return;
+            List<MyTurretBinding> list = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az) && IsTurretBase(az)).ConvertAll(az => new MyTurretBinding(az));
             if (Common.IsNullCollection(list)) { Turrets = null; return; }
             Turrets = new ConcurrentBag<MyTurretBinding>(list);
         }
@@ -54,19 +49,19 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (!Common.NullEntity(Me))
-                    Turret.SetConfig(Configs);
-                Turret.RotorsEnabled = BlockEnabled;
-                Turret.AutoFire = AutoFire;
-                Turret.Enabled = TurretEnabled;
-                if (!TurretEnabled || !BlockEnabled) { Turret.AimTarget = null; }
+                if (Common.NullEntity(Me)) return;
+                Turret.SetConfig(Configs);
+                Turret.AutoFire = AutoFire.Value;
+                Turret.RotorsEnabled = Enabled.Value;
+                Turret.Enabled = TurretEnabled.Value;
+                if (!TurretEnabled.Value || !Enabled.Value) { Turret.AimTarget = null; }
                 else
                 {
-                    Turret.AimTarget = UsingWeaponCoreTracker ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz, Turret.TargetInRange_Angle);
+                    Turret.AimTarget = UsingWeaponCoreTracker.Value ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz, Turret.TargetInRange_Angle);
                 }
 
             }
-            catch (Exception) { Turret.RotorsEnabled = BlockEnabled = false; }
+            catch (Exception) { }
             Turret.Running();
 
         }
@@ -75,10 +70,10 @@ namespace SuperBlocks.Controller
             if (Common.IsNull(MotorAz?.TopGrid)) return false;
             return Common.GetTs<IMyMotorStator>(MotorAz, b => b.TopGrid != null && b.CubeGrid == MotorAz.TopGrid && Math.Abs(MotorAz.TopGrid.WorldMatrix.Left.Dot(b.WorldMatrix.Up)) > 0.985).Count > 0;
         }
-        private void UpdateState()
+        protected override void UpdateState()
         {
-            Color CurrentColor = BlockEnabled ? (TurretEnabled ? (AutoFire ? (UsingWeaponCoreTracker ? Color.Blue : Color.Yellow) : Color.Cyan) : Color.Green) : Color.Black;
-            float e = BlockEnabled ? 4 : 0;
+            Color CurrentColor = Enabled.Value ? (TurretEnabled.Value ? (AutoFire.Value ? (UsingWeaponCoreTracker.Value ? Color.Blue : Color.Yellow) : Color.Cyan) : Color.Green) : Color.Black;
+            float e = Enabled.Value ? 4 : 0;
             try { Me.SetEmissiveParts("Emissive", CurrentColor, e); } catch (Exception) { }
         }
         private void Try2AttachTops()

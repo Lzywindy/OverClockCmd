@@ -9,15 +9,15 @@ namespace SuperBlocks.Controller
     {
         public MyTargetPredict() : base() { }
         public void Init() { ResetResult(); }
-        public bool CanFireWeapon(ICollection<IMyTerminalBlock> Weapons)
+        public bool CanFireWeapon(ICollection<IMyTerminalBlock> Weapons, float Precious = 0.00001f)
         {
             if (Direction == null || Utils.Common.IsNullCollection(Weapons)) return false;
-            return Weapons.All(CanFireWeapon);
+            return Weapons.All(w => CanFireWeapon(w, Precious));
         }
-        public bool CanFireWeapon(IMyTerminalBlock Weapons)
+        public bool CanFireWeapon(IMyTerminalBlock Weapons, float Precious = 0.00001f)
         {
             if (Direction == null || Utils.Common.NullEntity(Weapons)) return false;
-            return Weapons.WorldMatrix.Forward.Dot(Direction.Value) > 0.99999;
+            return Weapons.WorldMatrix.Forward.Dot(Direction.Value) > (1 - Precious);
         }
         public MyTargetDetected TargetLocked { get; set; }
         public Vector3D? Direction => VpD;
@@ -36,7 +36,7 @@ namespace SuperBlocks.Controller
             if (Parameters.Trajectory.IsDirect) { Tn = null; VpD = d_vector; return; }
             var v_r = TargetVelocity - SelfVelocity;
             var max_time = Parameters.Trajectory.MaxTrajectoryTime * Definitions.TimeGap;
-            var V_project_length = Math.Max(AverangeSpeed(Parameters.Trajectory.InitialSpeed, Parameters.Trajectory.DesiredSpeed, Parameters.Trajectory.AccelPerSec, Definitions.TimeGap), 10);
+            var V_project_length = Parameters.Trajectory.DesiredSpeed;
             var min_time = d_length / V_project_length * 0.65f;
             var time = min_time;
             var a_r = TargetLinearAcc - SelfGravity;
@@ -203,10 +203,10 @@ namespace SuperBlocks.Controller
             var d_vector = (d_length < 1 || d_length > Parameters.Trajectory.MaxTrajectory) ? null : new Vector3?(Vector3.Normalize(dis_v));
             if (Parameters.Trajectory.IsDirect) return d_vector;
             var v_r = TargetVelocity - SelfVelocity;
-            var V_project_length = AverangeSpeed(Parameters.Trajectory.InitialSpeed, Parameters.Trajectory.DesiredSpeed, Parameters.Trajectory.AccelPerSec, null);
-            var min_time = d_length / V_project_length * 0.7f;
-            var time = min_time;
             var max_time = Parameters.Trajectory.MaxTrajectoryTime * Definitions.TimeGap;
+            var V_project_length = Parameters.Trajectory.DesiredSpeed;
+            var min_time = d_length / Parameters.Trajectory.DesiredSpeed * 0.7f;
+            var time = min_time;
             var a_r = TargetLinearAcc - SelfGravity;
             var a = a_r.LengthSquared() * 0.25;
             var b = (-v_r.Dot(a_r) * 0.5);

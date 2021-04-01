@@ -44,8 +44,9 @@ namespace SuperBlocks
     }
     public static partial class Utils
     {
+
         public enum WeaponType { Energy, Rocket, Projectile }
-       
+
         public static Sandbox.ModAPI.Ingame.MyDetectedEntityInfo? CreateTarget(IMyEntity Target, IMyTerminalBlock SensorBlock, Vector3D? Position = null)
         {
             if (Target == null || SensorBlock == null) return null;

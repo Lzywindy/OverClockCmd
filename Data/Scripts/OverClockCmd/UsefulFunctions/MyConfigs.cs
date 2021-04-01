@@ -187,6 +187,15 @@ namespace SuperBlocks
                 }
                 return _str.ToString();
             }
+            public static ConcurrentDictionary<string, string> AddConfigBlock(ConcurrentDictionary<string, ConcurrentDictionary<string, string>> ConfigTree, string BlockName)
+            {
+                return ConfigTree.GetOrAdd(BlockName, new ConcurrentDictionary<string, string>());
+            }
+            public static bool RemoveConfigBlock(ConcurrentDictionary<string, ConcurrentDictionary<string, string>> ConfigTree, string BlockName)
+            {
+                var data = new ConcurrentDictionary<string, string>();
+                return ConfigTree.TryRemove(BlockName, out data);
+            }
         }
     }
 

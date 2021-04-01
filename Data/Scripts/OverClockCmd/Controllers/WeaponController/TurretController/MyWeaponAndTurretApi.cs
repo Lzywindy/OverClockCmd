@@ -25,10 +25,13 @@ namespace SuperBlocks.Controller
         {
             try
             {
+                if (Utils.Common.NullEntity(Weapon)) return;
+                if (Weapon is IMyFunctionalBlock) (Weapon as IMyFunctionalBlock).Enabled = true;
                 if (BasicInfoService.WeaponInfos.ContainsKey(Weapon.BlockDefinition.SubtypeId))
+                {
                     BasicInfoService.WcApi.ToggleWeaponFire(Weapon, Enabled, true, GetWeaponID(Weapon));
-                else
-                    (Weapon as IMyUserControllableGun)?.SetValue("Shoot", Enabled);
+                    return;
+                }
             }
             catch (Exception) { }
         }
@@ -36,10 +39,13 @@ namespace SuperBlocks.Controller
         {
             try
             {
+                if (Utils.Common.NullEntity(Weapon)) return;
+                if (Weapon is IMyFunctionalBlock) (Weapon as IMyFunctionalBlock).Enabled = true;
                 if (BasicInfoService.WeaponInfos.ContainsKey(Weapon.BlockDefinition.SubtypeId))
+                {
                     BasicInfoService.WcApi.FireWeaponOnce(Weapon, true, GetWeaponID(Weapon));
-                else
-                    (Weapon as IMyUserControllableGun).GetActionWithName("ShootOnce")?.Apply(Weapon);
+                    return;
+                }
             }
             catch (Exception) { }
         }

@@ -1,4 +1,6 @@
 ﻿using Sandbox.ModAPI;
+using SpaceEngineers.Game.ModAPI;
+using SuperBlocks.Controller;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,30 +38,37 @@ namespace SuperBlocks
             public void SetFire(bool Fire = false)
             {
                 if (Common.IsNullCollection(CurrentWeapons)) return;
-                if (firegap <= 0)
+                if (BasicInfoService.WeaponInfos.ContainsKey(CurrentWeapons.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
                 {
-                    foreach (var weapon in CurrentWeapons) Controller.MyWeaponAndTurretApi.FireWeapon(weapon, Fire);
-                    Weapons2Fire.Clear(); count = 0;
-                    return;
-                }
-                if (!Common.IsNullCollection(Weapons2Fire)) return;
-                if (Common.IsNullCollection(Weapons2Fire) && CurrentWeapons.All(Controller.MyWeaponAndTurretApi.CanFire))
-                {
-                    foreach (var weapon in CurrentWeapons) Controller.MyWeaponAndTurretApi.FireWeapon(weapon, false);
-                    foreach (var CurrentWeapon in CurrentWeapons)
-                        Weapons2Fire.Enqueue(CurrentWeapon);
-                    count = 0;
-                    return;
+                    if (firegap <= 0)
+                    {
+                        foreach (var weapon in CurrentWeapons) MyWeaponAndTurretApi.FireWeapon(weapon, Fire);
+                        Weapons2Fire.Clear(); count = 0;
+                        return;
+                    }
+                    if (!Common.IsNullCollection(Weapons2Fire)) return;
+                    if (Common.IsNullCollection(Weapons2Fire) && CurrentWeapons.All(MyWeaponAndTurretApi.CanFire))
+                    {
+                        foreach (var weapon in CurrentWeapons) MyWeaponAndTurretApi.FireWeapon(weapon, false);
+                        foreach (var CurrentWeapon in CurrentWeapons)
+                            Weapons2Fire.Enqueue(CurrentWeapon);
+                        count = 0;
+                        return;
+                    }
                 }
             }
             public void RunningAutoFire(bool CanFire = false)
             {
-                if (!CanFire) { foreach (var weapon in CurrentWeapons) Controller.MyWeaponAndTurretApi.FireWeapon(weapon, false); return; }
-                if (Weapons2Fire.Count < 1) return;
-                if (!Controller.MyWeaponAndTurretApi.CanFire(Weapons2Fire.Peek())) return;
-                if (count > 0) { count--; return; }
-                Controller.MyWeaponAndTurretApi.FireWeaponOnce(Weapons2Fire.Dequeue());
-                count = firegap;
+                if (Common.IsNullCollection(CurrentWeapons)) return;
+                if (BasicInfoService.WeaponInfos.ContainsKey(CurrentWeapons.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
+                {
+                    if (!CanFire) { foreach (var weapon in CurrentWeapons) MyWeaponAndTurretApi.FireWeapon(weapon, false); return; }
+                    if (Weapons2Fire.Count < 1) return;
+                    if (!MyWeaponAndTurretApi.CanFire(Weapons2Fire.Peek())) return;
+                    if (count > 0) { count--; return; }
+                    MyWeaponAndTurretApi.FireWeapon(Weapons2Fire.Dequeue(), CanFire);
+                    count = firegap;
+                }
             }
         }
         public class CycleStructure<T>

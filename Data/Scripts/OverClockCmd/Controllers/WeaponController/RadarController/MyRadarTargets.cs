@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using VRage.Game.Entity;
 using VRage.Game.ModAPI;
 using VRage.ModAPI;
 using VRageMath;
@@ -35,7 +36,7 @@ namespace SuperBlocks.Controller
             try
             {
                 if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
-                var ent_tgs = TargetsList.AsParallel().Where(tg => tg.GetDistance(RequstBlock) < Range)?.ToList();
+                var ent_tgs = TargetsList.Where(tg => tg.GetDistance(RequstBlock) < Range)?.ToList();
                 if (Utils.Common.IsNullCollection(ent_tgs)) return null;
                 if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
                 else return TargetsList.FirstOrDefault();
@@ -51,7 +52,7 @@ namespace SuperBlocks.Controller
             try
             {
                 if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
-                var ent_tgs = TargetsList.AsParallel().Where(tg => (tg.GetDistance(RequstBlock) < Range) && (TargetFilter?.Invoke(tg) ?? true))?.ToList();
+                var ent_tgs = TargetsList.Where(tg => (tg.GetDistance(RequstBlock) < Range) && (TargetFilter?.Invoke(tg) ?? true))?.ToList();
                 if (Utils.Common.IsNullCollection(ent_tgs)) return null;
                 if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
                 else return TargetsList.FirstOrDefault();
@@ -79,14 +80,15 @@ namespace SuperBlocks.Controller
             {
                 if (Utils.Common.NullEntity(CtrlBlock) || Range < 50)
                 {
-                    _DetectedEntities = new ConcurrentBag<IMyEntity>();
+                    _DetectedEntities = new ConcurrentBag<MyEntity>();
                     TargetsList = new ConcurrentBag<MyTargetDetected>();
                     return;
                 }
                 BoundingSphereD bounding = new BoundingSphereD(CtrlBlock.GetPosition(), Range);
-                List<IMyEntity> entities = MyAPIGateway.Entities.GetTopMostEntitiesInSphere(ref bounding);
+                List<MyEntity> entities = new List<MyEntity>();
+                MyGamePruningStructure.GetAllTopMostEntitiesInSphere(ref bounding, entities);
                 if (Utils.Common.IsNullCollection(entities)) return;
-                _DetectedEntities = new ConcurrentBag<IMyEntity>(entities);
+                _DetectedEntities = new ConcurrentBag<MyEntity>(entities);
                 var 敌人 = entities.Where(t => Utils.MyTargetEnsureAPI.IsEnemy(t, CtrlBlock));
                 if (Utils.Common.IsNullCollection(敌人)) return;
                 TargetsList = new ConcurrentBag<MyTargetDetected>(敌人.ToList().ConvertAll(t => new MyTargetDetected(t, CtrlBlock)));
@@ -109,7 +111,7 @@ namespace SuperBlocks.Controller
         public float Range => range;
         private volatile float range;
         private ConcurrentBag<MyTargetDetected> TargetsList;
-        private ConcurrentBag<IMyEntity> _DetectedEntities;
+        private ConcurrentBag<MyEntity> _DetectedEntities;
 
     }
 }

@@ -62,7 +62,7 @@ namespace SuperBlocks
                 Vector3 ReferNormal = MyPlanetInfoAPI.GetCurrentGravity(ShipController.GetPosition());
                 if (Vector3.IsZero(ReferNormal)) return null;
                 if (!height.HasValue) return null;
-                if ((ShipController.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Small && height.Value > 15) || (ShipController.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Large && height.Value > 30) || MyMath.AngleBetween(ShipController.WorldMatrix.Down, ShipController?.CubeGrid?.Physics?.Gravity ?? Vector3.Zero) > MathHelper.ToRadians(60))
+                if ((ShipController.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Small && height.Value > 15) || (ShipController.CubeGrid.GridSizeEnum == VRage.Game.MyCubeSize.Large && height.Value > 30) || MyMath.AngleBetween(ShipController.WorldMatrix.Down, ShipController?.CubeGrid?.Physics?.Gravity ?? Vector3.Zero) > MathHelper.ToRadians(55))
                 {
                     Vector3 Direciton = (ForwardDirectionOverride ?? ShipController.WorldMatrix.Forward) + RotationCtrlLines.W * ShipController.WorldMatrix.Right;
                     ForwardDirection = ProjectOnPlane(Direciton, ReferNormal);

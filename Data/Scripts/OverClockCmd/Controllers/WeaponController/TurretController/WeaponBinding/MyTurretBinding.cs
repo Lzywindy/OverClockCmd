@@ -23,7 +23,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (SlaveWeapons.UnabledFire)
+                if (SlaveWeapons.UnabledFire || Configs.ContainsKey(_TurretWeaponConfigID))
                     ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, _TurretWeaponConfigID);
                 else if (BasicInfoService.WcApi.HasCoreWeapon(SlaveWeapons.CurrentWeapons.First()))
                     ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "DefaultWeaponCoreWeapon");
@@ -72,35 +72,39 @@ namespace SuperBlocks.Controller
                     }
                 }
                 else
-                {
                     ModifiedConfig = DefaultConfig = MyWeaponParametersConfig.CreateFromConfig(Configs, "DefaultTurretWeaponConfig");
-                }
             }
-            catch (Exception) { BasicInit(MotorAz); }
+            catch (Exception) { Clear(); }
         }
         public void Running()
         {
             try
             {
                 RemoveEmptyBlocks();
-                SetFire(AutoFire && Enabled && RotorsEnabled);
                 MotorAz.Enabled = RotorsEnabled;
                 foreach (var motorEv in motorEvs) { motorEv.Enabled = RotorsEnabled; }
-                if (!Enabled || !CanRunning) { RunningDefault(); return; }
+                if (!Enabled || !CanRunning) { RunningDefault(); SetFire(false); return; }
                 if (UnderControl)
                 {
                     RunningManual(Utils.Common.GetT<IMyShipController>(MotorAz, block => block.IsUnderControl)?.RotationIndicator);
+                    SetFire(false);
                 }
-                else if (ManuelOnly)
-                    RunningDefault();
+                else if (ManuelOnly) { RunningDefault(); SetFire(false); }
                 else
                 {
                     RunningAutoAimAt(MotorAz);
+                    SetFire(AutoFire && Enabled && RotorsEnabled);
                     RunningAutoFire(AutoFire && Enabled && RotorsEnabled);
                 }
             }
-            catch (Exception) { BasicInit(MotorAz); }
+            catch (Exception) { }
 
+        }
+
+        public void Restart()
+        {
+            BasicInit(MotorAz);
+            ReadConfig_Turret_Rotors();
         }
         public MyTargetDetected AimTarget { get { return TargetPredict.TargetLocked; } set { TargetPredict.TargetLocked = value; } }
         public volatile bool AutoFire = false;
@@ -110,8 +114,30 @@ namespace SuperBlocks.Controller
     }
     public sealed partial class MyTurretBinding
     {
-        private void RunningAutoFire(bool FireWeapons) => SlaveWeapons.RunningAutoFire(CanFire && FireWeapons);
-        private void SetFire(bool FireWeapons) => SlaveWeapons.SetFire(FireWeapons && CanFire);
+        private void RunningAutoFire(bool FireWeapons)
+        {
+            if (BasicInfoService.WeaponInfos.ContainsKey(SlaveWeapons?.CurrentWeapons?.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
+                SlaveWeapons.RunningAutoFire(CanFire(DefaultConfig.Delta_precious) && FireWeapons);
+            else
+            {
+                var block = Utils.Common.GetT<IMyTimerBlock>(MotorAz, b => b.CustomName.Contains("weapon") && b.CubeGrid == MotorAz.TopGrid);
+                if (block == null) return;
+                if (FireWeapons) { block.Enabled = FireWeapons && CanFire(DefaultConfig.Delta_precious); block.Trigger(); return; }
+                block.Enabled = false;
+            }
+        }
+        private void SetFire(bool FireWeapons)
+        {
+            if (BasicInfoService.WeaponInfos.ContainsKey(SlaveWeapons?.CurrentWeapons?.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
+                SlaveWeapons.SetFire(FireWeapons && CanFire(DefaultConfig.Delta_precious));
+            else
+            {
+                var block = Utils.Common.GetT<IMyTimerBlock>(MotorAz, b => b.CustomName.Contains("weapon") && b.CubeGrid == MotorAz.TopGrid);
+                if (block == null) return;
+                if (FireWeapons) { block.Enabled = FireWeapons && CanFire(DefaultConfig.Delta_precious); block.Trigger(); return; }
+                block.Enabled = false;
+            }
+        }
         private void RunningDefault() => MotorsRunningDefault();
         private void RunningDirection(Vector3D? Direction)
         {
@@ -121,7 +147,7 @@ namespace SuperBlocks.Controller
             {
                 var data = MyWeaponAndTurretApi.Get_ArmOfForce_Point(Gun_Rotor_Group);
                 TurretRotor_Torque += MyWeaponAndTurretApi.GetTorque(MotorAz, data, Direction, _Multipy);
-                Gun_Rotor_Group.Key.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(Gun_Rotor_Group.Key, MyWeaponAndTurretApi.RotorDampener(MyWeaponAndTurretApi.GetTorque(Gun_Rotor_Group.Key, data, Direction, _Multipy), Gun_Rotor_Group.Key.TargetVelocityRad, _Max_AV_ev));
+                Gun_Rotor_Group.Key.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(Gun_Rotor_Group.Key, MyWeaponAndTurretApi.RotorDampener(MyWeaponAndTurretApi.GetTorque(Gun_Rotor_Group.Key, data, Direction, _Multipy * 1.4f), Gun_Rotor_Group.Key.TargetVelocityRad, _Max_AV_ev));
             }
             TurretRotor_Torque /= motorEvs_WTs.Count;
             MotorAz.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(MotorAz, MyWeaponAndTurretApi.RotorDampener(TurretRotor_Torque, MotorAz.TargetVelocityRad, _Max_AV_az));
@@ -209,17 +235,14 @@ namespace SuperBlocks.Controller
                 }
                 ReferWeapon();
             }
-            catch (Exception)
-            {
-                BasicInit(this.MotorAz);
-            }
+            catch (Exception) { Clear(); }
         }
         private void ReferWeapon()
         {
             string WeaponName = Definitions.ConfigName.WeaponDef.DefaultWeapon;
             string AmmoName = Definitions.ConfigName.ProjectileDef.DefaultAmmo;
-            SlaveWeapons.ResetFireRPM(ModifiedConfig.RPM);
-            if (SlaveWeapons.UnabledFire) SlaveWeapons.LoadCurrentWeapons(Weapons, ModifiedConfig.RPM);
+            SlaveWeapons.ResetFireRPM(DefaultConfig.RPM);
+            if (SlaveWeapons.UnabledFire) SlaveWeapons.LoadCurrentWeapons(Weapons, DefaultConfig.RPM);
             if (!SlaveWeapons.UnabledFire)
             {
                 foreach (var CurrentWeapon in SlaveWeapons.CurrentWeapons)
@@ -285,7 +308,7 @@ namespace SuperBlocks.Controller
         private IMyCameraBlock ControlledCamera { get { if (Utils.Common.IsNullCollection(Cameras)) return null; IMyCameraBlock cameraBlock = Cameras.FirstOrDefault(b => b.IsActive); return cameraBlock; } }
 
         private bool CanManuel => !Utils.Common.IsNullCollection(Cameras);
-        private bool CanFire => TargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons);
+        private bool CanFire(float Precious = 0.00001f) => TargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons, Precious);
         private float Mult { get { if (!UnderControl) return 0; return MathHelper.Clamp(MyAPIGateway.Session.Camera.FovWithZoom, 0.00001f, 0.5f); } }
     }
     public sealed partial class MyTurretBinding
@@ -350,62 +373,66 @@ namespace SuperBlocks.Controller
         }
         private void SetLimitedMotors()
         {
-            if (!Utils.Common.IsNull(MotorAz))
+            try
             {
-                if (_AzLimit)
+                if (!Utils.Common.IsNull(MotorAz))
                 {
-                    MotorAz.LowerLimitRad = MathHelper.ToRadians(_AzLowerLimit);
-                    MotorAz.UpperLimitRad = MathHelper.ToRadians(_AzUpperLimit);
-                }
-                else
-                {
-                    MotorAz.LowerLimitRad = float.MinValue;
-                    MotorAz.UpperLimitRad = float.MaxValue;
-                }
-            }
-            if (!Utils.Common.IsNullCollection(motorEvs_WTs))
-            {
-                if (_EvLimit && !Utils.Common.IsNull(MotorAz?.TopGrid))
-                {
-                    foreach (var motorEvs_WT in motorEvs_WTs)
+                    if (_AzLimit)
                     {
-                        var sign = Math.Sign(MotorAz.TopGrid.WorldMatrix.Left.Dot(motorEvs_WT.Key.WorldMatrix.Up));
-                        if (sign > 0)
-                        {
-                            motorEvs_WT.Key.LowerLimitRad = MathHelper.ToRadians(_EvLowerLimit);
-                            motorEvs_WT.Key.UpperLimitRad = MathHelper.ToRadians(_EvUpperLimit);
-                        }
-                        else if (sign < 0)
-                        {
-                            motorEvs_WT.Key.LowerLimitRad = MathHelper.ToRadians(_EvUpperLimit) * sign;
-                            motorEvs_WT.Key.UpperLimitRad = MathHelper.ToRadians(_EvLowerLimit) * sign;
-                        }
-                        else
-                        {
-                            motorEvs_WT.Key.LowerLimitRad = 0;
-                            motorEvs_WT.Key.UpperLimitRad = 0;
-                        }
-
+                        MotorAz.LowerLimitRad = MathHelper.ToRadians(_AzLowerLimit);
+                        MotorAz.UpperLimitRad = MathHelper.ToRadians(_AzUpperLimit);
+                    }
+                    else
+                    {
+                        MotorAz.LowerLimitRad = float.MinValue;
+                        MotorAz.UpperLimitRad = float.MaxValue;
                     }
                 }
-                else
+                if (!Utils.Common.IsNullCollection(motorEvs_WTs))
                 {
-                    foreach (var motorEvs_WT in motorEvs_WTs)
+                    if (_EvLimit && !Utils.Common.IsNull(MotorAz?.TopGrid))
                     {
-                        motorEvs_WT.Key.LowerLimitRad = float.MinValue;
-                        motorEvs_WT.Key.UpperLimitRad = float.MaxValue;
+                        foreach (var motorEvs_WT in motorEvs_WTs)
+                        {
+                            var sign = Math.Sign(MotorAz.TopGrid.WorldMatrix.Left.Dot(motorEvs_WT.Key.WorldMatrix.Up));
+                            if (sign > 0)
+                            {
+                                motorEvs_WT.Key.LowerLimitRad = MathHelper.ToRadians(_EvLowerLimit);
+                                motorEvs_WT.Key.UpperLimitRad = MathHelper.ToRadians(_EvUpperLimit);
+                            }
+                            else if (sign < 0)
+                            {
+                                motorEvs_WT.Key.LowerLimitRad = MathHelper.ToRadians(_EvUpperLimit) * sign;
+                                motorEvs_WT.Key.UpperLimitRad = MathHelper.ToRadians(_EvLowerLimit) * sign;
+                            }
+                            else
+                            {
+                                motorEvs_WT.Key.LowerLimitRad = 0;
+                                motorEvs_WT.Key.UpperLimitRad = 0;
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        foreach (var motorEvs_WT in motorEvs_WTs)
+                        {
+                            motorEvs_WT.Key.LowerLimitRad = float.MinValue;
+                            motorEvs_WT.Key.UpperLimitRad = float.MaxValue;
+                        }
                     }
                 }
-
             }
+            catch (Exception) { Clear(); }
         }
         public bool TargetInRange_Angle(MyTargetDetected _TargetDetected)
         {
-            return InRangeDirection(MyTargetPredict.CalculateDirection_TargetTest(MotorAz, Weapons, _TargetDetected, ref ModifiedConfig));
+            if (Utils.Common.NullEntity(_TargetDetected?.Entity)) return false;
+            return InRangeDirection(_TargetDetected.GetEntityPosition(MotorAz));
         }
         private bool InRangeDirection(Vector3D? Direction)
         {
-            if (Direction == null) return false;
+            if (Direction == null || Vector3D.IsZero(Direction.Value)) return false;
             var local_vector = Vector3D.TransformNormal(Direction.Value, MatrixD.Transpose(MotorAz.WorldMatrix));
             double az, ev;
             Vector3D.GetAzimuthAndElevation(local_vector, out az, out ev);
@@ -417,6 +444,7 @@ namespace SuperBlocks.Controller
 
     public sealed partial class MyTurretBinding
     {
+
         private IMyGridTerminalSystem GridTerminalSystem { get { if (Utils.Common.NullEntity(MotorAz?.CubeGrid)) return null; return MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(MotorAz.CubeGrid); } }
         private HashSet<IMyCameraBlock> Cameras { get; } = new HashSet<IMyCameraBlock>();
         private HashSet<IMyTerminalBlock> Weapons { get; } = new HashSet<IMyTerminalBlock>();
@@ -470,6 +498,15 @@ namespace SuperBlocks.Controller
         {
             if (Utils.Common.NullEntity(MotorStatorEv?.TopGrid) || Utils.Common.NullEntity(MotorAz?.TopGrid) || MotorAz.TopGrid != MotorStatorEv.CubeGrid) return false;
             return Math.Abs(MotorAz.TopGrid.WorldMatrix.Left.Dot(MotorStatorEv.WorldMatrix.Up)) > 0.985;
+        }
+        private void Clear()
+        {
+            Cameras.Clear();
+            Weapons.Clear();
+            motorEvs.Clear();
+            motorEvs_WTs.Clear();
+            WeaponKinds.Clear();
+            SlaveWeapons.CurrentWeapons?.Clear();
         }
     }
 }

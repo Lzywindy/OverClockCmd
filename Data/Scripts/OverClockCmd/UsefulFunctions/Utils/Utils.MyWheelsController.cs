@@ -19,11 +19,12 @@ namespace SuperBlocks
                 Motors_Hover = Common.GetTs(Me, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
                 SWheels = Common.GetTs<IMyMotorSuspension>(Wheels, InThisEntity);
                 MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
-                Pistons = Common.GetTs<IMyPistonBase>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
-                ShipConnectors = Common.GetTs<IMyShipConnector>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
-                LandingGears = Common.GetTs<IMyLandingGear>(Me, p => InThisEntity(p) && p.CustomName.Contains("UCR"));
+                Pistons = Common.GetTs<IMyPistonBase>(Me, p => InThisEntity(p) && (p.CustomName.Contains("UCR")|| BlockGroupService.TestBlockInGroups(p)));
+                ShipConnectors = Common.GetTs<IMyShipConnector>(Me, p => InThisEntity(p) && (p.CustomName.Contains("UCR") || BlockGroupService.TestBlockInGroups(p)));
+                LandingGears = Common.GetTs<IMyLandingGear>(Me, p => InThisEntity(p) && (p.CustomName.Contains("UCR") || BlockGroupService.TestBlockInGroups(p)));
                 brakelights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BrakeNM) && InThisEntity(lightblock));
                 backlights = Common.GetTs(Me, (IMyInteriorLight lightblock) => lightblock.CustomName.Contains(BackwardNM) && InThisEntity(lightblock));
+                BlockGroupService.Init(Me);
             }
             public void Running(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, float ForwardIndicator, float TurnIndicator, float PowerMult, bool Brake)
             {
@@ -38,12 +39,14 @@ namespace SuperBlocks
                 LoadPistons();
                 if (Wheels == null && !HoverDevices)
                 {
+                    BlockGroupService.Init(Me);
                     Wheels = MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Me.CubeGrid).GetBlockGroupWithName(WheelsGroupNM);
                     Motors_Hover = Common.GetTs(Me, (IMyTerminalBlock thrust) => thrust.BlockDefinition.SubtypeId.Contains(HoverEngineNM));
                 }
                 if (Wheels == null) return;
                 if (NullWheels)
                 {
+                    BlockGroupService.Init(Me);
                     SWheels = Common.GetTs<IMyMotorSuspension>(Wheels, InThisEntity);
                     MWheels = Common.GetTs<IMyMotorStator>(Wheels, InThisEntity);
                 }
@@ -177,7 +180,7 @@ namespace SuperBlocks
                 return (float)(LinearVelocity - MaximumSpeed * Me.WorldMatrix.Forward * (-ForwardIndicator)).Dot(Me.WorldMatrix.Forward) * sign / 100;
             }
             #endregion
-
+            private MyBlockGroupService BlockGroupService { get; } = new MyBlockGroupService();
             private const float SmallGridHightMax = 2.5f;
             private const float LargeGridHightMax = 12.5f;
             public Vector3D? GetCurrentPlaneNormal()
