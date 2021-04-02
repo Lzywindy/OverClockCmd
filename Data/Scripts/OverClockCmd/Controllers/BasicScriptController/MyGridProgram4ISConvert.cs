@@ -115,7 +115,7 @@ namespace SuperBlocks.Controller
                     Main("", Sandbox.ModAPI.Ingame.UpdateType.Update100);
             }
             catch (Exception) { EnabledRunning = false; }
-            if (!EnabledRunning) Restart(Me);
+            try { OnRestart?.Invoke(); } catch (Exception) { }
         }
         public sealed override void Close()
         {
@@ -141,7 +141,7 @@ namespace SuperBlocks.Controller
         public void TriggleEnabled(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return; Enabled.Value = !Enabled.Value; }
         public void EnabledSetter(IMyTerminalBlock Me, bool value) { if (!EnabledGUI(Me)) return; Enabled.Value = value; }
         public bool EnabledGetter(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return false; return Enabled.Value; }
-        public void Restart(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return; try { UpdateGridGroup(); LoadData(Me); SaveData(Me); OnRestart?.Invoke(); Program(); EnabledRunning = true; } catch (Exception) { EnabledRunning = false; } }
+        public void Restart(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return; try { UpdateGridGroup(); OnRestart?.Invoke(); LoadData(Me); SaveData(Me); Program(); EnabledRunning = true; } catch (Exception) { EnabledRunning = false; } }
         public void LoadData(IMyTerminalBlock Me) { if (EnabledGUI(Me)) { Configs.Clear(); MyConfigs.Concurrent.CustomDataConfigRead_INI(Me, Configs); LoadData(); } }
         public void SaveData(IMyTerminalBlock Me) { if (EnabledGUI(Me)) { SaveData(); Me.CustomData = MyConfigs.Concurrent.CustomDataConfigSave_INI(Configs); } }
         public bool EnabledGUI(IMyTerminalBlock Me) { return Me == this.Me; }

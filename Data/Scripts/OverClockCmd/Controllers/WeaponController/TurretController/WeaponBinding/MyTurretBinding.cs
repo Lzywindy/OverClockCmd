@@ -1,4 +1,5 @@
-﻿using Sandbox.ModAPI;
+﻿using ParallelTasks;
+using Sandbox.ModAPI;
 using SpaceEngineers.Game.ModAPI;
 using System;
 using System.Collections.Concurrent;
@@ -83,18 +84,18 @@ namespace SuperBlocks.Controller
                 RemoveEmptyBlocks();
                 MotorAz.Enabled = RotorsEnabled;
                 foreach (var motorEv in motorEvs) { motorEv.Enabled = RotorsEnabled; }
-                if (!Enabled || !CanRunning) { RunningDefault(); SetFire(false); return; }
+                var fire = AutoFire && Enabled && RotorsEnabled && CanFire(DefaultConfig.Delta_precious);
+                SetFire(fire);
+                if (!Enabled || !CanRunning) { RunningDefault(); return; }
                 if (UnderControl)
                 {
                     RunningManual(Utils.Common.GetT<IMyShipController>(MotorAz, block => block.IsUnderControl)?.RotationIndicator);
-                    SetFire(false);
                 }
-                else if (ManuelOnly) { RunningDefault(); SetFire(false); }
+                else if (ManuelOnly) { RunningDefault(); }
                 else
                 {
                     RunningAutoAimAt(MotorAz);
-                    SetFire(AutoFire && Enabled && RotorsEnabled);
-                    RunningAutoFire(AutoFire && Enabled && RotorsEnabled);
+                    RunningAutoFire(fire);
                 }
             }
             catch (Exception) { }
@@ -116,26 +117,25 @@ namespace SuperBlocks.Controller
     {
         private void RunningAutoFire(bool FireWeapons)
         {
-            if (BasicInfoService.WeaponInfos.ContainsKey(SlaveWeapons?.CurrentWeapons?.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
-                SlaveWeapons.RunningAutoFire(CanFire(DefaultConfig.Delta_precious) && FireWeapons);
+            if (BasicInfoService.WcApi.HasCoreWeapon(SlaveWeapons.CurrentWeapons?.FirstOrDefault()))
+                SlaveWeapons.RunningAutoFire(FireWeapons);
             else
             {
                 var block = Utils.Common.GetT<IMyTimerBlock>(MotorAz, b => b.CustomName.Contains("weapon") && b.CubeGrid == MotorAz.TopGrid);
                 if (block == null) return;
-                if (FireWeapons) { block.Enabled = FireWeapons && CanFire(DefaultConfig.Delta_precious); block.Trigger(); return; }
-                block.Enabled = false;
+                block.Enabled = FireWeapons;
+                if (FireWeapons) block.Trigger();
             }
         }
         private void SetFire(bool FireWeapons)
         {
-            if (BasicInfoService.WeaponInfos.ContainsKey(SlaveWeapons?.CurrentWeapons?.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
-                SlaveWeapons.SetFire(FireWeapons && CanFire(DefaultConfig.Delta_precious));
+            if (BasicInfoService.WcApi.HasCoreWeapon(SlaveWeapons.CurrentWeapons?.FirstOrDefault()))
+                SlaveWeapons.SetFire(FireWeapons);
             else
             {
                 var block = Utils.Common.GetT<IMyTimerBlock>(MotorAz, b => b.CustomName.Contains("weapon") && b.CubeGrid == MotorAz.TopGrid);
                 if (block == null) return;
-                if (FireWeapons) { block.Enabled = FireWeapons && CanFire(DefaultConfig.Delta_precious); block.Trigger(); return; }
-                block.Enabled = false;
+                block.Enabled = FireWeapons; if (FireWeapons) block.Trigger();
             }
         }
         private void RunningDefault() => MotorsRunningDefault();
@@ -169,6 +169,10 @@ namespace SuperBlocks.Controller
         private void RunningAutoAimAt(IMyTerminalBlock Me)
         {
             ReferWeapon();
+
+            //if (TargetPredictTask.Item == null) TargetPredictTask = MyAPIGateway.Parallel.StartBackground(() => { TargetPredict.CalculateDirection(Me, SlaveWeapons.CurrentWeapons, ref ModifiedConfig); });
+            //if (TargetPredictTask.IsComplete) TargetPredictTask.Execute();
+
             TargetPredict.CalculateDirection(Me, SlaveWeapons.CurrentWeapons, ref ModifiedConfig);
             if (InRangeDirection(TargetPredict.Direction))
                 RunningDirection(TargetPredict.Direction);
@@ -197,6 +201,8 @@ namespace SuperBlocks.Controller
             Weapons.RemoveWhere(Utils.Common.NullEntity);
         }
         public void CycleWeapons() { }
+
+        private Task TargetPredictTask;
     }
     public sealed partial class MyTurretBinding
     {

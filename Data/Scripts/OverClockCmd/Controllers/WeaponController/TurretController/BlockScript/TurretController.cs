@@ -1,4 +1,5 @@
-﻿using Sandbox.ModAPI;
+﻿using ParallelTasks;
+using Sandbox.ModAPI;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -37,8 +38,9 @@ namespace SuperBlocks.Controller
         }
         protected override void InitBlock()
         {
-            OnRestart += () => { 
-                TurretRegister.RegistControllerBlock(Me); 
+            OnRestart += () =>
+            {
+                TurretRegister.RegistControllerBlock(Me);
                 UpdateState();
                 if (Common.NullEntity(Me)) return;
                 if (Common.IsNullCollection(Configs))
@@ -55,12 +57,18 @@ namespace SuperBlocks.Controller
             {
                 if (!TurretRegister.IsMainController(Me)) return;
                 MyAPIGateway.Parallel.ForEach(Turrets, Turret => UpdateTurrets(Turret));
+                //foreach (var Turret in Turrets)
+                //{
+                //    UpdateTurrets(Turret);
+                //}
             };
             OnRunning10 += () =>
             {
                 if (!TurretRegister.IsMainController(Me)) return;
                 updatecounts = (updatecounts + 1) % 10;
-                RadarTargets.UpdateScanning(Me?.GetTopMostParent());
+                if (updatecounts % 5 == 0) RadarTargets.UpdateScanning(Me?.GetTopMostParent());
+                //if (RadarScanner.Item == null) RadarScanner = MyAPIGateway.Parallel.StartBackground(() => { RadarTargets.UpdateScanning(Me?.GetTopMostParent()); });
+                //if (RadarScanner.IsComplete) RadarScanner.Execute();
                 if (updatecounts % 8 == 0) { UpdateBindings(); }
                 if (updatecounts % 9 == 0) { foreach (var Turret in Turrets) Turret.ReadConfig_Turret_Rotors(); }
             };
@@ -79,6 +87,7 @@ namespace SuperBlocks.Controller
             AutoFire.OnValueChanged += UpdateState;
             UsingWeaponCoreTracker.OnValueChanged += UpdateState;
         }
+        private Task RadarScanner;
         private void AutoFire_OnValueChanged()
         {
             try

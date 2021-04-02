@@ -15,6 +15,20 @@ namespace SuperBlocks
                 if (planet == null || GetCurrentGravity(MyPosition) == Vector3.Zero) return null;
                 return (MyPosition - planet.PositionComp.GetPosition()).Length() - planet.AverageRadius;
             }
+            public static float? GetAtmoEffect(Vector3D MyPosition)
+            {
+                var planet = MyGamePruningStructure.GetClosestPlanet(MyPosition);
+                if (planet == null || GetCurrentGravity(MyPosition) == Vector3.Zero || !planet.HasAtmosphere) return null;
+                var value = planet.GetAirDensity(MyPosition);
+                if (value > 0.5f) return value;
+                return null;
+            }
+            public static float GetOxygen(Vector3D MyPosition)
+            {
+                var planet = MyGamePruningStructure.GetClosestPlanet(MyPosition);
+                if (planet == null || GetCurrentGravity(MyPosition) == Vector3.Zero || !planet.HasAtmosphere) return 0;
+                return planet.GetOxygenForPosition(MyPosition);
+            }
             public static double? GetSurfaceHight(Vector3D MyPosition)
             {
                 var planet = MyGamePruningStructure.GetClosestPlanet(MyPosition);

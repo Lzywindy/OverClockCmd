@@ -30,7 +30,7 @@ namespace SuperBlocks
                 }
                 catch (Exception) { }
             }
-            public void Running(IMyTerminalBlock Me, bool HoverMode, float? RollIndicate, float MaxiumSpeed, Vector3 MoveInidcate)
+            public void Running(IMyTerminalBlock Me, bool HoverMode, float? RollIndicate, Vector3 MoveInidcate)
             {
                 try
                 {
@@ -40,7 +40,7 @@ namespace SuperBlocks
                     var linervelocity = Me.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero;
                     var gravity = Me.CubeGrid?.Physics?.Gravity ?? Vector3.Zero;
                     var gl = gravity.Length();
-                    Vector3 direction = HoverMode ? Me.WorldMatrix.Backward : Me.WorldMatrix.Down;// (gravity + Vector3.ClampToSphere(linervelocity - WorldMoveInidcate * MaxiumSpeed, gl * diffangle)) : (Vector3.ClampToSphere(PoseProcessFuncs.ProjectLinnerVelocity_CockpitForward(Me, true, true) - WorldMoveInidcate * MaxiumSpeed, diffangle) + (Vector3)Me.WorldMatrix.Backward);
+                    Vector3 direction = (!HoverMode || Vector3.IsZero(gravity)) ? Me.WorldMatrix.Backward : Me.WorldMatrix.Down;
                     if (Vector3.IsZero(direction)) direction = Vector3.Zero;
                     else direction = Vector3.Normalize(direction);
                     foreach (var MotorThrust in MotorThrusts)

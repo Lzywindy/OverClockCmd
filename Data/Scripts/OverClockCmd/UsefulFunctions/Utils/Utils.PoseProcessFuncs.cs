@@ -24,7 +24,7 @@ namespace SuperBlocks
                       - ((Need2CtrlSignal ? (Vector3.ClampToSphere((-ShipController.WorldMatrix.Forward * RotationCtrlLines.X + ShipController.WorldMatrix.Right * RotationCtrlLines.Y), 1) * MaximumSpeedLimited) : Vector3.Zero)))) : null;
                     if (Vector3.IsZero(current_gravity))
                         ReferNormal = current_velocity_linear;
-                    else if (!current_velocity_linear.HasValue)
+                    if ((!ForwardOrUp && MyMath.AngleBetween(current_gravity, ShipController.WorldMatrix.Down) > MathHelper.ToRadians(45)) || (!current_velocity_linear.HasValue))
                         ReferNormal = current_gravity;
                     else
                         ReferNormal = Vector3.ClampToSphere(current_velocity_linear.Value * LocationSensetive + Dampener(current_gravity) * SafetyStage, 1f);

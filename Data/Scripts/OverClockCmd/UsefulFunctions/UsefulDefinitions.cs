@@ -38,7 +38,7 @@ namespace SuperBlocks
             public void SetFire(bool Fire = false)
             {
                 if (Common.IsNullCollection(CurrentWeapons)) return;
-                if (BasicInfoService.WeaponInfos.ContainsKey(CurrentWeapons.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
+                if (BasicInfoService.WcApi.HasCoreWeapon(CurrentWeapons.FirstOrDefault()))
                 {
                     if (firegap <= 0)
                     {
@@ -60,13 +60,13 @@ namespace SuperBlocks
             public void RunningAutoFire(bool CanFire = false)
             {
                 if (Common.IsNullCollection(CurrentWeapons)) return;
-                if (BasicInfoService.WeaponInfos.ContainsKey(CurrentWeapons.FirstOrDefault()?.BlockDefinition.SubtypeId ?? ""))
+                if (BasicInfoService.WcApi.HasCoreWeapon(CurrentWeapons.FirstOrDefault()))
                 {
-                    if (!CanFire) { foreach (var weapon in CurrentWeapons) MyWeaponAndTurretApi.FireWeapon(weapon, false); return; }
+                    if (!CanFire) return;
                     if (Weapons2Fire.Count < 1) return;
                     if (!MyWeaponAndTurretApi.CanFire(Weapons2Fire.Peek())) return;
                     if (count > 0) { count--; return; }
-                    MyWeaponAndTurretApi.FireWeapon(Weapons2Fire.Dequeue(), CanFire);
+                    MyWeaponAndTurretApi.FireWeaponOnce(Weapons2Fire.Dequeue());
                     count = firegap;
                 }
             }

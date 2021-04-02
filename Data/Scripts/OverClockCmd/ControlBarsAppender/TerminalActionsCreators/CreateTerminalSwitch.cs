@@ -35,7 +35,7 @@ namespace SuperBlocks.Controller
                 triggle.Enabled = Filter;
                 triggle.Name = CtrlNM_S;
                 triggle.Icon = @"Textures\GUI\Icons\Actions\Start.dds";
-                triggle.Writer = (me, sb) => { sb.Clear(); sb.AppendLine($"{Title}:{(GetterFunc?.Invoke(me) ?? false ? "On" : "Off")}"); };
+                triggle.Writer = (me, sb) => { sb.Clear(); sb.AppendLine($"{Title.Substring(0, 5)}:{(GetterFunc?.Invoke(me) ?? false ? "On" : "Off")}"); };
                 MyAPIGateway.TerminalControls.AddAction<TBlockType>(triggle);
                 actions.Add(triggle);
             }

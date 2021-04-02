@@ -148,13 +148,13 @@ namespace SuperBlocks.Controller
                 AutoCloseDoorController.UpdateBlocks(GridTerminalSystem);
                 RotorThrustRotorCtrl.UpdateBinding(Me, InThisEntity);
                 _Target_Sealevel = sealevel = MyPlanetInfoAPI.GetSealevel(Me.GetPosition()) ?? 0;
+                UpdateState();
+                _Role_OnValueChanged();
+                Overclocked_Reactors_OnValueChanged();
+                Overclocked_GasGenerators_OnValueChanged();
+                Overclocked_Thrusts_OnValueChanged();
+                Overclocked_Gyros_OnValueChanged();
             };
-            OnRestart += _Role_OnValueChanged;
-            OnRestart += UpdateState;
-            OnRestart += Overclocked_Reactors_OnValueChanged;
-            OnRestart += Overclocked_GasGenerators_OnValueChanged;
-            OnRestart += Overclocked_Thrusts_OnValueChanged;
-            OnRestart += Overclocked_Gyros_OnValueChanged;
             OnRunning1 += () =>
             {
                 if (Me.CubeGrid.IsStatic) Role = ControllerRole.None;
@@ -164,7 +164,7 @@ namespace SuperBlocks.Controller
                 ThrustControl();
                 WheelControl();
                 UpdateState();
-                RotorThrustRotorCtrl.Running(Me, HoverMode, RotationIndication.Z, MaximumSpeed, MoveIndication);
+                RotorThrustRotorCtrl.Running(Me, HoverMode, RotationIndication.Z, MoveIndication);
                 AutoCloseDoorController.Running(GridTerminalSystem);
             };
             OnRunning100 += () =>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using VRage.Utils;
 using VRageMath;
+using static SuperBlocks.Utils;
 
 namespace SuperBlocks.Controller
 {
@@ -114,6 +115,25 @@ namespace SuperBlocks.Controller
             MyAPIGateway.TerminalControls.CustomActionGetter -= EnabledCuriserCtrl.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= EnabledThrustersCtrl.CreateAction;
             MyAPIGateway.TerminalControls.CustomActionGetter -= EnabledGyrosCtrl.CreateAction;
+        }
+        private bool Airbrake(IMyTerminalBlock Me)
+        {
+            if (Me != this.Me) return false;
+            bool brake = Override_HandBrake ?? Controller?.HandBrake ?? false;
+            if (brake) return true;
+            switch (Role)
+            {
+                case ControllerRole.Aeroplane:
+                case ControllerRole.VTOL:
+                case ControllerRole.SpaceShip:
+                    var atmo = MyPlanetInfoAPI.GetAtmoEffect(Me.GetPosition());
+                    if (ForwardOrUp) return (target_speed <= 0 || ((MoveIndication * Vector3.Backward).Dot(Vector3.Backward) > 0)) && atmo.HasValue;
+                    return Vector3.IsZero(MoveIndication);
+                case ControllerRole.Helicopter:
+                    return Vector3.IsZero(MoveIndication);
+                default:
+                    return false;
+            }
         }
         private static CreateTerminalSwitch<IMyTerminalBlock> DockGroundCtrl { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("DockGroundID", "DockGround", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false);
         private static CreateTerminalSwitch<IMyTerminalBlock> HasWingsCtrl { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("HasWingsID", "Has Wings", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false);
@@ -261,6 +281,7 @@ namespace SuperBlocks.Controller
             CreateProperty.CreateProperty_PB_CN<float, IMyTerminalBlock>($"{CtrlNM}LocationSensetive", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, Me => Me?.GameLogic?.GetAs<UniversalController>()?.LocationSensetive_Getter(Me) ?? 1, (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.LocationSensetive_Setter(Me, value));
             CreateProperty.CreateProperty_PB_CN<Vector3D?, IMyTerminalBlock>($"{CtrlNM}Override_ForwardDirection", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, Me => Me?.GameLogic?.GetAs<UniversalController>()?.Override_ForwardDirection_Getter(Me), (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.Override_ForwardDirection_Setter(Me, value));
             CreateProperty.CreateProperty_PB_CN<Vector3D?, IMyTerminalBlock>($"{CtrlNM}Override_PlaneNormal", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, Me => Me?.GameLogic?.GetAs<UniversalController>()?.Override_PlaneNormal_Getter(Me), (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.Override_PlaneNormal_Setter(Me, value));
+            CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}CanAirbrake", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, Me => Me?.GameLogic?.GetAs<UniversalController>()?.Airbrake(Me) ?? false, (Me, value) => { });
         }
         private static void UnloadInterface_UniversalController_Advance()
         {

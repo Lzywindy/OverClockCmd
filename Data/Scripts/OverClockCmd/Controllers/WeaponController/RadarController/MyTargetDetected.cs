@@ -19,7 +19,6 @@ namespace SuperBlocks.Controller
             this.IgnoreFilter = IgnoreFilter;
             if (!IsGrid) return;
             InitDatas(Detector);
-            ObjectSize = Grid?.GridSize ?? -1;
         }
         #region 可访问的状态函数变量
         public bool TargetSafety()
@@ -27,7 +26,7 @@ namespace SuperBlocks.Controller
             if (Grid == null) return Utils.Common.NullEntity(Entity);
             return Utils.Common.IsNullCollection(Blocks);
         }
-        public readonly IMyEntity Entity;
+        public IMyEntity Entity { get; private set; }
         public bool IsGrid => Grid != null;
         public bool InvalidTarget => Utils.Common.NullEntity(Entity);
         public double Priority(IMyTerminalBlock Detector)
@@ -87,7 +86,7 @@ namespace SuperBlocks.Controller
                 GridTerminalSystem?.GetBlocksOfType(_Blocks, WeaponFilter);
             Blocks = new ConcurrentBag<IMyTerminalBlock>(_Blocks);
         }
-        public double ObjectSize { get; private set; }
+        public double ObjectSize => Grid?.GridSize ?? Entity?.WorldAABB.Size.Length() ?? -1;
         #endregion
         #region 接口函数
         public int CompareTo(MyTargetDetected other)

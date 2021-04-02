@@ -180,22 +180,7 @@ namespace SuperBlocks.Controller
         private Vector3D Forward => Me.WorldMatrix.Forward;
         private Vector3 ProjectLinnerVelocity_CockpitForward { get { return PoseProcessFuncs.ProjectOnPlane(LinearVelocity, Forward); } }
         private bool Dampener => Override_Dampener ?? Controller?.DampenersOverride ?? true;
-        private bool HandBrake
-        {
-            get
-            {
-                switch (Role)
-                {
-                    case ControllerRole.Aeroplane:
-                    case ControllerRole.VTOL:
-                    case ControllerRole.SpaceShip:
-                        if (ForwardOrUp) return (Override_HandBrake ?? Controller?.HandBrake ?? true) || ((MoveIndication * Vector3.Backward).Dot(Vector3.Backward) > 0);
-                        else return Override_HandBrake ?? Controller?.HandBrake ?? true;
-                    default:
-                        return Override_HandBrake ?? Controller?.HandBrake ?? true;
-                }
-            }
-        }
+        private bool HandBrake => (Override_HandBrake ?? Controller?.HandBrake ?? true);
         private Vector3 MoveIndication => Override_MoveIndication ?? Controller?.MoveIndicator ?? Vector3.Zero;
         private Vector3 RotationIndication => Override_RotationIndication ?? new Vector3(Controller?.RotationIndicator ?? Vector2.Zero, Controller?.RollIndicator ?? 0);
         private bool PoseMode { get { switch (Role) { case ControllerRole.Helicopter: return true; case ControllerRole.VTOL: return HasWings ? (!ForwardOrUp) : (_EnabledCuriser && (Gravity != Vector3.Zero)); case ControllerRole.SpaceShip: return _EnabledCuriser && (Gravity != Vector3.Zero); default: return false; } } }
