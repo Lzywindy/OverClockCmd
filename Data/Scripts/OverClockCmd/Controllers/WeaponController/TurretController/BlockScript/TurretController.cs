@@ -49,9 +49,22 @@ namespace SuperBlocks.Controller
                     SaveData(Me);
                 Range = MyRadarSubtypeIdHelper.DetectedRangeBlock(MyRadarSubtypeIdHelper.GetFarestDetectedBlock(Me.CubeGrid));
                 BlockGroupService.Init(Me);
-                List<MyTurretBinding> list = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az) && IsTurretBase(az)).ConvertAll(az => new MyTurretBinding(az));
-                if (Common.IsNullCollection(list)) { Turrets = null; return; }
-                Turrets = new ConcurrentBag<MyTurretBinding>(list);
+                HashSet<MyTurretBinding> _Turrets = new HashSet<MyTurretBinding>();
+                if (!Common.IsNullCollection(Turrets))
+                {
+                    foreach (var Turret in Turrets)
+                    {
+                        if (Common.NullEntity(Turret.MotorAz)) continue;
+                        _Turrets.Add(Turret);
+                    }
+                }
+                var motors = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az) && IsTurretBase(az));
+                if (Common.IsNullCollection(motors)) { Turrets = null; return; }
+                foreach (var motor in motors)
+                {
+                    if (!_Turrets.Add(new MyTurretBinding(motor))) continue;
+                }
+                Turrets = new ConcurrentBag<MyTurretBinding>(_Turrets);
             };
             OnRunning1 += () =>
             {
@@ -66,7 +79,8 @@ namespace SuperBlocks.Controller
             {
                 if (!TurretRegister.IsMainController(Me)) return;
                 updatecounts = (updatecounts + 1) % 10;
-                if (updatecounts % 5 == 0) RadarTargets.UpdateScanning(Me?.GetTopMostParent());
+                //if (updatecounts % 5 == 0) RadarTargets.UpdateScanning(Me?.GetTopMostParent());
+                if (!IsTargetUpdating) MyAPIGateway.Parallel.Start(TargetUpdating);
                 //if (RadarScanner.Item == null) RadarScanner = MyAPIGateway.Parallel.StartBackground(() => { RadarTargets.UpdateScanning(Me?.GetTopMostParent()); });
                 //if (RadarScanner.IsComplete) RadarScanner.Execute();
                 if (updatecounts % 8 == 0) { UpdateBindings(); }
@@ -87,7 +101,27 @@ namespace SuperBlocks.Controller
             AutoFire.OnValueChanged += UpdateState;
             UsingWeaponCoreTracker.OnValueChanged += UpdateState;
         }
-        private Task RadarScanner;
+        private void TargetUpdating()
+        {
+            try
+            {
+                IsTargetUpdating = true;
+                RadarTargets.UpdateScanning(Me?.GetTopMostParent());
+                MyAPIGateway.Parallel.ForEach(Turrets, Turret => {
+                    if (!TurretEnabled.Value || !Enabled.Value) { Turret.AimTarget = null; }
+                    else
+                    {
+                        Turret.AimTarget = UsingWeaponCoreTracker.Value ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz, Turret.TargetInRange_Angle);
+                    }
+
+                });
+            }
+            catch (Exception) { }
+            finally
+            {
+                IsTargetUpdating = false;
+            }
+        }
         private void AutoFire_OnValueChanged()
         {
             try

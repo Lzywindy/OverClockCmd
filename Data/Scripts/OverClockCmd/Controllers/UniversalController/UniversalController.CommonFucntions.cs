@@ -11,19 +11,19 @@ namespace SuperBlocks.Controller
     public partial class UniversalController
     {
         public bool DockGround(IMyTerminalBlock Me) { try { if (Me == this.Me) return _Dock; } catch (Exception) { } return false; }
-        public void DockGround(IMyTerminalBlock Me, bool value) { try { if (Me == this.Me) _Dock = value; } catch (Exception) { } }
-        public void TriggleDockGround(IMyTerminalBlock Me) { try { if (Me == this.Me) _Dock = !_Dock; } catch (Exception) { } }
+        public void DockGround(IMyTerminalBlock Me, bool value) { try { if (Me == this.Me) { _Dock = value; SaveData(Me); } } catch (Exception) { } }
+        public void TriggleDockGround(IMyTerminalBlock Me) { try { if (Me == this.Me) { _Dock = !_Dock; SaveData(Me); } } catch (Exception) { } }
         public bool DockGroundReady(IMyTerminalBlock Me) { try { if (Me == this.Me) return WheelsController.DockComplete; } catch (Exception) { } return false; }
-        public void TriggleHasWings(IMyTerminalBlock Me) { if (Me == this.Me) HasWings = !HasWings; }
-        public void TriggleHoverMode(IMyTerminalBlock Me) { if (Me == this.Me) HoverMode = !HoverMode; }
-        public void TriggleEnabledCuriser(IMyTerminalBlock Me) { if (Me == this.Me) EnabledCuriser = !EnabledCuriser; }
-        public void TriggleEnabledThrusters(IMyTerminalBlock Me) { if (Me == this.Me) EnabledThrusters = !EnabledThrusters; }
-        public void TriggleEnabledGyros(IMyTerminalBlock Me) { if (Me == this.Me) EnabledGyros = !EnabledGyros; }
-        public void CHasWings(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) HasWings = Value; }
-        public void CHoverMode(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) HoverMode = Value; }
-        public void CEnabledCuriser(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) EnabledCuriser = Value; }
-        public void CEnabledThrusters(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) EnabledThrusters = Value; }
-        public void CEnabledGyros(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) EnabledGyros = Value; }
+        public void TriggleHasWings(IMyTerminalBlock Me) { if (Me == this.Me) { HasWings = !HasWings; SaveData(Me); } }
+        public void TriggleHoverMode(IMyTerminalBlock Me) { if (Me == this.Me) { HoverMode = !HoverMode; SaveData(Me); } }
+        public void TriggleEnabledCuriser(IMyTerminalBlock Me) { if (Me == this.Me) { EnabledCuriser = !EnabledCuriser; SaveData(Me); } }
+        public void TriggleEnabledThrusters(IMyTerminalBlock Me) { if (Me == this.Me) { EnabledThrusters = !EnabledThrusters; SaveData(Me); } }
+        public void TriggleEnabledGyros(IMyTerminalBlock Me) { if (Me == this.Me) { EnabledGyros = !EnabledGyros; SaveData(Me); } }
+        public void CHasWings(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) { HasWings = Value; SaveData(Me); } }
+        public void CHoverMode(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) { HoverMode = Value; SaveData(Me); } }
+        public void CEnabledCuriser(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) { EnabledCuriser = Value; SaveData(Me); } }
+        public void CEnabledThrusters(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) { EnabledThrusters = Value; SaveData(Me); } }
+        public void CEnabledGyros(IMyTerminalBlock Me, bool Value) { if (Me == this.Me) { EnabledGyros = Value; SaveData(Me); } }
         public bool CHasWings(IMyTerminalBlock Me) { if (Me == this.Me) return HasWings; return false; }
         public bool CHoverMode(IMyTerminalBlock Me) { if (Me == this.Me) return HoverMode; return false; }
         public bool CEnabledCuriser(IMyTerminalBlock Me) { if (Me == this.Me) return EnabledCuriser; return false; }
@@ -31,7 +31,7 @@ namespace SuperBlocks.Controller
         public bool CEnabledGyros(IMyTerminalBlock Me) { if (Me == this.Me) return EnabledGyros; return false; }
         public static void Controller_Role_List(List<VRage.ModAPI.MyTerminalControlComboBoxItem> items) { if (items == null) return; items.Clear(); items.AddRange(角色列表实体_UC); }
         public long CRole(IMyTerminalBlock Me) { if (Me == this.Me) return (long)Role; return 0; }
-        public void CRole(IMyTerminalBlock Me, long value) { if (Me == this.Me) Role = (ControllerRole)value; }
+        public void CRole(IMyTerminalBlock Me, long value) { if (Me == this.Me) { Role = (ControllerRole)value; SaveData(Me); } }
         private static List<VRage.ModAPI.MyTerminalControlComboBoxItem> 角色列表实体_UC { get; } = new List<VRage.ModAPI.MyTerminalControlComboBoxItem>()
         {
             new VRage.ModAPI.MyTerminalControlComboBoxItem() {Key= (int)ControllerRole.None,Value=MyStringId.GetOrCompute(ControllerRole.None.ToString())},
@@ -119,18 +119,18 @@ namespace SuperBlocks.Controller
         private bool Airbrake(IMyTerminalBlock Me)
         {
             if (Me != this.Me) return false;
+            var atmo = MyPlanetInfoAPI.GetAtmoEffect(Me.GetPosition()).HasValue;
             bool brake = Override_HandBrake ?? Controller?.HandBrake ?? false;
-            if (brake) return true;
+            if (brake) return atmo;
             switch (Role)
             {
                 case ControllerRole.Aeroplane:
                 case ControllerRole.VTOL:
                 case ControllerRole.SpaceShip:
-                    var atmo = MyPlanetInfoAPI.GetAtmoEffect(Me.GetPosition());
-                    if (ForwardOrUp) return (target_speed <= 0 || ((MoveIndication * Vector3.Backward).Dot(Vector3.Backward) > 0)) && atmo.HasValue;
-                    return Vector3.IsZero(MoveIndication);
+                    if (ForwardOrUp) return (target_speed <= 0 || ((MoveIndication * Vector3.Backward).Dot(Vector3.Backward) > 0)) && atmo;
+                    return Vector3.IsZero(MoveIndication) && atmo;
                 case ControllerRole.Helicopter:
-                    return Vector3.IsZero(MoveIndication);
+                    return Vector3.IsZero(MoveIndication) && atmo;
                 default:
                     return false;
             }
@@ -149,24 +149,24 @@ namespace SuperBlocks.Controller
     {
         public void CAngularDampener_R_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"x{MathHelper.RoundOn2(AngularDampeners_Roll)}"); }
         public float CAngularDampener_R(IMyTerminalBlock Me) { if (Me == this.Me) return AngularDampeners_Roll; return 1; }
-        public void CAngularDampener_R(IMyTerminalBlock Me, float value) { if (Me == this.Me) AngularDampeners_Roll = value; }
-        public void CAngularDampener_R_Inc(IMyTerminalBlock Me) { if (Me == this.Me) AngularDampeners_Roll++; }
-        public void CAngularDampener_R_Dec(IMyTerminalBlock Me) { if (Me == this.Me) AngularDampeners_Roll--; }
+        public void CAngularDampener_R(IMyTerminalBlock Me, float value) { if (Me == this.Me) { AngularDampeners_Roll = value; SaveData(Me); } }
+        public void CAngularDampener_R_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { AngularDampeners_Roll++; SaveData(Me); } }
+        public void CAngularDampener_R_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { AngularDampeners_Roll--; SaveData(Me); } }
         public void CAngularDampener_P_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"x{MathHelper.RoundOn2(AngularDampeners_Pitch)}"); }
         public float CAngularDampener_P(IMyTerminalBlock Me) { if (Me == this.Me) return AngularDampeners_Pitch; return 1; }
-        public void CAngularDampener_P(IMyTerminalBlock Me, float value) { if (Me == this.Me) AngularDampeners_Pitch = value; }
-        public void CAngularDampener_P_Inc(IMyTerminalBlock Me) { if (Me == this.Me) AngularDampeners_Pitch++; }
-        public void CAngularDampener_P_Dec(IMyTerminalBlock Me) { if (Me == this.Me) AngularDampeners_Pitch--; }
+        public void CAngularDampener_P(IMyTerminalBlock Me, float value) { if (Me == this.Me) { AngularDampeners_Pitch = value; SaveData(Me); } }
+        public void CAngularDampener_P_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { AngularDampeners_Pitch++; SaveData(Me); } }
+        public void CAngularDampener_P_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { AngularDampeners_Pitch--; SaveData(Me); } }
         public void CAngularDampener_Y_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"x{MathHelper.RoundOn2(AngularDampeners_Yaw)}"); }
         public float CAngularDampener_Y(IMyTerminalBlock Me) { if (Me == this.Me) return AngularDampeners_Yaw; return 1; }
-        public void CAngularDampener_Y(IMyTerminalBlock Me, float value) { if (Me == this.Me) AngularDampeners_Yaw = value; }
-        public void CAngularDampener_Y_Inc(IMyTerminalBlock Me) { if (Me == this.Me) AngularDampeners_Yaw++; }
-        public void CAngularDampener_Y_Dec(IMyTerminalBlock Me) { if (Me == this.Me) AngularDampeners_Yaw--; }
+        public void CAngularDampener_Y(IMyTerminalBlock Me, float value) { if (Me == this.Me) { AngularDampeners_Yaw = value; SaveData(Me); } }
+        public void CAngularDampener_Y_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { AngularDampeners_Yaw++; SaveData(Me); } }
+        public void CAngularDampener_Y_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { AngularDampeners_Yaw--; SaveData(Me); } }
         public void CMaxiumSpeed_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{CMaxiumSpeedShow()}"); }
         public float CMaxiumSpeed(IMyTerminalBlock Me) { if (Me == this.Me) return MaximumSpeed; return 1; }
-        public void CMaxiumSpeed(IMyTerminalBlock Me, float value) { if (Me == this.Me) MaximumSpeed = value; }
-        public void CMaxiumSpeed_Inc(IMyTerminalBlock Me) { if (Me == this.Me) MaximumSpeed++; }
-        public void CMaxiumSpeed_Dec(IMyTerminalBlock Me) { if (Me == this.Me) MaximumSpeed--; }
+        public void CMaxiumSpeed(IMyTerminalBlock Me, float value) { if (Me == this.Me) { MaximumSpeed = value; SaveData(Me); } }
+        public void CMaxiumSpeed_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { MaximumSpeed++; SaveData(Me); } }
+        public void CMaxiumSpeed_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { MaximumSpeed--; SaveData(Me); } }
         private string CMaxiumSpeedShow()
         {
             switch (Role)
@@ -195,19 +195,19 @@ namespace SuperBlocks.Controller
         }
         public void MaxReactions_AngleV_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{MaxReactions_AngleV} deg/s"); }
         public float MaxReactions_AngleV_Getter(IMyTerminalBlock Me) { if (Me == this.Me) return MaxReactions_AngleV; return 1; }
-        public void MaxReactions_AngleV_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) MaxReactions_AngleV = value; }
-        public void MaxReactions_AngleV_Inc(IMyTerminalBlock Me) { if (Me == this.Me) MaxReactions_AngleV++; }
-        public void MaxReactions_AngleV_Dec(IMyTerminalBlock Me) { if (Me == this.Me) MaxReactions_AngleV--; }
+        public void MaxReactions_AngleV_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) { MaxReactions_AngleV = value; SaveData(Me); } }
+        public void MaxReactions_AngleV_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { MaxReactions_AngleV++; SaveData(Me); } }
+        public void MaxReactions_AngleV_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { MaxReactions_AngleV--; SaveData(Me); } }
         public void SafetyStage_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{SafetyStage}"); }
         public float SafetyStage_Getter(IMyTerminalBlock Me) { if (Me == this.Me) return SafetyStage; return 1; }
-        public void SafetyStage_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) SafetyStage = value; }
-        public void SafetyStage_Inc(IMyTerminalBlock Me) { if (Me == this.Me) SafetyStage++; }
-        public void SafetyStage_Dec(IMyTerminalBlock Me) { if (Me == this.Me) SafetyStage--; }
+        public void SafetyStage_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) { SafetyStage = value; SaveData(Me); } }
+        public void SafetyStage_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { SafetyStage++; SaveData(Me); } }
+        public void SafetyStage_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { SafetyStage--; SaveData(Me); } }
         public void LocationSensetive_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{LocationSensetive}"); }
         public float LocationSensetive_Getter(IMyTerminalBlock Me) { if (Me == this.Me) return LocationSensetive; return 1; }
-        public void LocationSensetive_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) LocationSensetive = value; }
-        public void LocationSensetive_Inc(IMyTerminalBlock Me) { if (Me == this.Me) LocationSensetive++; }
-        public void LocationSensetive_Dec(IMyTerminalBlock Me) { if (Me == this.Me) LocationSensetive--; }
+        public void LocationSensetive_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) { LocationSensetive = value; SaveData(Me); } }
+        public void LocationSensetive_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { LocationSensetive++; SaveData(Me); } }
+        public void LocationSensetive_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { LocationSensetive--; SaveData(Me); } }
         public void Override_ForwardDirection_Setter(IMyTerminalBlock Me, Vector3D? Vector) { if (Me == this.Me) ForwardDirectionOverride = Vector; }
         public Vector3D? Override_ForwardDirection_Getter(IMyTerminalBlock Me) { if (Me == this.Me) return ForwardDirectionOverride; return null; }
         public void Override_PlaneNormal_Setter(IMyTerminalBlock Me, Vector3D? Vector) { if (Me == this.Me) PlaneNormalOverride = Vector; }

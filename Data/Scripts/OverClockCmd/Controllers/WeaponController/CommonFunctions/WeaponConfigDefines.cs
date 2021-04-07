@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using VRage.Game;
 using VRageMath;
 using static SuperBlocks.Utils;
@@ -165,6 +166,24 @@ namespace SuperBlocks
                         MyConfigs.Concurrent.ModifyProperty(Config[ConfigID], "maxtrajectorytime", data.Trajectory.MaxTrajectoryTime.ToString());
                         return;
                     }
+                }
+
+                public override string ToString()
+                {
+                    StringBuilder str = new StringBuilder();
+                    str.Clear();
+                    str.AppendLine($"Delta_t:{Delta_t}");
+                    str.AppendLine($"Delta_precious:{Delta_precious}");
+                    str.AppendLine($"Calc_t:{Calc_t}");
+                    str.AppendLine($"TimeFixed:{TimeFixed}");
+                    str.AppendLine($"RPM:{RPM}");
+                    str.AppendLine($"Range:{Range}");
+                    str.AppendLine($"Trajectory:{Trajectory.MaxTrajectory}");
+                    str.AppendLine($"AccelPerSec:{Trajectory.AccelPerSec}");
+                    str.AppendLine($"GravityMultiplier:{Trajectory.GravityMultiplier}");
+                    str.AppendLine($"InitialSpeed:{Trajectory.InitialSpeed}");
+                    str.AppendLine($"DesiredSpeed:{Trajectory.DesiredSpeed}");
+                    return str.ToString();
                 }
             }
             public struct FunctionalGroupDef

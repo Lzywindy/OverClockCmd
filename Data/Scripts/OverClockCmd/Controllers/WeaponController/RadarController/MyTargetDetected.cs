@@ -15,7 +15,14 @@ namespace SuperBlocks.Controller
         public MyTargetDetected(IMyEntity Entity, IMyTerminalBlock Detector, bool IgnoreFilter = false) : base()
         {
             this.Entity = Entity;
-            HashCode = Entity?.GetHashCode() ?? -1;
+            this.IgnoreFilter = IgnoreFilter;
+            if (!IsGrid) return;
+            InitDatas(Detector);
+        }
+        public MyTargetDetected() : base() { }
+        public void SetTarget(IMyEntity Entity, IMyTerminalBlock Detector, bool IgnoreFilter = false)
+        {
+            this.Entity = Entity;
             this.IgnoreFilter = IgnoreFilter;
             if (!IsGrid) return;
             InitDatas(Detector);
@@ -119,12 +126,12 @@ namespace SuperBlocks.Controller
         }
         #endregion
         #region 私有变量函数
-        private readonly bool IgnoreFilter;
+        private bool IgnoreFilter;
         private ConcurrentBag<IMyTerminalBlock> Blocks;
         //private List<IMyTerminalBlock> Blocks { get; } = new List<IMyTerminalBlock>();
         private IMyCubeGrid Grid => Entity as IMyCubeGrid;
         private IMyGridTerminalSystem GridTerminalSystem => (IsGrid ? MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(Grid) : null);
-        private readonly int HashCode;
+        private int HashCode => Entity?.GetHashCode() ?? -1;
         public MyPhysicsComponentBase TargetPhysical { get { if (Utils.Common.NullEntity(Entity)) return null; return Entity?.Physics; } }
         private static bool WeaponFilter(IMyTerminalBlock block) => (BasicInfoService.WcApi.HasCoreWeapon(block) || (block is IMyUserControllableGun));
         #endregion

@@ -26,9 +26,14 @@ namespace SuperBlocks.Controller
             try
             {
                 if (Utils.Common.NullEntity(Weapon)) return;
-                if (Weapon is IMyFunctionalBlock) (Weapon as IMyFunctionalBlock).Enabled = true;
                 if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
                     BasicInfoService.WcApi.ToggleWeaponFire(Weapon, Enabled, true, GetWeaponID(Weapon));
+                else
+                { 
+                    if(Enabled) (Weapon as IMyUserControllableGun).GetActionWithName(@"Shoot_On")?.Apply(Weapon);
+                    else (Weapon as IMyUserControllableGun).GetActionWithName(@"Shoot_Off")?.Apply(Weapon);
+                }
+                  
             }
             catch (Exception) { }
         }
@@ -37,9 +42,10 @@ namespace SuperBlocks.Controller
             try
             {
                 if (Utils.Common.NullEntity(Weapon)) return;
-                if (Weapon is IMyFunctionalBlock) (Weapon as IMyFunctionalBlock).Enabled = true;
                 if (BasicInfoService.WcApi.HasCoreWeapon(Weapon))
                     BasicInfoService.WcApi.FireWeaponOnce(Weapon, true, GetWeaponID(Weapon));
+                else
+                    (Weapon as IMyUserControllableGun).GetActionWithName(@"ShootOnce")?.Apply(Weapon);
             }
             catch (Exception) { }
         }
@@ -93,7 +99,6 @@ namespace SuperBlocks.Controller
             center /= Gun_Rotor_Group.Value.Count;
             return new MyTuple<Vector3D?, Vector3D?>(direction * Vector3D.Distance(center, Gun_Rotor_Group.Key.GetPosition()), center);//Get arm of force and it force point
         }
-        internal static bool ActiveRotorBasicFilter(IMyMotorStator block) => block?.TopGrid != null;
         internal static MyWeaponParametersConfig? GetWeaponCoreDefinition(IMyTerminalBlock block, string AmmoName)
         {
             if (!BasicInfoService.WeaponInfos.ContainsKey(block.BlockDefinition.SubtypeId)) return null;
@@ -108,6 +113,42 @@ namespace SuperBlocks.Controller
                 Range = ammo.MaxTrajectory,
                 Trajectory = ammo
             };
+        }
+        public static bool ActiveRotorBasicFilter(IMyMotorStator block) => !Utils.Common.NullEntity(block?.TopGrid);
+        public static void RotorSetDefault(IMyGridTerminalSystem GridTerminalSystem, long MotorID, float Max_Speed = 30, float Multipy = 1) => RotorSetDefault(Utils.Common.ID2Motor(GridTerminalSystem, MotorID), Max_Speed, Multipy);
+        public static void RotorsSetDefault(IMyGridTerminalSystem GridTerminalSystem, ICollection<long> Motors, float Max_Speed = 30, float Multipy = 1)
+        {
+            if (Utils.Common.IsNullCollection(Motors)) return;
+            foreach (var Motor in Motors) { RotorSetDefault(GridTerminalSystem, Motor, Max_Speed, Multipy); }
+        }
+        public static void RotorRunning(IMyGridTerminalSystem GridTerminalSystem, long MotorID, float value, float Multipy = 1)
+        {
+            var motor = Utils.Common.ID2Motor(GridTerminalSystem, MotorID);
+            if (Utils.Common.NullEntity(motor) || !ActiveRotorBasicFilter(motor)) return;
+            motor.TargetVelocityRad = RotorRunning(motor, value, Multipy);
+        }
+        public static void RotorSetDefault<T>(T Motor, float Max_Speed = 30, float Multipy = 1) where T : IMyMotorStator
+        {
+            if (!ActiveRotorBasicFilter(Motor)) return;
+            Motor.TargetVelocityRad = -MathHelper.Clamp(MathHelper.WrapAngle(Motor.Angle), -Max_Speed, Max_Speed);
+        }
+        public static float RotorRunning<T>(T Motor, float value, float Multipy = 1) where T : IMyMotorStator
+        {
+            var upper = Motor.UpperLimitRad;
+            var lower = Motor.LowerLimitRad;
+            if (value > 0)
+            {
+                if (upper >= float.MaxValue) return value;
+                if (Motor.Angle >= upper) return 0;
+                return value * Multipy;
+            }
+            else if (value < 0)
+            {
+                if (lower <= float.MinValue) return value;
+                if (Motor.Angle <= lower) return 0;
+                return value * Multipy;
+            }
+            return 0;
         }
     }
 }

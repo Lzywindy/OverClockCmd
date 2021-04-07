@@ -33,34 +33,22 @@ namespace SuperBlocks.Controller
         }
         public MyTargetDetected GetTheMostThreateningTarget(IMyTerminalBlock RequstBlock)
         {
-            try
-            {
-                if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
-                var ent_tgs = TargetsList.Where(tg => tg.GetDistance(RequstBlock) < Range)?.ToList();
-                if (Utils.Common.IsNullCollection(ent_tgs)) return null;
-                if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
-                else return TargetsList.FirstOrDefault();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
+            var ent_tgs = TargetsList.AsParallel().Where(tg => tg.GetDistance(RequstBlock) < Range)?.ToList();
+            if (Utils.Common.IsNullCollection(ent_tgs)) return null;
+            if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
+            else if (TargetsList.Count == 1) return TargetsList.First();
+            else return null;
 
         }
         public MyTargetDetected GetTheMostThreateningTarget(IMyTerminalBlock RequstBlock, Func<MyTargetDetected, bool> TargetFilter = null)
         {
-            try
-            {
-                if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
-                var ent_tgs = TargetsList.Where(tg => (tg.GetDistance(RequstBlock) < Range) && (TargetFilter?.Invoke(tg) ?? true))?.ToList();
-                if (Utils.Common.IsNullCollection(ent_tgs)) return null;
-                if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
-                else return TargetsList.FirstOrDefault();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            if (RequstBlock == null || Utils.Common.IsNullCollection(TargetsList)) return null;
+            var ent_tgs = TargetsList.AsParallel().Where(tg => (tg.GetDistance(RequstBlock) < Range) && (TargetFilter?.Invoke(tg) ?? true))?.ToList();
+            if (Utils.Common.IsNullCollection(ent_tgs)) return null;
+            if (TargetsList.Count > 1) return TargetsList.ToList()?.MinBy(tg => (float)tg.Priority(RequstBlock));
+            else if (TargetsList.Count == 1) return TargetsList.First();
+            else return null;
         }
         public List<Sandbox.ModAPI.Ingame.MyDetectedEntityInfo> GetDetectedEntities(IMyTerminalBlock RequstBlock)
         {
@@ -76,36 +64,25 @@ namespace SuperBlocks.Controller
         }
         public void UpdateScanning(IMyTerminalBlock CtrlBlock)
         {
-            try
-            {
-                if (Utils.Common.NullEntity(CtrlBlock) || Range < 50)
-                {
-                    _DetectedEntities = new ConcurrentBag<MyEntity>();
-                    TargetsList = new ConcurrentBag<MyTargetDetected>();
-                    return;
-                }
-                BoundingSphereD bounding = new BoundingSphereD(CtrlBlock.GetPosition(), Range);
-                List<MyEntity> entities = new List<MyEntity>();
-                MyGamePruningStructure.GetAllTopMostEntitiesInSphere(ref bounding, entities);
-                if (Utils.Common.IsNullCollection(entities)) return;
-                _DetectedEntities = new ConcurrentBag<MyEntity>(entities);
-                var 敌人 = entities.Where(t => Utils.MyTargetEnsureAPI.IsEnemy(t, CtrlBlock));
-                if (Utils.Common.IsNullCollection(敌人)) return;
-                TargetsList = new ConcurrentBag<MyTargetDetected>(敌人.ToList().ConvertAll(t => new MyTargetDetected(t, CtrlBlock)));
-            }
-            catch (Exception) { }
+            if (Utils.Common.NullEntity(CtrlBlock) || Range < 50) { _DetectedEntities = new ConcurrentBag<MyEntity>(); TargetsList = new ConcurrentBag<MyTargetDetected>(); return; }
+            BoundingSphereD bounding = new BoundingSphereD(CtrlBlock.GetPosition(), Range);
+            List<MyEntity> entities = new List<MyEntity>();
+            MyGamePruningStructure.GetAllTopMostEntitiesInSphere(ref bounding, entities);
+            if (Utils.Common.IsNullCollection(entities)) return;
+            _DetectedEntities = new ConcurrentBag<MyEntity>(entities);
+            var enm = entities.Where(t => Utils.MyTargetEnsureAPI.IsEnemy(t, CtrlBlock));
+            if (Utils.Common.IsNullCollection(enm)) return;
+            var Targets = enm.ToList()?.ConvertAll(t => new MyTargetDetected(t, CtrlBlock));
+            if (Utils.Common.IsNullCollection(Targets)) return;
+            TargetsList = new ConcurrentBag<MyTargetDetected>(Targets);
         }
         public void UpdateScanning(IMyEntity Me)
         {
-            try
-            {
-                var grid = Me?.GetTopMostParent() as IMyCubeGrid;
-                if (Utils.Common.NullEntity(grid)) return;
-                var block = Utils.MyRadarSubtypeIdHelper.GetFarestDetectedBlock(grid);
-                range = Utils.MyRadarSubtypeIdHelper.DetectedRangeBlock(block) * 1.5f;
-                UpdateScanning(block);
-            }
-            catch (Exception) { }
+            var grid = Me?.GetTopMostParent() as IMyCubeGrid;
+            if (Utils.Common.NullEntity(grid)) return;
+            var block = Utils.MyRadarSubtypeIdHelper.GetFarestDetectedBlock(grid);
+            range = Utils.MyRadarSubtypeIdHelper.DetectedRangeBlock(block) * 1.5f;
+            UpdateScanning(block);
         }
         public int EnemyCount => TargetsList?.Count ?? 0;
         public float Range => range;

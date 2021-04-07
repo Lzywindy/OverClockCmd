@@ -170,10 +170,12 @@
     <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.AdvanceFucntions.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.PrivateSignals.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretControllerService.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretScript.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\MyWeaponAndTurretApi.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyStaticWeaponBinding.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyWeaponBinding.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\WeaponSelector.cs" />
     <Compile Include="SupportApis\Shield\ShieldApi.cs" />
     <Compile Include="SupportApis\Water\Water.cs" />
     <Compile Include="SupportApis\Water\WaterModAPI.cs" />
@@ -219,6 +221,7 @@
     <Compile Include="SupportApis\WeaponThread\script\WeaponCoreApi.cs" />
     <Compile Include="SupportApis\WeaponThread\script\WeaponStructure.cs" />
     <Compile Include="UsefulFunctions\Utils\Utils.MyRadarSubtypeIdHelper.cs" />
+    <Compile Include="UsefulFunctions\WeaponDB\WeaponDatas.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\WeaponController\FixedWeaponController\" />

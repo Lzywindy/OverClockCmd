@@ -108,14 +108,14 @@ namespace SuperBlocks.Controller
             base.UpdateBeforeSimulation100();
             try
             {
-                if (!EnabledRunning) return;
                 try { OnRunning100?.Invoke(); } catch (Exception) { }
+                if (!EnabledRunning) { return; }
                 if (UpdateFrequency == Sandbox.ModAPI.Ingame.UpdateFrequency.None) return;
                 if (UpdateFrequency.HasFlag(Sandbox.ModAPI.Ingame.UpdateFrequency.Update100))
                     Main("", Sandbox.ModAPI.Ingame.UpdateType.Update100);
             }
             catch (Exception) { EnabledRunning = false; }
-            try { OnRestart?.Invoke(); } catch (Exception) { }
+            try { Restart(Me); } catch (Exception) { }
         }
         public sealed override void Close()
         {
@@ -138,8 +138,8 @@ namespace SuperBlocks.Controller
     }
     public partial class MyGridProgram4ISConvert
     {
-        public void TriggleEnabled(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return; Enabled.Value = !Enabled.Value; }
-        public void EnabledSetter(IMyTerminalBlock Me, bool value) { if (!EnabledGUI(Me)) return; Enabled.Value = value; }
+        public void TriggleEnabled(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return; Enabled.Value = !Enabled.Value; SaveData(Me); }
+        public void EnabledSetter(IMyTerminalBlock Me, bool value) { if (!EnabledGUI(Me)) return; Enabled.Value = value; SaveData(Me); }
         public bool EnabledGetter(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return false; return Enabled.Value; }
         public void Restart(IMyTerminalBlock Me) { if (!EnabledGUI(Me)) return; try { UpdateGridGroup(); OnRestart?.Invoke(); LoadData(Me); SaveData(Me); Program(); EnabledRunning = true; } catch (Exception) { EnabledRunning = false; } }
         public void LoadData(IMyTerminalBlock Me) { if (EnabledGUI(Me)) { Configs.Clear(); MyConfigs.Concurrent.CustomDataConfigRead_INI(Me, Configs); LoadData(); } }

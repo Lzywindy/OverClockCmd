@@ -11,12 +11,14 @@ using static SuperBlocks.Definitions.Structures;
 
 namespace SuperBlocks.Controller
 {
-    public sealed partial class MyTurretBinding
+    public sealed partial class MyTurretBinding : IEquatable<MyTurretBinding>, IEqualityComparer<MyTurretBinding>
     {
         public MyTurretBinding(IMyMotorStator MotorAz)
         {
             if (Utils.Common.NullEntity(MotorAz)) return;
             this.MotorAz = MotorAz;
+            HashCode = this.MotorAz.EntityId.GetHashCode();
+            EntityID = this.MotorAz.EntityId;
             BasicInit(this.MotorAz);
             ReadConfig_Turret_Rotors();
         }
@@ -84,16 +86,25 @@ namespace SuperBlocks.Controller
                 RemoveEmptyBlocks();
                 MotorAz.Enabled = RotorsEnabled;
                 foreach (var motorEv in motorEvs) { motorEv.Enabled = RotorsEnabled; }
-                var fire = AutoFire && Enabled && RotorsEnabled && CanFire(DefaultConfig.Delta_precious);
-                SetFire(fire);
-                if (!Enabled || !CanRunning) { RunningDefault(); return; }
+                if (!Enabled || !CanRunning) { RunningDefault(); SetFire(false); return; }
                 if (UnderControl)
                 {
                     RunningManual(Utils.Common.GetT<IMyShipController>(MotorAz, block => block.IsUnderControl)?.RotationIndicator);
+                    SetFire(false);
                 }
-                else if (ManuelOnly) { RunningDefault(); }
+                else if (ManuelOnly) { RunningDefault(); SetFire(false); }
                 else
                 {
+                    ReferWeapon();
+                    var Direction = MyTargetPredict.CalculateDirection_TargetTest(MotorAz, Weapons, AimTarget, ref ModifiedConfig);
+                    if (InRangeDirection(Direction))
+                        RunningDirection(Direction);
+                    else
+                    {
+                        RunningDefault();
+                    }
+                    bool fire = AutoFire && Enabled && RotorsEnabled && MyTargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons, Direction, DefaultConfig.Delta_precious);
+                    SetFire(fire);
                     RunningAutoAimAt(MotorAz);
                     RunningAutoFire(fire);
                 }
@@ -107,11 +118,36 @@ namespace SuperBlocks.Controller
             BasicInit(MotorAz);
             ReadConfig_Turret_Rotors();
         }
-        public MyTargetDetected AimTarget { get { return TargetPredict.TargetLocked; } set { TargetPredict.TargetLocked = value; } }
+        public MyTargetDetected AimTarget { get; set; }
         public volatile bool AutoFire = false;
         public volatile bool Enabled = false;
         public volatile bool RotorsEnabled = true;
-        public Vector3D? PredictDirection => TargetPredict.Direction;
+        public override int GetHashCode()
+        {
+            return HashCode;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj.GetHashCode() == HashCode;
+        }
+
+        public bool Equals(MyTurretBinding other)
+        {
+            return other.HashCode == HashCode;
+        }
+
+        public bool Equals(MyTurretBinding x, MyTurretBinding y)
+        {
+            return x.HashCode == y.HashCode;
+        }
+
+        public int GetHashCode(MyTurretBinding obj)
+        {
+            return obj.HashCode;
+        }
+        public readonly long EntityID = -1;
+        private volatile int HashCode = -1;
     }
     public sealed partial class MyTurretBinding
     {
@@ -172,13 +208,11 @@ namespace SuperBlocks.Controller
 
             //if (TargetPredictTask.Item == null) TargetPredictTask = MyAPIGateway.Parallel.StartBackground(() => { TargetPredict.CalculateDirection(Me, SlaveWeapons.CurrentWeapons, ref ModifiedConfig); });
             //if (TargetPredictTask.IsComplete) TargetPredictTask.Execute();
-
-            TargetPredict.CalculateDirection(Me, SlaveWeapons.CurrentWeapons, ref ModifiedConfig);
-            if (InRangeDirection(TargetPredict.Direction))
-                RunningDirection(TargetPredict.Direction);
+            var Direction = MyTargetPredict.CalculateDirection_TargetTest(Me, Weapons, AimTarget, ref ModifiedConfig);
+            if (InRangeDirection(Direction))
+                RunningDirection(Direction);
             else
             {
-                TargetPredict.Clear();
                 RunningDefault();
             }
         }
@@ -254,8 +288,8 @@ namespace SuperBlocks.Controller
                 foreach (var CurrentWeapon in SlaveWeapons.CurrentWeapons)
                 {
                     if (!BasicInfoService.WcApi.HasCoreWeapon(CurrentWeapon)) continue;
-                    if (Utils.Common.NullEntity(TargetPredict.TargetLocked?.Entity)) continue;
-                    BasicInfoService.WcApi.SetWeaponTarget(CurrentWeapon, TargetPredict.TargetLocked.Entity, MyWeaponAndTurretApi.GetWeaponID(CurrentWeapon));
+                    if (Utils.Common.NullEntity(AimTarget?.Entity)) continue;
+                    BasicInfoService.WcApi.SetWeaponTarget(CurrentWeapon, AimTarget.Entity, MyWeaponAndTurretApi.GetWeaponID(CurrentWeapon));
                 }
             }
             SetWeaponAmmos(WeaponName, AmmoName);
@@ -309,12 +343,10 @@ namespace SuperBlocks.Controller
         public bool CanRunning => (!(Utils.Common.NullEntity(MotorAz) || Utils.Common.IsNullCollection(motorEvs_WTs)));
         private bool ManuelOnly => Utils.Common.IsNullCollection(Weapons) && CanManuel;
         private bool UnderControl => CanManuel && !Utils.Common.NullEntity(ControlledCamera);
-        private MyTargetPredict TargetPredict { get; } = new MyTargetPredict();
         private Utils.FireWeaponManage SlaveWeapons { get; } = new Utils.FireWeaponManage();
         private IMyCameraBlock ControlledCamera { get { if (Utils.Common.IsNullCollection(Cameras)) return null; IMyCameraBlock cameraBlock = Cameras.FirstOrDefault(b => b.IsActive); return cameraBlock; } }
 
         private bool CanManuel => !Utils.Common.IsNullCollection(Cameras);
-        private bool CanFire(float Precious = 0.00001f) => TargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons, Precious);
         private float Mult { get { if (!UnderControl) return 0; return MathHelper.Clamp(MyAPIGateway.Session.Camera.FovWithZoom, 0.00001f, 0.5f); } }
     }
     public sealed partial class MyTurretBinding

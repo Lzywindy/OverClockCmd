@@ -55,7 +55,7 @@ namespace SuperBlocks.Controller
                 bool CtrlOrCruise = HoverMode || (Ctrl != Vector3.Zero);
                 UpdateTargetSealevel();
                 target_speed = MathHelper.Clamp(HandBrake ? 0 : (Ctrl != Vector3.Zero) ? ForwardOrUp ? LinearVelocity.Dot(Forward) : 0 : target_speed, 0, MaximumSpeed);
-                ThrustControllerSystem.Running(Me, InThisEntity, CtrlOrCruise ? Ctrl : Vector3.Forward, (!ForwardOrUp), EnabledAllDirection, (!EnabledThrusters), CtrlOrCruise ? MaximumSpeed : target_speed, diffsealevel, true);
+                ThrustControllerSystem.Running(Me, InThisEntity, CtrlOrCruise ? Ctrl : Vector3.Forward, (!ForwardOrUp), EnabledAllDirection || (MyPlanetInfoAPI.GetAtmoEffect(Me.GetPosition()) == null), (!EnabledThrusters), CtrlOrCruise ? MaximumSpeed : target_speed, diffsealevel, true);
             }
         }
         protected override void LoadData()
@@ -169,8 +169,23 @@ namespace SuperBlocks.Controller
             };
             OnRunning100 += () =>
             {
-                if (UniversalControllerManage.IsMainController(Me)) return;
-                Me.CustomData = UniversalControllerManage.GetRegistControllerBlockConfig(Me);
+                if (UniversalControllerManage.IsMainController(Me))
+                {
+                    Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
+                    ThrustControllerSystem.ForceUpdate(Me, InThisEntity);
+                    GyroControllerSystem.ForceUpdate(Me, InThisEntity);
+                    WheelsController.ForceUpdate(Me, InThisEntity);
+                    AutoCloseDoorController.UpdateBlocks(GridTerminalSystem);
+                    RotorThrustRotorCtrl.UpdateBinding(Me, InThisEntity);
+                    UpdateState();
+                    _Role_OnValueChanged();
+                    Overclocked_Reactors_OnValueChanged();
+                    Overclocked_GasGenerators_OnValueChanged();
+                    Overclocked_Thrusts_OnValueChanged();
+                    Overclocked_Gyros_OnValueChanged();
+                }
+                else
+                    Me.CustomData = UniversalControllerManage.GetRegistControllerBlockConfig(Me);
             };
         }
         protected override void ClosedBlock()

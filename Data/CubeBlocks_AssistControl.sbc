@@ -93,7 +93,7 @@
 				<TypeId>TerminalBlock</TypeId>
 				<SubtypeId>TurretController</SubtypeId>
 			</Id>
-			<DisplayName>Universal Controller</DisplayName>
+			<DisplayName>Turret Controller</DisplayName>
 			<Icon>Textures\GUI\Icons\Cubes\RemoteControl.dds</Icon>
 			<Description>This controller is an Turret controller, which can control a group of Rotor Turrets. </Description>
 			<CubeSize>Large</CubeSize>

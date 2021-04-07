@@ -23,6 +23,8 @@ namespace SuperBlocks.Controller
         private ConcurrentBag<MyTurretBinding> Turrets;
         private MyBlockGroupService BlockGroupService { get; } = new MyBlockGroupService();
 
+        private volatile bool IsTargetUpdating = false;
+
         private bool IsTurretBase(IMyMotorStator Motor)
         {
             var str = Motor.BlockDefinition.SubtypeId.ToLower();
@@ -54,15 +56,10 @@ namespace SuperBlocks.Controller
                 Turret.AutoFire = AutoFire.Value;
                 Turret.RotorsEnabled = Enabled.Value;
                 Turret.Enabled = TurretEnabled.Value;
-                if (!TurretEnabled.Value || !Enabled.Value) { Turret.AimTarget = null; }
-                else
-                {
-                    Turret.AimTarget = UsingWeaponCoreTracker.Value ? new MyTargetDetected(BasicInfoService.WcApi.GetAiFocus(Me.CubeGrid), Me, true) : RadarTargets.GetTheMostThreateningTarget(Turret.MotorAz, Turret.TargetInRange_Angle);
-                }
-
+                Turret.Running();
             }
             catch (Exception) { }
-            Turret.Running();
+            
 
         }
         private static bool HasEvMotors(IMyMotorStator MotorAz)

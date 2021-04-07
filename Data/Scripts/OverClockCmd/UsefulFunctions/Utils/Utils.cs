@@ -11,6 +11,35 @@ namespace SuperBlocks
 {
     public static partial class Utils
     {
+        public struct AimParameters
+        {
+            public volatile bool IsNull;
+            public volatile float X;
+            public volatile float Y;
+            public volatile float Z;
+            public volatile float Tn;
+            public void GetValue(out Vector3D? Direction, out double? Tn)
+            {
+                Direction = null; Tn = null;
+                if (IsNull) return;
+                Direction = new Vector3D(X, Y, Z);
+                Tn = this.Tn;
+            }
+            public void SetValue(Vector3D? Direction, double? Tn)
+            {
+                IsNull = !Direction.HasValue;
+                if (IsNull) return;
+                X = (float)Direction.Value.X;
+                Y = (float)Direction.Value.Y;
+                Z = (float)Direction.Value.Z;
+                this.Tn = (float)(Tn ?? 200);
+            }
+            public Vector3D? GetDirection()
+            {
+                if (IsNull) return null;
+                return new Vector3D(X, Y, Z);
+            }
+        }
         public static Guid MyGuid { get; } = new Guid("5F1A43D3-02D3-C959-2413-5922F4EEB917");
         public static Dictionary<string, string> SolveLine(string configline)
         {

@@ -12,6 +12,9 @@ namespace SuperBlocks
     {
         public static class Common
         {
+            public static IMyMotorStator ID2Motor(IMyGridTerminalSystem GridTerminalSystem, long EntID) => GridTerminalSystem?.GetBlockWithId(EntID) as IMyMotorStator;
+            public static IMyCameraBlock ID2Camera(IMyGridTerminalSystem GridTerminalSystem, long EntID) => GridTerminalSystem?.GetBlockWithId(EntID) as IMyCameraBlock;
+            public static IMyTerminalBlock ID2Weapon(IMyGridTerminalSystem GridTerminalSystem, long EntID) => GridTerminalSystem?.GetBlockWithId(EntID) as IMyTerminalBlock;
             public static bool IsNull(Vector3? Value) => Value == null || Value.Value == Vector3.Zero;
             public static bool IsNull(Vector3D? Value) => Value == null || Value.Value == Vector3D.Zero;
             public static bool IsNullCollection<T>(ICollection<T> Value) => (Value?.Count ?? 0) < 1;
@@ -35,7 +38,7 @@ namespace SuperBlocks
                 return blocks;
             }
             public static Sandbox.ModAPI.Ingame.IMyBlockGroup GetBg(IMyTerminalBlock block, Func<Sandbox.ModAPI.Ingame.IMyBlockGroup, bool> requst = null) { List<IMyBlockGroup> Items = GetTs<IMyBlockGroup>(block, requst); if (IsNullCollection(Items)) return null; else return Items.First(); }
-            public static List<Sandbox.ModAPI.Ingame.IMyBlockGroup> GetBgs(IMyTerminalBlock block, Func<Sandbox.ModAPI.Ingame.IMyBlockGroup, bool> requst = null)  { List<Sandbox.ModAPI.Ingame.IMyBlockGroup> Items = new List<Sandbox.ModAPI.Ingame.IMyBlockGroup>(); if (block == null || block.CubeGrid == null) return Items; MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid)?.GetBlockGroups(Items, requst); return Items; }
+            public static List<Sandbox.ModAPI.Ingame.IMyBlockGroup> GetBgs(IMyTerminalBlock block, Func<Sandbox.ModAPI.Ingame.IMyBlockGroup, bool> requst = null) { List<Sandbox.ModAPI.Ingame.IMyBlockGroup> Items = new List<Sandbox.ModAPI.Ingame.IMyBlockGroup>(); if (block == null || block.CubeGrid == null) return Items; MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(block.CubeGrid)?.GetBlockGroups(Items, requst); return Items; }
             public static bool IsStaticWeapon(IMyTerminalBlock block)
             {
                 if (NullEntity(block) || !block.IsFunctional || (block is IMyLargeTurretBase)) return false;

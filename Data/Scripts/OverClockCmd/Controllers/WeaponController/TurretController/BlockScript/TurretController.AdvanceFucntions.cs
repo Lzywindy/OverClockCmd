@@ -62,7 +62,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (EnabledGUI(Me)) TurretEnabled.Value = !TurretEnabled.Value;
+                if (EnabledGUI(Me)) { TurretEnabled.Value = !TurretEnabled.Value;SaveData(Me); }
             }
             catch (Exception) { }
         }
@@ -81,6 +81,7 @@ namespace SuperBlocks.Controller
             {
                 if (!EnabledGUI(Me)) return;
                 TurretEnabled.Value = value;
+                SaveData(Me);
             }
             catch (Exception) { }
         }
@@ -88,7 +89,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (EnabledGUI(Me)) UsingWeaponCoreTracker.Value = !UsingWeaponCoreTracker.Value;
+                if (EnabledGUI(Me)) { UsingWeaponCoreTracker.Value = !UsingWeaponCoreTracker.Value; SaveData(Me); }
             }
             catch (Exception) { }
         }
@@ -105,7 +106,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (EnabledGUI(Me)) UsingWeaponCoreTracker.Value = value;
+                if (EnabledGUI(Me)) { UsingWeaponCoreTracker.Value = value; SaveData(Me); }
             }
             catch (Exception) { }
         }
@@ -113,7 +114,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (EnabledGUI(Me)) AutoFire.Value = !AutoFire.Value;
+                if (EnabledGUI(Me)) { AutoFire.Value = !AutoFire.Value; SaveData(Me); }
             }
             catch (Exception) { }
         }
@@ -130,7 +131,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (EnabledGUI(Me)) AutoFire.Value = value;
+                if (EnabledGUI(Me)) { AutoFire.Value = value; SaveData(Me); }
             }
             catch (Exception) { }
         }
@@ -149,6 +150,7 @@ namespace SuperBlocks.Controller
             {
                 if (!EnabledGUI(Me)) return;
                 RangeMultiply = MathHelper.Clamp(value, 0.001f, 1f);
+                SaveData(Me);
             }
             catch (Exception) { }
         }
@@ -158,6 +160,7 @@ namespace SuperBlocks.Controller
             {
                 if (!EnabledGUI(Me)) return;
                 RangeMultiply = MathHelper.Clamp(RangeMultiply += 0.1f, 0.001f, 1f);
+                SaveData(Me);
             }
             catch (Exception) { }
         }
@@ -167,6 +170,7 @@ namespace SuperBlocks.Controller
             {
                 if (!EnabledGUI(Me)) return;
                 RangeMultiply = MathHelper.Clamp(RangeMultiply -= 0.1f, 0.001f, 1f);
+                SaveData(Me);
             }
             catch (Exception) { }
         }
