@@ -86,27 +86,29 @@ namespace SuperBlocks.Controller
                 RemoveEmptyBlocks();
                 MotorAz.Enabled = RotorsEnabled;
                 foreach (var motorEv in motorEvs) { motorEv.Enabled = RotorsEnabled; }
-                if (!Enabled || !CanRunning) { RunningDefault(); SetFire(false); return; }
+                if (!Enabled || !CanRunning) { RunningDefault(); RunningAutoFire(false); return; }
                 if (UnderControl)
                 {
                     RunningManual(Utils.Common.GetT<IMyShipController>(MotorAz, block => block.IsUnderControl)?.RotationIndicator);
-                    SetFire(false);
+                    RunningAutoFire(false);
                 }
-                else if (ManuelOnly) { RunningDefault(); SetFire(false); }
+                else if (ManuelOnly) { RunningDefault(); RunningAutoFire(false); }
                 else
                 {
                     ReferWeapon();
                     var Direction = MyTargetPredict.CalculateDirection_TargetTest(MotorAz, Weapons, AimTarget, ref ModifiedConfig);
                     if (InRangeDirection(Direction))
+                    {
+                        bool fire = AutoFire && Enabled && RotorsEnabled && MyTargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons, Direction, DefaultConfig.Delta_precious);
                         RunningDirection(Direction);
+                        RunningAutoAimAt(MotorAz);
+                        RunningAutoFire(fire);
+                    }
                     else
                     {
                         RunningDefault();
-                    }
-                    bool fire = AutoFire && Enabled && RotorsEnabled && MyTargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons, Direction, DefaultConfig.Delta_precious);
-                    SetFire(fire);
-                    RunningAutoAimAt(MotorAz);
-                    RunningAutoFire(fire);
+                        RunningAutoFire(false);
+                    }                    
                 }
             }
             catch (Exception) { }
@@ -154,24 +156,16 @@ namespace SuperBlocks.Controller
         private void RunningAutoFire(bool FireWeapons)
         {
             if (BasicInfoService.WcApi.HasCoreWeapon(SlaveWeapons.CurrentWeapons?.FirstOrDefault()))
+            {
+                SlaveWeapons.SetFire(FireWeapons);
                 SlaveWeapons.RunningAutoFire(FireWeapons);
+            }
             else
             {
                 var block = Utils.Common.GetT<IMyTimerBlock>(MotorAz, b => b.CustomName.Contains("weapon") && b.CubeGrid == MotorAz.TopGrid);
                 if (block == null) return;
                 block.Enabled = FireWeapons;
                 if (FireWeapons) block.Trigger();
-            }
-        }
-        private void SetFire(bool FireWeapons)
-        {
-            if (BasicInfoService.WcApi.HasCoreWeapon(SlaveWeapons.CurrentWeapons?.FirstOrDefault()))
-                SlaveWeapons.SetFire(FireWeapons);
-            else
-            {
-                var block = Utils.Common.GetT<IMyTimerBlock>(MotorAz, b => b.CustomName.Contains("weapon") && b.CubeGrid == MotorAz.TopGrid);
-                if (block == null) return;
-                block.Enabled = FireWeapons; if (FireWeapons) block.Trigger();
             }
         }
         private void RunningDefault() => MotorsRunningDefault();
