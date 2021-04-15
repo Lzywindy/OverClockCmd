@@ -10,10 +10,10 @@
 
 
 
-![太空工程师MOD制作计划(1)](.\OverClockCmd\Figures\太空工程师MOD制作计划(1).jpg)
+![太空工程师MOD制作计划(1)](OverClockCmd/Figures/太空工程师MOD制作计划(1).jpg)
 
 Figure 1.预计要做的模组和机制。
 
-![太空工程师MOD制作计划(2)](.\OverClockCmd\Figures\太空工程师MOD制作计划(2).jpg)
+![太空工程师MOD制作计划(2)](OverClockCmd/Figures/太空工程师MOD制作计划(2).jpg)
 
 Figure 2.MOD中控制器的设计以及一些用户操作界面设计。
