@@ -43,55 +43,37 @@ namespace SuperBlocks.Controller
                 TurretRegister.RegistControllerBlock(Me);
                 UpdateState();
                 if (Common.NullEntity(Me)) return;
-                if (Common.IsNullCollection(Configs))
-                    LoadData(Me);
-                if (Me.CustomData.Length < 1)
-                    SaveData(Me);
+                if (Common.IsNullCollection(Configs)) LoadData(Me);
+                if (Me.CustomData.Length < 1) SaveData(Me);
                 Range = MyRadarSubtypeIdHelper.DetectedRangeBlock(MyRadarSubtypeIdHelper.GetFarestDetectedBlock(Me.CubeGrid));
                 BlockGroupService.Init(Me);
                 HashSet<MyTurretBinding> _Turrets = new HashSet<MyTurretBinding>();
-                if (!Common.IsNullCollection(Turrets))
-                {
-                    foreach (var Turret in Turrets)
-                    {
-                        if (Common.NullEntity(Turret.MotorAz)) continue;
-                        _Turrets.Add(Turret);
-                    }
-                }
+                HashSet<IMyMotorStator> _Turrets_Base = new HashSet<IMyMotorStator>();
+                if (!Common.IsNullCollection(Turrets)) { foreach (var Turret in Turrets) { if (Common.NullEntity(Turret.MotorAz)) continue; _Turrets.Add(Turret); _Turrets_Base.Add(Turret.MotorAz); } }
                 var motors = Common.GetTs<IMyMotorStator>(Me, az => HasEvMotors(az) && InThisEntity(az) && IsTurretBase(az));
                 if (Common.IsNullCollection(motors)) { Turrets = null; return; }
-                foreach (var motor in motors)
-                {
-                    if (!_Turrets.Add(new MyTurretBinding(motor))) continue;
-                }
+                foreach (var motor in motors) { if (!_Turrets_Base.Contains(motor)) _Turrets.Add(new MyTurretBinding(motor)); }
                 Turrets = new ConcurrentBag<MyTurretBinding>(_Turrets);
+                foreach (var Turret in Turrets) { Turret.Restart(); }
             };
             OnRunning1 += () =>
             {
-                if (!TurretRegister.IsMainController(Me)) return;
+                if (!TurretRegister.IsMainController(Me) || Common.IsNullCollection(Turrets)) return;
                 MyAPIGateway.Parallel.ForEach(Turrets, Turret => UpdateTurrets(Turret));
-                //foreach (var Turret in Turrets)
-                //{
-                //    UpdateTurrets(Turret);
-                //}
+                if (!Enabled.Value) { Turrets = null; }
             };
             OnRunning10 += () =>
             {
-                if (!TurretRegister.IsMainController(Me)) return;
+                if (!TurretRegister.IsMainController(Me) || Common.IsNullCollection(Turrets)) return;
                 updatecounts = (updatecounts + 1) % 10;
-                //if (updatecounts % 5 == 0) RadarTargets.UpdateScanning(Me?.GetTopMostParent());
                 if (!IsTargetUpdating) MyAPIGateway.Parallel.Start(TargetUpdating);
-                //if (RadarScanner.Item == null) RadarScanner = MyAPIGateway.Parallel.StartBackground(() => { RadarTargets.UpdateScanning(Me?.GetTopMostParent()); });
-                //if (RadarScanner.IsComplete) RadarScanner.Execute();
                 if (updatecounts % 8 == 0) { UpdateBindings(); }
                 if (updatecounts % 9 == 0) { foreach (var Turret in Turrets) Turret.ReadConfig_Turret_Rotors(); }
             };
             OnRunning100 += () =>
              {
-                 if (TurretRegister.IsMainController(Me))
-                     foreach (var Turret in Turrets) Turret.Restart();
-                 else
-                     Me.CustomData = TurretRegister.GetRegistControllerBlockConfig(Me);
+                 if (TurretRegister.IsMainController(Me)) return;
+                 Me.CustomData = TurretRegister.GetRegistControllerBlockConfig(Me);
                  Try2AttachTops();
              };
             Enabled.OnValueChanged += Enabled_OnValueChanged;
@@ -107,7 +89,10 @@ namespace SuperBlocks.Controller
             {
                 IsTargetUpdating = true;
                 RadarTargets.UpdateScanning(Me?.GetTopMostParent());
-                MyAPIGateway.Parallel.ForEach(Turrets, Turret => {
+                if (Common.IsNullCollection(Turrets)) return;
+                MyAPIGateway.Parallel.ForEach(Turrets, Turret =>
+                {
+
                     if (!TurretEnabled.Value || !Enabled.Value) { Turret.AimTarget = null; }
                     else
                     {
@@ -135,7 +120,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                if (Common.IsNullCollection(Turrets)) return;
+                if (Common.IsNullCollection(Turrets)) { OnRestart?.Invoke(); return; }
                 foreach (var Turret in Turrets) { Turret.RotorsEnabled = Enabled.Value; }
             }
             catch (System.Exception) { }

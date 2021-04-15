@@ -23,14 +23,15 @@ namespace SuperBlocks
                     gyro.GyroStrengthMultiplier = mult;
                 }
             }
-            public void SetEnabled(bool Enabled) { if (gyros == null || gyros.Count < 1) return; foreach (var gyro in gyros) gyro.Enabled = Enabled; }
+            public void SetEnabled(bool Enabled) { if (gyros == null || gyros.Count < 1) return; foreach (var gyro in gyros) if (gyro.Enabled != Enabled) gyro.Enabled = Enabled; }
             public void GyrosOverride(IMyTerminalBlock Me, Func<IMyTerminalBlock, bool> InThisEntity, Vector3? RotationIndicate)
             {
                 if (Common.IsNull(Me) || InThisEntity == null) return;
                 if (Common.IsNullCollection(gyros)) return;
                 foreach (var gyro in gyros)
                 {
-                    gyro.GyroOverride = RotationIndicate.HasValue && (Me != null);
+                    var ov = RotationIndicate.HasValue && (Me != null);
+                    if (ov != gyro.GyroOverride) gyro.GyroOverride = ov;
                     if (Me == null) gyro.Roll = gyro.Yaw = gyro.Pitch = 0;
                 }
                 if (!RotationIndicate.HasValue) return;

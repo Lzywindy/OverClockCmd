@@ -14,7 +14,8 @@ namespace SuperBlocks
             public static void RotorSetDefault<T>(T Motor, float Max_Speed = 30) where T : Sandbox.ModAPI.Ingame.IMyMotorStator
             {
                 if (Motor == null || Motor.TopGrid == null) return;
-                Motor.TargetVelocityRad = -MathHelper.Clamp(MathHelper.WrapAngle(Motor.Angle), -Max_Speed, Max_Speed);
+                var angle = -MathHelper.Clamp(MathHelper.WrapAngle(Motor.Angle), -Max_Speed, Max_Speed);
+                Motor.TargetVelocityRad = MathHelper.IsZero(angle, 1e-4f) ? 0 : angle;
             }
             public static void RotorsSetDefault<T>(ICollection<T> Motors, float Max_Speed = 30) where T : Sandbox.ModAPI.Ingame.IMyMotorStator
             {
@@ -25,8 +26,11 @@ namespace SuperBlocks
             {
                 var upper = Motor.UpperLimitRad;
                 var lower = Motor.LowerLimitRad;
+                bool isZero = MathHelper.IsZero(value, 1e-4f);
+                if (isZero) return 0;
                 if (value > 0)
                 {
+
                     if (upper >= float.MaxValue) return value;
                     if (Motor.Angle >= upper) return 0;
                     return value;

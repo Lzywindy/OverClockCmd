@@ -198,12 +198,12 @@ namespace SuperBlocks.Controller
         public void MaxReactions_AngleV_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) { MaxReactions_AngleV = value; SaveData(Me); } }
         public void MaxReactions_AngleV_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { MaxReactions_AngleV++; SaveData(Me); } }
         public void MaxReactions_AngleV_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { MaxReactions_AngleV--; SaveData(Me); } }
-        public void SafetyStage_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{SafetyStage}"); }
+        public void SafetyStage_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{SafetyStage * 100}%"); }
         public float SafetyStage_Getter(IMyTerminalBlock Me) { if (Me == this.Me) return SafetyStage; return 1; }
         public void SafetyStage_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) { SafetyStage = value; SaveData(Me); } }
         public void SafetyStage_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { SafetyStage++; SaveData(Me); } }
         public void SafetyStage_Dec(IMyTerminalBlock Me) { if (Me == this.Me) { SafetyStage--; SaveData(Me); } }
-        public void LocationSensetive_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{LocationSensetive}"); }
+        public void LocationSensetive_Writter(IMyTerminalBlock Me, StringBuilder value) { if (Me != this.Me) return; value.Clear(); value.Append($"{LocationSensetive * 100}%"); }
         public float LocationSensetive_Getter(IMyTerminalBlock Me) { if (Me == this.Me) return LocationSensetive; return 1; }
         public void LocationSensetive_Setter(IMyTerminalBlock Me, float value) { if (Me == this.Me) { LocationSensetive = value; SaveData(Me); } }
         public void LocationSensetive_Inc(IMyTerminalBlock Me) { if (Me == this.Me) { LocationSensetive++; SaveData(Me); } }
@@ -310,8 +310,62 @@ namespace SuperBlocks.Controller
         private static CreateTerminalSliderBar<IMyTerminalBlock> ResistYawCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("ResistYawID", "Resist Yaw", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 0, 20);
         private static CreateTerminalFence<IMyTerminalBlock> Fence_4 { get; } = new CreateTerminalFence<IMyTerminalBlock>(Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false);
         private static CreateTerminalSliderBar<IMyTerminalBlock> MaxiumSpeedLimitedCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("MaxiumSpeedLimitedID", "Maxium Speed Limited:", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 1, 3e8f);
-        private static CreateTerminalSliderBar<IMyTerminalBlock> MaxReactions_AngleVCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("MaxReactions_AngleVID", "Maxium RSC Speed:", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 1, 3e8f);
-        private static CreateTerminalSliderBar<IMyTerminalBlock> SafetyStageCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("SafetyStageID", "Safety Stage:", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 1, 3e8f);
-        private static CreateTerminalSliderBar<IMyTerminalBlock> LocationSensetiveCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("LocationSensetiveID", "Location Sensetive:", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 1, 3e8f);
+        private static CreateTerminalSliderBar<IMyTerminalBlock> MaxReactions_AngleVCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("MaxReactions_AngleVID", "Maxium RSC Speed:", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 1, 90f);
+        private static CreateTerminalSliderBar<IMyTerminalBlock> SafetyStageCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("SafetyStageID", "Safety Percentage:", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 0, 1);
+        private static CreateTerminalSliderBar<IMyTerminalBlock> LocationSensetiveCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("LocationSensetiveID", "Location Sensetive Percentage:", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, 0, 1);
+    }
+    public partial class UniversalController
+    {
+        private bool WarpEnabled(IMyTerminalBlock Me) => EnabledGUI(Me) && GetEnabled_Warp();
+
+        public bool WarpMode(IMyTerminalBlock Me) { try { if (WarpEnabled(Me)) return _WarpEnabled_Signal; } catch (Exception) { } return false; }
+        public void WarpMode(IMyTerminalBlock Me, bool value) { try { if (WarpEnabled(Me)) { _WarpEnabled_Signal = value; SaveData(Me); } } catch (Exception) { } }
+        public void TriggleWarpMode(IMyTerminalBlock Me) { try { if (WarpEnabled(Me)) { _WarpEnabled_Signal = !_WarpEnabled_Signal; SaveData(Me); } } catch (Exception) { } }
+        public void CWarpMode_Acc_Writter(IMyTerminalBlock Me, StringBuilder value) { if (!WarpEnabled(Me)) return; value.Clear(); value.Append($"{MathHelper.RoundOn2(WarpAcc)}m/(s^2)"); }
+        public float CWarpMode_Acc(IMyTerminalBlock Me) { if (WarpEnabled(Me)) return WarpAcc; return 1; }
+        public void CWarpMode_Acc(IMyTerminalBlock Me, float value) { if (WarpEnabled(Me)) { WarpAcc = value; SaveData(Me); } }
+        public void CWarpMode_Acc_Inc(IMyTerminalBlock Me) { if (WarpEnabled(Me)) { WarpAcc++; SaveData(Me); } }
+        public void CWarpMode_Acc_Dec(IMyTerminalBlock Me) { if (WarpEnabled(Me)) { WarpAcc--; SaveData(Me); } }
+
+
+        private static void LoadupInterface_UniversalController_Warp()
+        {
+            /*====================TriggerFunc Hook==================================================*/
+            WarpModeCtrl.TriggerFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.TriggleWarpMode(Me);
+            WarpModeAccCtrl.IncreaseFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.CWarpMode_Acc_Inc(Me);
+            WarpModeAccCtrl.DecreaseFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.CWarpMode_Acc_Dec(Me);
+            /*====================GetterFunc Hook===================================================*/
+            WarpModeCtrl.GetterFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.WarpMode(Me) ?? false;
+            WarpModeAccCtrl.GetterFunc = (Me) => Me?.GameLogic?.GetAs<UniversalController>()?.CWarpMode_Acc(Me) ?? 1;
+            /*====================SetterFunc Hook===================================================*/
+            WarpModeCtrl.SetterFunc = (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.WarpMode(Me, value);
+            WarpModeAccCtrl.SetterFunc = (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.CWarpMode_Acc(Me, value);
+            /*====================WritterFunc Hook==================================================*/
+            WarpModeAccCtrl.WriterFunc = (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.CWarpMode_Acc_Writter(Me, value);
+            /*=======================Terminal Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomControlGetter += Fence_5.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter += WarpModeCtrl.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter += WarpModeAccCtrl.CreateController;
+            /*=========================Action Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomActionGetter += WarpModeCtrl.CreateAction;
+            MyAPIGateway.TerminalControls.CustomActionGetter += WarpModeAccCtrl.CreateAction;
+            /*=========================Property Hook==================================================*/
+            CreateProperty.CreateProperty_PB_CN<bool, IMyTerminalBlock>($"{CtrlNM}WarpMode", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, Me => Me?.GameLogic?.GetAs<UniversalController>()?.WarpMode(Me) ?? false, (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.WarpMode(Me, value));
+            CreateProperty.CreateProperty_PB_CN<float, IMyTerminalBlock>($"{CtrlNM}WarpModeAcc", Me => Me?.GameLogic?.GetAs<UniversalController>()?.EnabledGUI(Me) ?? false, Me => Me?.GameLogic?.GetAs<UniversalController>()?.CWarpMode_Acc(Me) ?? 1, (Me, value) => Me?.GameLogic?.GetAs<UniversalController>()?.CWarpMode_Acc(Me, value));
+
+        }
+        private static void UnloadInterface_UniversalController_Warp()
+        {
+            /*=======================Terminal Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomControlGetter -= Fence_5.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter -= WarpModeCtrl.CreateController;
+            MyAPIGateway.TerminalControls.CustomControlGetter -= WarpModeAccCtrl.CreateController;
+            /*=========================Action Hook==================================================*/
+            MyAPIGateway.TerminalControls.CustomActionGetter -= WarpModeCtrl.CreateAction;
+            MyAPIGateway.TerminalControls.CustomActionGetter -= WarpModeAccCtrl.CreateAction;
+        }
+        private static CreateTerminalFence<IMyTerminalBlock> Fence_5 { get; } = new CreateTerminalFence<IMyTerminalBlock>(Me => Me?.GameLogic?.GetAs<UniversalController>()?.WarpEnabled(Me) ?? false);
+        private static CreateTerminalSwitch<IMyTerminalBlock> WarpModeCtrl { get; } = new CreateTerminalSwitch<IMyTerminalBlock>("WarpModeID", "Warp Enabled", Me => Me?.GameLogic?.GetAs<UniversalController>()?.WarpEnabled(Me) ?? false);
+        private static CreateTerminalSliderBar<IMyTerminalBlock> WarpModeAccCtrl { get; } = new CreateTerminalSliderBar<IMyTerminalBlock>("WarpModeAccID", "Warp Mode Acc", Me => Me?.GameLogic?.GetAs<UniversalController>()?.WarpEnabled(Me) ?? false, 1, 4e4f);
     }
 }

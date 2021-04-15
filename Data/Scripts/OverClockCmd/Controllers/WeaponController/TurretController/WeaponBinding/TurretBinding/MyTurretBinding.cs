@@ -85,34 +85,38 @@ namespace SuperBlocks.Controller
             {
                 RemoveEmptyBlocks();
                 MotorAz.Enabled = RotorsEnabled;
-                foreach (var motorEv in motorEvs) { motorEv.Enabled = RotorsEnabled; }
-                if (!Enabled || !CanRunning) { RunningDefault(); RunningAutoFire(false); return; }
+                foreach (var motorEv in MotorEvs) motorEv.Enabled = RotorsEnabled;
+                if (!Enabled || !CanRunning || !RotorsEnabled) { RunningDefault(); RunningAutoFire(false); return; }
+                Vector3D? Direction = null;
+                bool fire = AutoFire && Enabled && RotorsEnabled;
                 if (UnderControl)
                 {
                     RunningManual(Utils.Common.GetT<IMyShipController>(MotorAz, block => block.IsUnderControl)?.RotationIndicator);
                     RunningAutoFire(false);
+                    return;
                 }
-                else if (ManuelOnly) { RunningDefault(); RunningAutoFire(false); }
+                else if (ManuelOnly)
+                {
+                    RunningDefault();
+                    RunningAutoFire(false);
+                }
                 else
                 {
                     ReferWeapon();
-                    var Direction = MyTargetPredict.CalculateDirection_TargetTest(MotorAz, Weapons, AimTarget, ref ModifiedConfig);
+                    SlaveWeapons.ResetFireRPM(DefaultConfig.RPM);
+                    Direction = MyTargetPredict.CalculateDirection_TargetTest(MotorAz, Weapons, AimTarget, ref ModifiedConfig);
                     if (InRangeDirection(Direction))
                     {
-                        bool fire = AutoFire && Enabled && RotorsEnabled && MyTargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons, Direction, DefaultConfig.Delta_precious);
+                        fire = AutoFire && Enabled && RotorsEnabled && MyTargetPredict.CanFireWeapon(SlaveWeapons.CurrentWeapons, Direction, DefaultConfig.Delta_precious);
                         RunningDirection(Direction);
                         RunningAutoAimAt(MotorAz);
-                        RunningAutoFire(fire);
+                        RunningAutoFire(fire); return;
                     }
-                    else
-                    {
-                        RunningDefault();
-                        RunningAutoFire(false);
-                    }                    
+                    RunningDefault();
+                    RunningAutoFire(false);
                 }
             }
             catch (Exception) { }
-
         }
 
         public void Restart()
@@ -150,87 +154,9 @@ namespace SuperBlocks.Controller
         }
         public readonly long EntityID = -1;
         private volatile int HashCode = -1;
-    }
-    public sealed partial class MyTurretBinding
-    {
-        private void RunningAutoFire(bool FireWeapons)
-        {
-            if (BasicInfoService.WcApi.HasCoreWeapon(SlaveWeapons.CurrentWeapons?.FirstOrDefault()))
-            {
-                SlaveWeapons.SetFire(FireWeapons);
-                SlaveWeapons.RunningAutoFire(FireWeapons);
-            }
-            else
-            {
-                var block = Utils.Common.GetT<IMyTimerBlock>(MotorAz, b => b.CustomName.Contains("weapon") && b.CubeGrid == MotorAz.TopGrid);
-                if (block == null) return;
-                block.Enabled = FireWeapons;
-                if (FireWeapons) block.Trigger();
-            }
-        }
-        private void RunningDefault() => MotorsRunningDefault();
-        private void RunningDirection(Vector3D? Direction)
-        {
-            if (!CanRunning || Direction == null) { MotorsRunningDefault(); return; }
-            float TurretRotor_Torque = 0;
-            foreach (var Gun_Rotor_Group in motorEvs_WTs)
-            {
-                var data = MyWeaponAndTurretApi.Get_ArmOfForce_Point(Gun_Rotor_Group);
-                TurretRotor_Torque += MyWeaponAndTurretApi.GetTorque(MotorAz, data, Direction, _Multipy);
-                Gun_Rotor_Group.Key.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(Gun_Rotor_Group.Key, MyWeaponAndTurretApi.RotorDampener(MyWeaponAndTurretApi.GetTorque(Gun_Rotor_Group.Key, data, Direction, _Multipy * 1.4f), Gun_Rotor_Group.Key.TargetVelocityRad, _Max_AV_ev));
-            }
-            TurretRotor_Torque /= motorEvs_WTs.Count;
-            MotorAz.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(MotorAz, MyWeaponAndTurretApi.RotorDampener(TurretRotor_Torque, MotorAz.TargetVelocityRad, _Max_AV_az));
-        }
-        private void RunningManual(Vector2? Rotation)
-        {
-            if (!CanRunning || Rotation == null) { MotorsRunningDefault(); return; }
-            var finalCtrl = Vector2.Clamp(Rotation.Value * Mult, -_MaxSpeed, _MaxSpeed);
-            MotorAz.TargetVelocityRad = finalCtrl.Y;
-            var MD = MotorAz.TopGrid.WorldMatrix.Left;
-            var TurretEvs = motorEvs_WTs.Keys.ToList();
-            if (Utils.Common.IsNullCollection(TurretEvs)) return;
-            var MountEv = TurretEvs[0];
-            MountEv.TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(MountEv, MathHelper.Clamp(-finalCtrl.X * (float)MD.Dot(TurretEvs[0].WorldMatrix.Up), -_Max_AV_ev, _Max_AV_ev));// MathHelper.Clamp(-finalCtrl.X * (float)MD.Dot(TurretEvs[0].WorldMatrix.Up), -Config.max_ev, Config.max_ev);
-            for (int index = 1; index < TurretEvs.Count; index++)
-                TurretEvs[index].TargetVelocityRad = Utils.MyRotorAPI.RotorRunning(TurretEvs[index], MathHelper.Clamp((MathHelper.WrapAngle(Math.Sign(TurretEvs[0].WorldMatrix.Up.Dot(TurretEvs[index].WorldMatrix.Up)) * MountEv.Angle) - MathHelper.WrapAngle(TurretEvs[index].Angle)) * 35, _Max_AV_ev, _Max_AV_ev));
 
-        }
-        private void RunningAutoAimAt(IMyTerminalBlock Me)
-        {
-            ReferWeapon();
 
-            //if (TargetPredictTask.Item == null) TargetPredictTask = MyAPIGateway.Parallel.StartBackground(() => { TargetPredict.CalculateDirection(Me, SlaveWeapons.CurrentWeapons, ref ModifiedConfig); });
-            //if (TargetPredictTask.IsComplete) TargetPredictTask.Execute();
-            var Direction = MyTargetPredict.CalculateDirection_TargetTest(Me, Weapons, AimTarget, ref ModifiedConfig);
-            if (InRangeDirection(Direction))
-                RunningDirection(Direction);
-            else
-            {
-                RunningDefault();
-            }
-        }
-        private void MotorsRunningDefault()
-        {
-            Utils.MyRotorAPI.RotorSetDefault(MotorAz, _Max_AV_az);
-            Utils.MyRotorAPI.RotorsSetDefault(motorEvs_WTs?.Keys?.ToList(), _Max_AV_ev);
-        }
-        private void RemoveEmptyMotorEvs()
-        {
-            var motors = motorEvs_WTs.Keys.Where(Utils.Common.NullEntity);
-            if (Utils.Common.IsNullCollection(motors)) return;
-            foreach (var motor in motors) motorEvs_WTs.Remove(motor);
-
-        }
-        private void RemoveEmptyBlocks()
-        {
-            RemoveEmptyMotorEvs();
-            Cameras.RemoveWhere(Utils.Common.NullEntity);
-            Weapons.RemoveWhere(Utils.Common.NullEntity);
-        }
         public void CycleWeapons() { }
-
-        private Task TargetPredictTask;
     }
     public sealed partial class MyTurretBinding
     {
@@ -238,43 +164,18 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                Cameras.Clear(); Weapons.Clear(); motorEvs.Clear(); motorEvs_WTs.Clear();
+                Cameras.Clear(); Weapons.Clear(); MotorEvs.Clear();
+                //motorEvs_WTs.Clear();
                 if (MyWeaponAndTurretApi.ActiveRotorBasicFilter(motorAz))
                     MotorAz = motorAz;
                 else
                     MotorAz = null;
-                if (Utils.Common.NullEntity(MotorAz)) return;
-                motorEvs.UnionWith(Utils.Common.GetTs<IMyMotorStator>(MotorAz, b => b.TopGrid != null && b.CubeGrid == MotorAz.TopGrid && Math.Abs(MotorAz.TopGrid.WorldMatrix.Left.Dot(b.WorldMatrix.Up)) > 0.985));
-                if (Utils.Common.IsNullCollection(motorEvs)) return;
-                foreach (var ev in motorEvs) { motorEvs_WTs.Add(ev, new HashSet<IMyTerminalBlock>()); }
-                foreach (var ev_motor in motorEvs)
-                {
-                    if (Utils.Common.NullEntity(ev_motor) || (!MyWeaponAndTurretApi.ActiveRotorBasicFilter(ev_motor))) continue;
-                    var weapons = Utils.Common.GetTs<IMyTerminalBlock>(ev_motor, b => b.CubeGrid == ev_motor.TopGrid && Utils.Common.IsStaticWeapon(b));
-                    var cameras = Utils.Common.GetTs<IMyCameraBlock>(ev_motor, b => b.CubeGrid == ev_motor.TopGrid);
-                    if (!Utils.Common.IsNullCollection(weapons)) Weapons.UnionWith(weapons);
-                    if (!Utils.Common.IsNullCollection(cameras)) Cameras.UnionWith(cameras);
-                    if (!Utils.Common.IsNullCollection(weapons))
-                    {
-                        if (!motorEvs_WTs.ContainsKey(ev_motor))
-                            motorEvs_WTs.Add(ev_motor, new HashSet<IMyTerminalBlock>(weapons));
-                        motorEvs_WTs[ev_motor].UnionWith(weapons);
-                    }
-                    else if (!Utils.Common.IsNullCollection(cameras))
-                    {
-                        if (!motorEvs_WTs.ContainsKey(ev_motor))
-                            motorEvs_WTs.Add(ev_motor, new HashSet<IMyTerminalBlock>(weapons));
-                        motorEvs_WTs[ev_motor].UnionWith(weapons);
-                    }
-                }
-                ReferWeapon();
+                UpdateBinding();
             }
             catch (Exception) { Clear(); }
         }
         private void ReferWeapon()
         {
-            string WeaponName = Definitions.ConfigName.WeaponDef.DefaultWeapon;
-            string AmmoName = Definitions.ConfigName.ProjectileDef.DefaultAmmo;
             SlaveWeapons.ResetFireRPM(DefaultConfig.RPM);
             if (SlaveWeapons.UnabledFire) SlaveWeapons.LoadCurrentWeapons(Weapons, DefaultConfig.RPM);
             if (!SlaveWeapons.UnabledFire)
@@ -286,42 +187,14 @@ namespace SuperBlocks.Controller
                     BasicInfoService.WcApi.SetWeaponTarget(CurrentWeapon, AimTarget.Entity, MyWeaponAndTurretApi.GetWeaponID(CurrentWeapon));
                 }
             }
-            SetWeaponAmmos(WeaponName, AmmoName);
+            SetWeaponAmmos();
         }
-        //private void WeaponsInit(MyTurretConfig Config)
-        //{
-        //    var evs = motorEvs_WTs.Keys;
-        //    Cameras.Clear();
-        //    Weapons.Clear();
-        //    foreach (var ev_motor in evs)
-        //    {
-        //        if (Utils.Common.NullEntity(ev_motor) || (!MyWeaponAndTurretApi.ActiveRotorBasicFilter(ev_motor))) continue;
-        //        var weapons = Utils.Common.GetTs<IMyTerminalBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(ev_motor.TopGrid), b => b.CubeGrid == ev_motor.TopGrid && Utils.Common.IsStaticWeapon(b));
-        //        var cameras = Utils.Common.GetTs<IMyCameraBlock>(MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(ev_motor.TopGrid), b => b.CubeGrid == ev_motor.TopGrid);
-        //        if (!Utils.Common.IsNullCollection(weapons)) Weapons.AddRange(weapons);
-        //        if (!Utils.Common.IsNullCollection(cameras)) Cameras.AddRange(cameras);
-        //        if (!Utils.Common.IsNullCollection(weapons))
-        //        {
-        //            if (!motorEvs_WTs.ContainsKey(ev_motor))
-        //                motorEvs_WTs.Add(ev_motor, new HashSet<IMyTerminalBlock>(weapons));
-        //            motorEvs_WTs[ev_motor].UnionWith(weapons);
-        //        }
-        //        else if (!Utils.Common.IsNullCollection(cameras))
-        //        {
-        //            if (!motorEvs_WTs.ContainsKey(ev_motor))
-        //                motorEvs_WTs.Add(ev_motor, new HashSet<IMyTerminalBlock>(weapons));
-        //            motorEvs_WTs[ev_motor].UnionWith(weapons);
-        //        }
-        //    }
-        //    ReferWeapon();
-        //}
-        private void SetWeaponAmmos(string WeaponName, string AmmoName)
+        private void SetWeaponAmmos()
         {
             if (Utils.Common.IsNullCollection(SlaveWeapons.CurrentWeapons)) return;
             var weapon = SlaveWeapons.CurrentWeapons.FirstOrDefault();
             if (Utils.Common.NullEntity(weapon) || !BasicInfoService.WcApi.HasCoreWeapon(weapon)) return;
-            WeaponName = weapon.BlockDefinition.SubtypeId;
-            AmmoName = BasicInfoService.WcApi.GetActiveAmmo(weapon, MyWeaponAndTurretApi.GetWeaponID(weapon));
+            string AmmoName = BasicInfoService.WcApi.GetActiveAmmo(weapon, MyWeaponAndTurretApi.GetWeaponID(weapon));
             if (Utils.Common.IsNull(AmmoName)) return;
             foreach (var wp in SlaveWeapons.CurrentWeapons) BasicInfoService.WcApi.SetActiveAmmo(wp, MyWeaponAndTurretApi.GetWeaponID(wp), AmmoName);
             var value = MyWeaponAndTurretApi.GetWeaponCoreDefinition(weapon, AmmoName);
@@ -334,7 +207,7 @@ namespace SuperBlocks.Controller
     {
         private MyWeaponParametersConfig DefaultConfig = default(MyWeaponParametersConfig);
         private MyWeaponParametersConfig ModifiedConfig = default(MyWeaponParametersConfig);
-        public bool CanRunning => (!(Utils.Common.NullEntity(MotorAz) || Utils.Common.IsNullCollection(motorEvs_WTs)));
+        public bool CanRunning => (!(Utils.Common.NullEntity(MotorAz) || Utils.Common.IsNullCollection(MotorEvs)));
         private bool ManuelOnly => Utils.Common.IsNullCollection(Weapons) && CanManuel;
         private bool UnderControl => CanManuel && !Utils.Common.NullEntity(ControlledCamera);
         private Utils.FireWeaponManage SlaveWeapons { get; } = new Utils.FireWeaponManage();
@@ -420,37 +293,37 @@ namespace SuperBlocks.Controller
                         MotorAz.UpperLimitRad = float.MaxValue;
                     }
                 }
-                if (!Utils.Common.IsNullCollection(motorEvs_WTs))
+                if (!Utils.Common.IsNullCollection(MotorEvs))
                 {
                     if (_EvLimit && !Utils.Common.IsNull(MotorAz?.TopGrid))
                     {
-                        foreach (var motorEvs_WT in motorEvs_WTs)
+                        foreach (var MotorEv in MotorEvs)
                         {
-                            var sign = Math.Sign(MotorAz.TopGrid.WorldMatrix.Left.Dot(motorEvs_WT.Key.WorldMatrix.Up));
+                            var sign = Math.Sign(MotorAz.TopGrid.WorldMatrix.Left.Dot(MotorEv.WorldMatrix.Up));
                             if (sign > 0)
                             {
-                                motorEvs_WT.Key.LowerLimitRad = MathHelper.ToRadians(_EvLowerLimit);
-                                motorEvs_WT.Key.UpperLimitRad = MathHelper.ToRadians(_EvUpperLimit);
+                                MotorEv.LowerLimitRad = MathHelper.ToRadians(_EvLowerLimit);
+                                MotorEv.UpperLimitRad = MathHelper.ToRadians(_EvUpperLimit);
                             }
                             else if (sign < 0)
                             {
-                                motorEvs_WT.Key.LowerLimitRad = MathHelper.ToRadians(_EvUpperLimit) * sign;
-                                motorEvs_WT.Key.UpperLimitRad = MathHelper.ToRadians(_EvLowerLimit) * sign;
+                                MotorEv.LowerLimitRad = MathHelper.ToRadians(_EvUpperLimit) * sign;
+                                MotorEv.UpperLimitRad = MathHelper.ToRadians(_EvLowerLimit) * sign;
                             }
                             else
                             {
-                                motorEvs_WT.Key.LowerLimitRad = 0;
-                                motorEvs_WT.Key.UpperLimitRad = 0;
+                                MotorEv.LowerLimitRad = 0;
+                                MotorEv.UpperLimitRad = 0;
                             }
 
                         }
                     }
                     else
                     {
-                        foreach (var motorEvs_WT in motorEvs_WTs)
+                        foreach (var MotorEv in MotorEvs)
                         {
-                            motorEvs_WT.Key.LowerLimitRad = float.MinValue;
-                            motorEvs_WT.Key.UpperLimitRad = float.MaxValue;
+                            MotorEv.LowerLimitRad = float.MinValue;
+                            MotorEv.UpperLimitRad = float.MaxValue;
                         }
                     }
                 }
@@ -478,52 +351,11 @@ namespace SuperBlocks.Controller
     {
 
         private IMyGridTerminalSystem GridTerminalSystem { get { if (Utils.Common.NullEntity(MotorAz?.CubeGrid)) return null; return MyAPIGateway.TerminalActionsHelper.GetTerminalSystemForGrid(MotorAz.CubeGrid); } }
-        private HashSet<IMyCameraBlock> Cameras { get; } = new HashSet<IMyCameraBlock>();
-        private HashSet<IMyTerminalBlock> Weapons { get; } = new HashSet<IMyTerminalBlock>();
-        public IMyMotorStator MotorAz { get; private set; }
-        private HashSet<IMyMotorStator> motorEvs { get; set; } = new HashSet<IMyMotorStator>();
-        private Dictionary<IMyMotorStator, HashSet<IMyTerminalBlock>> motorEvs_WTs { get; } = new Dictionary<IMyMotorStator, HashSet<IMyTerminalBlock>>();
+
+        //private Dictionary<IMyMotorStator, HashSet<IMyTerminalBlock>> motorEvs_WTs { get; } = new Dictionary<IMyMotorStator, HashSet<IMyTerminalBlock>>();
         private Dictionary<string, HashSet<IMyTerminalBlock>> WeaponKinds { get; } = new Dictionary<string, HashSet<IMyTerminalBlock>>();
         private List<string> WeaponKindsNM => WeaponKinds.Keys.ToList();
         private string CurrentWeaponNM;
-
-        //private void GetTurretParts()
-        //{
-        //    if (Utils.Common.NullEntity(motorAz?.CubeGrid) || Utils.Common.NullEntity(motorAz?.TopGrid)) return;
-        //    Cameras.Clear();
-        //    Weapons.Clear();
-        //    motorEvs.Clear();
-        //    motorEvs_WTs.Clear();
-        //    WeaponKinds.Clear();
-        //    GridTerminalSystem?.GetBlocksOfType(motorEvs, UsefulRotorEvs);
-        //    if (Utils.Common.IsNullCollection(motorEvs)) return;
-        //    HashSet<IMyTerminalBlock> AllTipBlocks = new HashSet<IMyTerminalBlock>();
-        //    foreach (var motorEv in motorEvs)
-        //    {
-        //        if (!motorEvs_WTs.ContainsKey(motorEv))
-        //            motorEvs_WTs.Add(motorEv, new HashSet<IMyTerminalBlock>());
-        //        var weapons = Utils.Common.GetTs<IMyTerminalBlock>(GridTerminalSystem, b => b.CubeGrid == motorEv.TopGrid && Utils.Common.IsStaticWeapon(b) || (b is IMyCameraBlock));
-        //        if (Utils.Common.IsNullCollection(weapons)) continue;
-        //        motorEvs_WTs[motorEv].UnionWith(weapons);
-        //        AllTipBlocks.UnionWith(weapons);
-        //    }
-        //    var weaponlist = AllTipBlocks.Where(Utils.Common.IsStaticWeapon);
-        //    if (!Utils.Common.IsNullCollection(weaponlist))
-        //        Weapons.AddRange(weaponlist);
-        //    var cameralist = AllTipBlocks.Where(b => b is IMyCameraBlock)?.ToList()?.ConvertAll(b => b as IMyCameraBlock);
-        //    if (!Utils.Common.IsNullCollection(cameralist))
-        //        Cameras.AddRange(cameralist);
-        //    ReferWeapon();
-        //    foreach (var Weapon in Weapons)
-        //    {
-        //        if (!WeaponKinds.ContainsKey(Weapon.BlockDefinition.SubtypeId))
-        //            WeaponKinds.Add(Weapon.BlockDefinition.SubtypeId, new HashSet<IMyTerminalBlock>() { Weapon });
-        //        WeaponKinds[Weapon.BlockDefinition.SubtypeId].Add(Weapon);
-        //    }
-        //    CurrentWeaponNM = WeaponKindsNM.FirstOrDefault();
-        //    if (Utils.Common.IsNull(CurrentWeaponNM)) return;
-        //}
-
 
 
         private bool UsefulRotorEvs(IMyMotorStator MotorStatorEv)
@@ -535,10 +367,12 @@ namespace SuperBlocks.Controller
         {
             Cameras.Clear();
             Weapons.Clear();
-            motorEvs.Clear();
-            motorEvs_WTs.Clear();
+            MotorEvs.Clear();
+            //motorEvs_WTs.Clear();
             WeaponKinds.Clear();
             SlaveWeapons.CurrentWeapons?.Clear();
+
         }
+        IMyProgrammableBlock FireManager;
     }
 }

@@ -43,8 +43,7 @@ namespace SuperBlocks
                     if (firegap <= 0)
                     {
                         foreach (var weapon in CurrentWeapons) MyWeaponAndTurretApi.FireWeapon(weapon, Fire);
-                        Weapons2Fire.Clear(); count = 0;
-                        return;
+                        Weapons2Fire.Clear(); count = 0; return;
                     }
                     if (!Common.IsNullCollection(Weapons2Fire)) return;
                     if (Common.IsNullCollection(Weapons2Fire) && CurrentWeapons.All(MyWeaponAndTurretApi.CanFire))
@@ -62,7 +61,7 @@ namespace SuperBlocks
                 if (Common.IsNullCollection(CurrentWeapons)) return;
                 if (BasicInfoService.WcApi.HasCoreWeapon(CurrentWeapons.FirstOrDefault()))
                 {
-                    if (!CanFire) return;
+                    if (!CanFire) { foreach (var CurrentWeapon in CurrentWeapons) { MyWeaponAndTurretApi.FireWeapon(CurrentWeapon, false); } return; }
                     if (Weapons2Fire.Count < 1) return;
                     if (!MyWeaponAndTurretApi.CanFire(Weapons2Fire.Peek())) return;
                     if (count > 0) { count--; return; }

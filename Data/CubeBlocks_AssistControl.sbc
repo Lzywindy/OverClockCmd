@@ -16,9 +16,11 @@
 			<ModelOffset x="0" y="0" z="0" />
 			<Model>Models\Cubes\Large\RemoteControl.mwm</Model>
 			<Components>
-				<Component Subtype="SteelPlate" Count="1" />
-				<Component Subtype="Construction" Count="1" />
-				<Component Subtype="Computer" Count="1" />
+				<Component Subtype="CompositeArmorPlate" Count="25" />
+				<Component Subtype="Construction" Count="10" />
+				<Component Subtype="Computer" Count="10" />
+				<Component Subtype="GravityGenerator" Count="60" />
+        		<Component Subtype="Motor" Count="60" />
 			</Components>
 			<CriticalComponent Subtype="Construction" Index="0" />
 			<MountPoints>
@@ -46,7 +48,7 @@
 				<Z>1.1</Z>
 			</DestroyEffectOffset>
 			<PCU>5</PCU>
-			<IsAirTight>false</IsAirTight>
+			<IsAirTight>true</IsAirTight>
 		</Definition>
 		<Definition>
 			<Id>
@@ -62,9 +64,11 @@
 			<ModelOffset x="0" y="0" z="0" />
 			<Model>Models\Cubes\Small\RemoteControl.mwm</Model>
 			<Components>
-				<Component Subtype="SteelPlate" Count="1" />
-				<Component Subtype="Construction" Count="1" />
-				<Component Subtype="Computer" Count="1" />
+				<Component Subtype="CompositeArmorPlate" Count="5" />
+				<Component Subtype="Construction" Count="2" />
+				<Component Subtype="Computer" Count="2" />
+				<Component Subtype="GravityGenerator" Count="12" />
+        		<Component Subtype="Motor" Count="12" />
 			</Components>
 			<CriticalComponent Subtype="Construction" Index="0" />
 			<MountPoints>
@@ -85,7 +89,7 @@
 			<EdgeType>Light</EdgeType>
 			<BuildTimeSeconds>6</BuildTimeSeconds>
 			<PCU>5</PCU>
-			<IsAirTight>false</IsAirTight>
+			<IsAirTight>true</IsAirTight>
 		</Definition>
 		<!--炮塔控制器-->
 		<Definition>
@@ -132,7 +136,7 @@
 				<Z>1.1</Z>
 			</DestroyEffectOffset>
 			<PCU>5</PCU>
-			<IsAirTight>false</IsAirTight>
+			<IsAirTight>true</IsAirTight>
 		</Definition>
 		<Definition>
 			<Id>
@@ -171,7 +175,7 @@
 			<EdgeType>Light</EdgeType>
 			<BuildTimeSeconds>6</BuildTimeSeconds>
 			<PCU>5</PCU>
-			<IsAirTight>false</IsAirTight>
+			<IsAirTight>true</IsAirTight>
 		</Definition>
 	</CubeBlocks>
 	<BlockVariantGroups>

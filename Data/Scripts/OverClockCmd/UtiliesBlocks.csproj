@@ -161,6 +161,7 @@
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateTerminalControlCombobox.cs" />
     <Compile Include="Controllers\BasicScriptController\MyGridProgram4ISService.cs" />
     <Compile Include="Controllers\BasicScriptController\MyGridProgram4ISConvert.cs" />
+    <Compile Include="Controllers\GridBlockProcess\MyGridBlocksService.cs" />
     <Compile Include="Controllers\UniversalController\UniversalController.Variables.cs" />
     <Compile Include="Controllers\UniversalController\UniversalController.CommonFucntions.cs" />
     <Compile Include="Controllers\UniversalController\UniversalController.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Controllers\WeaponController\TurretController\BlockScript\TurretController.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyStaticWeaponBinding.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyWeaponBinding.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\TurretBinding\MyTurretBinding.PrivateFunctions.cs" />
     <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\WeaponSelector.cs" />
     <Compile Include="SupportApis\Shield\ShieldApi.cs" />
     <Compile Include="SupportApis\Water\Water.cs" />
@@ -185,7 +187,8 @@
     <Compile Include="Controllers\WeaponController\CommonFunctions\MyTargetPredict.cs" />
     <Compile Include="Controllers\WeaponController\RadarController\MyRadarTargets.cs" />
     <Compile Include="BasicGameLogics\Updatings\UpdateableClass.cs" />
-    <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\MyTurretBinding.cs" />
+    <Compile Include="Controllers\WeaponController\TurretController\WeaponBinding\TurretBinding\MyTurretBinding.cs" />
+    <Compile Include="TechBlocks\SuperEnergyBattarys.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetFilterManager.cs" />
     <Compile Include="TurretController\WeaponModual\MyTargetManager.cs" />
     <Compile Include="ControlBarsAppender\TerminalActionsCreators\CreateProperty.cs" />

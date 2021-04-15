@@ -1,4 +1,5 @@
-﻿using Sandbox.ModAPI;
+﻿using Sandbox.Game.EntityComponents;
+using Sandbox.ModAPI;
 using System;
 using System.Collections.Generic;
 using VRage.Game;
@@ -15,6 +16,7 @@ namespace SuperBlocks.Controller
         protected override void CustomDataChangedProcess() { LoadData(Me); }
         private void WheelControl()
         {
+            //if (!Enabled.Value || !Powered) return;
             bool NoWheelCtrl = !(Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle);
             WheelsController.TrackVehicle = Role == ControllerRole.TrackVehicle;
             WheelsController.RetractWheels = _Dock;
@@ -22,40 +24,64 @@ namespace SuperBlocks.Controller
             WheelsController.Running(Me, InThisEntity, Enabled.Value ? NoWheelCtrl ? 0 : ThrustsControlLine.Z : 0, Enabled.Value ? NoWheelCtrl ? 0 : RotationCtrlLines.W : 0, _WheelPowerMult, HandBrake);
         }
         private void UpdateTargetSealevel() { if (IgnoreLevel) diffsealevel = 0; else { sealevel = MyPlanetInfoAPI.GetSealevel(Me.GetPosition()) ?? 0; if (!KeepLevel) _Target_Sealevel = sealevel; diffsealevel = (float)(_Target_Sealevel - sealevel) * MultAttitude; } }
-        private static float SetInRange_AngularDampeners(float data) => MathHelper.Clamp(data, 0f, 20f);
+        private static float SetInRange_AngularDampeners(float data) => MathHelper.Clamp(data, 0.01f, 20f);
         private void PoseCtrl()
         {
-            if (!Enabled.Value) { GyroControllerSystem.GyrosOverride(Me, InThisEntity, null); return; }
+            if (!Enabled.Value) return;
             Vector3? Rotation;
+            float _MaxReactions_AngleV;
             if (Role == ControllerRole.HoverVehicle || Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle)
             {
                 Rotation = PoseProcessFuncs.ProcessRotation_GroundVehicle(Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, MaxReactions_AngleV, DisabledRotation, ForwardDirectionOverride);
-                GyroControllerSystem.SetEnabled(EnabledGyros && Rotation.HasValue);
+                _MaxReactions_AngleV = 25f;
             }
             else if (Role == ControllerRole.SeaShip || Role == ControllerRole.Submarine)
             {
                 Rotation = PoseProcessFuncs.ProcessRotation_SeaVehicle(Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, MaxReactions_AngleV, DisabledRotation, ForwardDirectionOverride);
-                GyroControllerSystem.SetEnabled(EnabledGyros);
+                _MaxReactions_AngleV = 20f;
             }
             else
             {
-                Rotation = PoseProcessFuncs.ProcessRotation(_EnabledCuriser, Me, RotationCtrlLines, ref ForwardDirection, InitAngularDampener, AngularDampeners, ForwardOrUp, PoseMode, MaximumSpeed, MaxReactions_AngleV, Need2CtrlSignal, LocationSensetive, SafetyStage, IgnoreForwardVelocity, Refer2Velocity, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride);
-                GyroControllerSystem.SetEnabled(EnabledGyros);
+                Rotation = PoseProcessFuncs.ProcessRotation(_EnabledCuriser, Me, RotationCtrlLines, ref ForwardDirection, Role, InitAngularDampener, AngularDampeners, ForwardOrUp, HasWings, MaximumSpeed, MaxReactions_AngleV, SafetyStage, DisabledRotation, ForwardDirectionOverride, PlaneNormalOverride);
+                _MaxReactions_AngleV = MaxReactions_AngleV;
             }
-            GyroControllerSystem.GyrosOverride(Me, InThisEntity, Rotation ?? RotationIndication);
+            InnerGyrosController.GyrosOverride(Me, Rotation ?? RotationIndication, _MaxReactions_AngleV, LocationSensetive);
         }
         private void ThrustControl()
         {
+
             if (!Enabled.Value) { ThrustControllerSystem.RunningDefault(Me, InThisEntity); return; }
+
             if (Role == ControllerRole.TrackVehicle || Role == ControllerRole.WheelVehicle || Role == ControllerRole.HoverVehicle)
+            {
                 ThrustControllerSystem.Running(Me, InThisEntity, ThrustsControlLine, false, true, (!EnabledThrusters), MaximumSpeed, 0, true);
+                WarpThrusterController.Running(Me, ThrustsControlLine, Get_WarpEnabled(), HandBrake ? 5f : WarpAcc, MaximumSpeed, MaximumSpeed, _Dock, true, 0);
+            }
             else
             {
                 Vector3 Ctrl = ThrustsControlLine;
-                bool CtrlOrCruise = HoverMode || (Ctrl != Vector3.Zero);
+                bool CtrlLine = Ctrl != Vector3.Zero;
+                bool CtrlOrCruise = HoverMode || CtrlLine;
                 UpdateTargetSealevel();
-                target_speed = MathHelper.Clamp(HandBrake ? 0 : (Ctrl != Vector3.Zero) ? ForwardOrUp ? LinearVelocity.Dot(Forward) : 0 : target_speed, 0, MaximumSpeed);
+                target_speed = MathHelper.Clamp(Brake() ? 0 : CtrlLine ? ForwardOrUp ? LinearVelocity.Dot(Forward) : 0 : target_speed, 0, MaximumSpeed);
                 ThrustControllerSystem.Running(Me, InThisEntity, CtrlOrCruise ? Ctrl : Vector3.Forward, (!ForwardOrUp), EnabledAllDirection || (MyPlanetInfoAPI.GetAtmoEffect(Me.GetPosition()) == null), (!EnabledThrusters), CtrlOrCruise ? MaximumSpeed : target_speed, diffsealevel, true);
+                WarpThrusterController.Running(Me, CtrlOrCruise ? Ctrl : Vector3.Forward, Get_WarpEnabled(), HandBrake ? 5f : WarpAcc, CtrlLine ? MaximumSpeed : target_speed, MaximumSpeed, _Dock, !ForwardOrUp, diffsealevel);
+            }
+        }
+        private bool Brake()
+        {
+            if (Override_HandBrake ?? Controller?.HandBrake ?? false) return true;
+            switch (Role)
+            {
+                case ControllerRole.Aeroplane:
+                case ControllerRole.VTOL:
+                case ControllerRole.SpaceShip:
+                    if (ForwardOrUp) return (target_speed <= 0 || ((MoveIndication * Vector3.Backward).Dot(Vector3.Backward) > 0));
+                    return Vector3.IsZero(MoveIndication);
+                case ControllerRole.Helicopter:
+                    return Vector3.IsZero(MoveIndication);
+                default:
+                    return false;
             }
         }
         protected override void LoadData()
@@ -70,6 +96,8 @@ namespace SuperBlocks.Controller
                     case "EnabledCuriser": EnabledCuriser = MyConfigs.ParseBool(configitem.Value); break;
                     case "Dock": _Dock = MyConfigs.ParseBool(configitem.Value); break;
                     case "HoverMode": HoverMode = MyConfigs.ParseBool(configitem.Value); break;
+                    case "EnabledThrusters": EnabledThrusters = MyConfigs.ParseBool(configitem.Value); break;
+                    case "EnabledGyros": EnabledGyros = MyConfigs.ParseBool(configitem.Value); break;
                     case "AngularDampeners_Roll": AngularDampeners_Roll = MyConfigs.ParseFloat(configitem.Value); break;
                     case "AngularDampeners_Pitch": AngularDampeners_Pitch = MyConfigs.ParseFloat(configitem.Value); break;
                     case "AngularDampeners_Yaw": AngularDampeners_Yaw = MyConfigs.ParseFloat(configitem.Value); break;
@@ -82,6 +110,8 @@ namespace SuperBlocks.Controller
                     case "Role": Role = (ControllerRole)Enum.Parse(typeof(ControllerRole), configitem.Value); break;
                     case "MultAttitude": MultAttitude = MyConfigs.ParseFloat(configitem.Value); break;
                     case "WheelPowerMult": _WheelPowerMult = MathHelper.Clamp(MyConfigs.ParseFloat(configitem.Value), 0, 1); break;
+                    case "WarpEnabled": _WarpEnabled_Signal = MyConfigs.ParseBool(configitem.Value); break;
+                    case "WarpAcc": WarpAcc = MathHelper.Clamp(MyConfigs.ParseFloat(configitem.Value), 0, 4e4f); break;
                     default: break;
                 }
             }
@@ -106,6 +136,8 @@ namespace SuperBlocks.Controller
                 MyConfigs.Concurrent.ModifyProperty(data, "HasWings", HasWings.ToString());
                 MyConfigs.Concurrent.ModifyProperty(data, "EnabledCuriser", EnabledCuriser.ToString());
                 MyConfigs.Concurrent.ModifyProperty(data, "HoverMode", HoverMode.ToString());
+                MyConfigs.Concurrent.ModifyProperty(data, "EnabledThrusters", EnabledThrusters.ToString());
+                MyConfigs.Concurrent.ModifyProperty(data, "EnabledGyros", EnabledGyros.ToString());
                 MyConfigs.Concurrent.ModifyProperty(data, "AngularDampeners_Roll", AngularDampeners_Roll.ToString());
                 MyConfigs.Concurrent.ModifyProperty(data, "AngularDampeners_Pitch", AngularDampeners_Pitch.ToString());
                 MyConfigs.Concurrent.ModifyProperty(data, "AngularDampeners_Yaw", AngularDampeners_Yaw.ToString());
@@ -118,6 +150,8 @@ namespace SuperBlocks.Controller
                 MyConfigs.Concurrent.ModifyProperty(data, "Role", Role.ToString());
                 MyConfigs.Concurrent.ModifyProperty(data, "MultAttitude", MultAttitude.ToString());
                 MyConfigs.Concurrent.ModifyProperty(data, "WheelPowerMult", _WheelPowerMult.ToString());
+                MyConfigs.Concurrent.ModifyProperty(data, "WarpEnabled", _WarpEnabled_Signal.ToString());
+                MyConfigs.Concurrent.ModifyProperty(data, "WarpAcc", WarpAcc.ToString());
             }
             {
                 var data = MyConfigs.Concurrent.AddConfigBlock(Configs, OverclockedID);
@@ -132,6 +166,16 @@ namespace SuperBlocks.Controller
     {
         protected override void InitBlock()
         {
+            if (Me.ResourceSink == null)
+            {
+                ResourceSinkInfo = new MyResourceSinkInfo() { RequiredInputFunc = RunningPower_Warp, MaxRequiredInput = float.MaxValue, ResourceTypeId = MyResourceDistributorComponent.ElectricityId };
+                if (Me.Components.Get<MyResourceSinkComponent>() != null)
+                    Me.Components.Remove<MyResourceSinkComponent>();
+                var ResourceSink = new MyResourceSinkComponent();
+                ResourceSink.AddType(ref ResourceSinkInfo);
+                Me.ResourceSink = ResourceSink;
+                Me.Components.Add(Me.ResourceSink);
+            }
             _Role.OnValueChanged += _Role_OnValueChanged;
             _Role.OnValueChanged += UpdateState;
             _ForwardOrUp.OnValueChanged += OnModeChange;
@@ -143,7 +187,6 @@ namespace SuperBlocks.Controller
             {
                 Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
                 ThrustControllerSystem.ForceUpdate(Me, InThisEntity);
-                GyroControllerSystem.ForceUpdate(Me, InThisEntity);
                 WheelsController.ForceUpdate(Me, InThisEntity);
                 AutoCloseDoorController.UpdateBlocks(GridTerminalSystem);
                 RotorThrustRotorCtrl.UpdateBinding(Me, InThisEntity);
@@ -159,6 +202,7 @@ namespace SuperBlocks.Controller
             {
                 if (Me.CubeGrid.IsStatic) Role = ControllerRole.None;
                 if (!UniversalControllerManage.IsMainController(Me)) return;
+                SetPowerConsumption();
                 Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
                 PoseCtrl();
                 ThrustControl();
@@ -167,27 +211,44 @@ namespace SuperBlocks.Controller
                 RotorThrustRotorCtrl.Running(Me, HoverMode, RotationIndication.Z, MoveIndication);
                 AutoCloseDoorController.Running(GridTerminalSystem);
             };
+            OnRunning10 += () =>
+            {
+                //if (Me.ResourceSink == null) return;
+
+                //Me.ResourceSink.SetInputFromDistributor(MyResourceDistributorComponent.ElectricityId, RunningPower_Warp, true);
+
+            };
             OnRunning100 += () =>
             {
                 if (UniversalControllerManage.IsMainController(Me))
                 {
                     Controller = Common.GetT(GridTerminalSystem, (IMyShipController block) => block.IsMainCockpit || block.IsUnderControl);
+                    count = (count + 1) % 10;
+                    if (count % 10 != 0) return;
                     ThrustControllerSystem.ForceUpdate(Me, InThisEntity);
-                    GyroControllerSystem.ForceUpdate(Me, InThisEntity);
                     WheelsController.ForceUpdate(Me, InThisEntity);
                     AutoCloseDoorController.UpdateBlocks(GridTerminalSystem);
                     RotorThrustRotorCtrl.UpdateBinding(Me, InThisEntity);
                     UpdateState();
                     _Role_OnValueChanged();
-                    Overclocked_Reactors_OnValueChanged();
-                    Overclocked_GasGenerators_OnValueChanged();
-                    Overclocked_Thrusts_OnValueChanged();
-                    Overclocked_Gyros_OnValueChanged();
                 }
                 else
                     Me.CustomData = UniversalControllerManage.GetRegistControllerBlockConfig(Me);
             };
         }
+        private int count = 0;
+        private void SetPowerConsumption()
+        {
+            if (Me.ResourceSink == null) return;
+            float powerNeeded = RunningPower_Warp();
+            //Powered = Me.ResourceSink.IsPowerAvailable(MyResourceDistributorComponent.ElectricityId, powerNeeded);
+            //if (!Powered) return;
+            Me.ResourceSink.SetMaxRequiredInputByType(MyResourceDistributorComponent.ElectricityId, powerNeeded);
+            Me.ResourceSink.SetRequiredInputByType(MyResourceDistributorComponent.ElectricityId, powerNeeded);
+
+        }
+        private bool Powered { get; set; } = true;
+
         protected override void ClosedBlock()
         {
             _Role.OnValueChanged -= _Role_OnValueChanged;
@@ -228,7 +289,7 @@ namespace SuperBlocks.Controller
         {
             try
             {
-                GyroControllerSystem.SetOverclocked(Overclocked_Gyros.Value);
+                //GyroControllerSystem.SetOverclocked(Overclocked_Gyros.Value);
             }
             catch (Exception) { }
         }
@@ -249,11 +310,13 @@ namespace SuperBlocks.Controller
         {
             LoadupInterface_UniversalController_Basic();
             LoadupInterface_UniversalController_Advance();
+            LoadupInterface_UniversalController_Warp();
         }
         public static void UnloadInterface_UniversalController()
         {
             UnloadInterface_UniversalController_Basic();
             UnloadInterface_UniversalController_Advance();
+            UnloadInterface_UniversalController_Warp();
         }
     }
 }

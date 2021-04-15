@@ -139,5 +139,13 @@ namespace SuperBlocks
             foreach (var key in keys) { muzzle_projectiles_l.Add(muzzle_projectiles[key]); }
             return muzzle_projectiles_l;
         }
+        public static Vector3 GridTorqueMultipy(IMyTerminalBlock Me)
+        {
+            var vector = Me.CubeGrid.WorldAABB.Max - Me.CubeGrid.WorldAABB.Min;
+            var f = Math.Abs((float)Me.WorldMatrix.Forward.Dot(vector));
+            var r = Math.Abs((float)Me.WorldMatrix.Right.Dot(vector));
+            var u = Math.Abs((float)Me.WorldMatrix.Up.Dot(vector));
+            return (new Vector3(Math.Max(r, u), Math.Max(r, f), Math.Max(u, f))) / Me.CubeGrid.GridSize;
+        }
     }
 }

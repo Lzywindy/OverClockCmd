@@ -9,25 +9,52 @@ namespace SuperBlocks
         public static class PoseProcessFuncs
         {
             public static double? GetSealevel(IMyShipController Controller) { double value; if (Common.IsNull(Controller) || (!Controller.TryGetPlanetElevation(Sandbox.ModAPI.Ingame.MyPlanetElevation.Sealevel, out value))) return null; return value; }
-            public static Vector3? ProcessRotation(bool _EnabledCuriser, IMyTerminalBlock ShipController, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, bool ForwardOrUp = false, bool PoseMode = false, float MaximumSpeedLimited = 100f, float MaxReactions_AngleV = 1f, bool Need2CtrlSignal = true, float LocationSensetive = 1f, float SafetyStage = 1f, bool IgnoreForwardVelocity = true, bool Refer2Velocity = true, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null, Vector3? PlaneNormalOverride = null)
+            public static Vector3? ProcessRotation(bool _EnabledCuriser, IMyTerminalBlock ShipController, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, ControllerRole Role, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, bool ForwardOrUp = false, bool HasWings = false, float MaximumSpeedLimited = 100f, float MaxReactions_AngleV = 1f, float SafetyStage = 1f, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null, Vector3? PlaneNormalOverride = null)
             {
                 if (Common.IsNull(ShipController) || DisabledRotation) return null;
-                Vector3 current_gravity = MyPlanetInfoAPI.GetCurrentGravity(ShipController.GetPosition());
+                Vector3 Gravity = MyPlanetInfoAPI.GetCurrentGravity(ShipController.GetPosition());
                 Vector3? ReferNormal;
+                bool Need2CtrlSignal, IgnoreForwardVelocity, Refer2Velocity, PoseMode;
+                switch (Role)
+                {
+                    case ControllerRole.Helicopter: PoseMode = true; break;
+                    case ControllerRole.VTOL: PoseMode = HasWings ? (!ForwardOrUp) : (_EnabledCuriser && (Gravity != Vector3.Zero)); break;
+                    case ControllerRole.SpaceShip: PoseMode = _EnabledCuriser && (Gravity != Vector3.Zero); break;
+                    default: PoseMode = false; break;
+                }
+                switch (Role)
+                {
+                    case ControllerRole.Helicopter: IgnoreForwardVelocity = false; break;
+                    case ControllerRole.VTOL: IgnoreForwardVelocity = ForwardOrUp || Gravity == Vector3.Zero; break;
+                    default: IgnoreForwardVelocity = true; break;
+                }
+                Vector3 _ProjectLinnerVelocity_CockpitForward = ProjectLinnerVelocity_CockpitForward(ShipController, IgnoreForwardVelocity);
+                bool Refer2Velocity_SpaceShip = (_ProjectLinnerVelocity_CockpitForward.Length() >= MaximumSpeedLimited * 0.1f) && (Gravity == Vector3.Zero || ForwardOrUp);
+                switch (Role)
+                {
+                    case ControllerRole.Helicopter: Need2CtrlSignal = true; break;
+                    case ControllerRole.VTOL: Need2CtrlSignal = !(ForwardOrUp || Gravity == Vector3.Zero); break;
+                    default: Need2CtrlSignal = false; break;
+                }
+                switch (Role)
+                {
+                    case ControllerRole.Aeroplane: case ControllerRole.Helicopter: Refer2Velocity = true; break;
+                    case ControllerRole.VTOL: Refer2Velocity = (HasWings && (Gravity != Vector3.Zero)) || Refer2Velocity_SpaceShip; break;
+                    case ControllerRole.SpaceShip: Refer2Velocity = Refer2Velocity_SpaceShip; break;
+                    default: Refer2Velocity = false; break;
+                }
                 if (PlaneNormalOverride.HasValue && PlaneNormalOverride.Value != Vector3.Zero)
                 {
                     ReferNormal = PlaneNormalOverride;
                 }
                 else
                 {
-                    Vector3? current_velocity_linear = Refer2Velocity ? ((Vector3?)(ProjectLinnerVelocity_CockpitForward(ShipController, Refer2Velocity, IgnoreForwardVelocity)
-                      - ((Need2CtrlSignal ? (Vector3.ClampToSphere((-ShipController.WorldMatrix.Forward * RotationCtrlLines.X + ShipController.WorldMatrix.Right * RotationCtrlLines.Y), 1) * MaximumSpeedLimited) : Vector3.Zero)))) : null;
-                    if (Vector3.IsZero(current_gravity))
-                        ReferNormal = current_velocity_linear;
-                    if ((!ForwardOrUp && MyMath.AngleBetween(current_gravity, ShipController.WorldMatrix.Down) > MathHelper.ToRadians(45)) || (!current_velocity_linear.HasValue))
-                        ReferNormal = current_gravity;
+                    var _SafetyStage = MathHelper.Clamp(SafetyStage, 0, 1);
+                    Vector3 current_velocity_linear = (_SafetyStage == 1 || !Refer2Velocity) ? Vector3.Zero : (_ProjectLinnerVelocity_CockpitForward - (Need2CtrlSignal ? (Vector3.ClampToSphere(-ShipController.WorldMatrix.Forward * RotationCtrlLines.X + ShipController.WorldMatrix.Right * RotationCtrlLines.Y, 1) * MaximumSpeedLimited) : Vector3.Zero) * (1 - SafetyStage));
+                    if ((!ForwardOrUp && MyMath.AngleBetween(Gravity, ShipController.WorldMatrix.Down) > MathHelper.ToRadians(45)) || Vector3.IsZero(current_velocity_linear))
+                        ReferNormal = Gravity;
                     else
-                        ReferNormal = Vector3.ClampToSphere(current_velocity_linear.Value * LocationSensetive + Dampener(current_gravity) * SafetyStage, 1f);
+                        ReferNormal = Vector3.ClampToSphere(current_velocity_linear + Dampener(Gravity) * SafetyStage, 1f);
                 }
                 if (Common.IsNull(ReferNormal)) { return null; }
                 Vector3 Direciton;
@@ -39,11 +66,11 @@ namespace SuperBlocks
                 {
                     if (RotationCtrlLines.W != 0 || RotationCtrlLines.Z != 0)
                         ForwardDirection = ShipController.WorldMatrix.Forward;
-                    if (_EnabledCuriser && ForwardOrUp && (current_gravity != null))
+                    if (_EnabledCuriser && ForwardOrUp && (Gravity != null))
                     {
-                        ForwardDirection = ProjectOnPlane(ForwardDirection, current_gravity);
+                        ForwardDirection = ProjectOnPlane(ForwardDirection, Gravity);
                         if (ForwardDirection == Vector3.Zero)
-                            ForwardDirection = ProjectOnPlane(ShipController.WorldMatrix.Down, current_gravity);
+                            ForwardDirection = ProjectOnPlane(ShipController.WorldMatrix.Down, Gravity);
                     }
                     if (ForwardDirection != Vector3.Zero)
                         ForwardDirection = ScaleVectorTimes(Vector3.Normalize(ForwardDirection));
@@ -73,12 +100,14 @@ namespace SuperBlocks
                 }
                 else
                 {
-                    if (RotationCtrlLines.W != 0) return new Vector3(0, RotationCtrlLines.W * 1800000f, 0);
-                    if (!ForwardDirectionOverride.HasValue) return null;
-                    return (ProcessDampeners(ShipController, InitAngularDampener, AngularDampeners) +
-                     new Vector3(0,
-                      Dampener(SetupAngle(Calc_Direction_Vector(ForwardDirectionOverride.Value, ShipController.WorldMatrix.Right), Calc_Direction_Vector(ForwardDirectionOverride.Value, ShipController.WorldMatrix.Forward))) * 1800000f,
-                      0) * MaxReactions_AngleV);
+                    if (ForwardDirectionOverride.HasValue)
+                    {
+                        return (ProcessDampeners(ShipController, InitAngularDampener, AngularDampeners) +
+                                new Vector3(0,
+                             Dampener(SetupAngle(Calc_Direction_Vector(ForwardDirectionOverride.Value, ShipController.WorldMatrix.Right), Calc_Direction_Vector(ForwardDirectionOverride.Value, ShipController.WorldMatrix.Forward))) * 1800000f,
+                             0) * MaxReactions_AngleV);
+                    }
+                    else return new Vector3(0, RotationCtrlLines.W * 1800000f, 0);
                 }
             }
             public static Vector3? ProcessRotation_SeaVehicle(IMyTerminalBlock ShipController, Vector4 RotationCtrlLines, ref Vector3 ForwardDirection, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null, float MaxReactions_AngleV = 1f, bool DisabledRotation = true, Vector3? ForwardDirectionOverride = null)
@@ -94,9 +123,9 @@ namespace SuperBlocks
                     Dampener(SetupAngle(Calc_Direction_Vector(ReferNormal, ShipController.WorldMatrix.Left), Calc_Direction_Vector(ReferNormal, ShipController.WorldMatrix.Down)))) * MaxReactions_AngleV;
             }
             public static Vector3 ProjectOnPlane(Vector3 direction, Vector3 planeNormal) => Vector3.ProjectOnPlane(ref direction, ref planeNormal);
-            public static Vector3 ProjectLinnerVelocity_CockpitForward(IMyTerminalBlock ShipController, bool EnableToGet = true, bool IgnoreForwardVelocity = false)
+            public static Vector3 ProjectLinnerVelocity_CockpitForward(IMyTerminalBlock ShipController, bool IgnoreForwardVelocity = false)
             {
-                var LinearVelocity = EnableToGet ? ShipController?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero : Vector3.Zero;
+                var LinearVelocity = ShipController?.CubeGrid?.Physics?.LinearVelocity ?? Vector3.Zero;
                 if (IgnoreForwardVelocity) return ProjectOnPlane(LinearVelocity, ShipController.WorldMatrix.Forward); else return LinearVelocity;
             }
             public static Vector3 ProcessDampeners(IMyTerminalBlock ShipController, Vector3? InitAngularDampener = null, Vector3? AngularDampeners = null)
