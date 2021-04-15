@@ -1,2 +1,8 @@
 # OverClockCmd
- My SpaceEngineers's Mod
+ 
+暂时命名为超限模组
+
+太空工程师模组，还在开发中
+
+会有很多Bug，还有很多计划没实现
+
